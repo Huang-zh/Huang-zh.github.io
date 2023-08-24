@@ -14,32 +14,11 @@
             <pubDate>Thu, 24 Aug 2023 00:00:00 +0000</pubDate>
             
             <guid>https://Huang-zh.github.io/posts/firstpost/</guid>
-            <description>你眼中怎么还有一团火，叫我不知道该如何。
-回忆开动倒计列车，陪你度过寂寞。
-var config = { startOnLoad:true, theme:&#39;neutral&#39;, align:&#39;left&#39; }; mermaid.initialize(config);  pie title French Words I Know &#34;Merde&#34; : 50 &#34;Oui&#34; : 35 &#34;Alors&#34; : 10 &#34;Non&#34; : 5  </description>
-            <content type="html"><![CDATA[<p>你眼中怎么还有一团火，叫我不知道该如何。</p>
-<p>回忆开动倒计列车，陪你度过寂寞。</p>
-
-<script async type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js">
-    var config = {
-      startOnLoad:true,
-      theme:'neutral',
-      align:'left'
-    };
-    mermaid.initialize(config);
-  </script>
-  
-  <div class="mermaid">
-    
-pie
-    title French Words I Know
-    "Merde" : 50
-    "Oui" : 35
-    "Alors" : 10
-    "Non" : 5
-
-  </div>
-
+            <description>你眼中怎么还有一团火
+叫我不知道该如何</description>
+            <content type="html"><![CDATA[<p>你眼中怎么还有一团火</p>
+<p>叫我不知道该如何</p>
+<!-- raw HTML omitted -->
 ]]></content>
         </item>
         
