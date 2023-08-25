@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>此间的少年</title>
-    <link>https://Huang-zh.github.io/</link>
-    <description>Recent content on 此间的少年</description>
+    <title>redis原理 on 此间的少年</title>
+    <link>https://Huang-zh.github.io/categories/redis%E5%8E%9F%E7%90%86/</link>
+    <description>Recent content in redis原理 on 此间的少年</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Fri, 25 Aug 2023 22:10:44 +0800</lastBuildDate><atom:link href="https://Huang-zh.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 25 Aug 2023 22:10:44 +0800</lastBuildDate><atom:link href="https://Huang-zh.github.io/categories/redis%E5%8E%9F%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Redis存储原理剖析&lt;一&gt;</title>
       <link>https://Huang-zh.github.io/posts/redis1/</link>
@@ -35,25 +35,6 @@
 redis的数据模型，可以把它看成字典，一种基于key-value存储的数据结构，底层由数组实现的基于hashtable的拉链法存储。
 以下是从redis源码中提取的四种以此从外到内的核心数据模型，其中redisDb为最外层，抽丝剥茧之后，不难发现真正的数据存储于底层的dictEntry：
 typedef struct redisDb { dict *dict; /* The keyspace for this DB */ dict *expires; /* Timeout of keys with a timeout set */ dict *blocking_keys; /* Keys with clients waiting for data (BLPOP)*/ dict *ready_keys; /* Blocked keys that received a PUSH */ dict *watched_keys; /* WATCHED keys for MULTI/EXEC CAS */ int id; /* Database ID */ long long avg_ttl; /* Average TTL, just for stats */ list *defrag_later; /* List of key names to attempt to defrag one by one, gradually.</description>
-    </item>
-    
-    <item>
-      <title>浮生如梦</title>
-      <link>https://Huang-zh.github.io/posts/firstpost/</link>
-      <pubDate>Thu, 24 Aug 2023 00:00:00 +0000</pubDate>
-      
-      <guid>https://Huang-zh.github.io/posts/firstpost/</guid>
-      <description>你眼中怎么还有一团火
-叫我不知道该如何</description>
-    </item>
-    
-    <item>
-      <title>简介</title>
-      <link>https://Huang-zh.github.io/about/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://Huang-zh.github.io/about/</guid>
-      <description>关于我  祖籍浙江温州，定居浙江杭州。 程序员，互联网金融行业，对高频交易有略微经验。 偶尔打打篮球，玩玩吉他，入门水平^_^ 不玩抖音快手，不玩王者荣耀。  和我联系：  huangzhenghao831@163.com  </description>
     </item>
     
   </channel>

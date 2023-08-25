@@ -1,20 +1,11 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-    <channel>
-        <title>Posts on 此间的少年</title>
-        <link>https://Huang-zh.github.io/posts/</link>
-        <description>Recent content in Posts on 此间的少年</description>
-        <generator>Hugo -- gohugo.io</generator>
-        <language>zh-cn</language>
-        <lastBuildDate>Fri, 25 Aug 2023 22:10:44 +0800</lastBuildDate>
-        <atom:link href="https://Huang-zh.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
-        
-        <item>
-            <title>Redis存储原理剖析&lt;一&gt;</title>
-            <link>https://Huang-zh.github.io/posts/redis1/</link>
-            <pubDate>Fri, 25 Aug 2023 22:10:44 +0800</pubDate>
-            
-            <guid>https://Huang-zh.github.io/posts/redis1/</guid>
-            <description>1. 前言  2022年，是充满挑战性的一年。
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="[huangzh]">
+<meta name="description" content="1. 前言  2022年，是充满挑战性的一年。
 这一年，我选择离开了自己熟悉的信息化领域，把精力投向了互联网金融。
 在22年的后半程，鉴于平台和团队所带来的效应，个人也在高频交易业务领域吸收了足够多的知识。过程中，认知的颠覆和自我的怀疑常常是共存。
 所幸这些经历最后都能够作为养分，支撑我一步步走到当下。
@@ -35,8 +26,214 @@
  时间复杂度o(1)。 满足“=”，“IN”条件查询。 不支持范围查询，比如between关键字。 不支持order by关键字排序。   3. redis数据模型 我们在描述一种存储类型的中间件时，无论它是缓存类的存储，亦或是传统写入磁盘的关系性数据库存储，都存在它们各自最基础也是最核心的数据存储模型，这里我个人习惯把它叫做数据模型，基于数据模型才能实现上层复杂的结构存储。
 redis的数据模型，可以把它看成字典，一种基于key-value存储的数据结构，底层由数组实现的基于hashtable的拉链法存储。
 以下是从redis源码中提取的四种以此从外到内的核心数据模型，其中redisDb为最外层，抽丝剥茧之后，不难发现真正的数据存储于底层的dictEntry：
-typedef struct redisDb { dict *dict; /* The keyspace for this DB */ dict *expires; /* Timeout of keys with a timeout set */ dict *blocking_keys; /* Keys with clients waiting for data (BLPOP)*/ dict *ready_keys; /* Blocked keys that received a PUSH */ dict *watched_keys; /* WATCHED keys for MULTI/EXEC CAS */ int id; /* Database ID */ long long avg_ttl; /* Average TTL, just for stats */ list *defrag_later; /* List of key names to attempt to defrag one by one, gradually.</description>
-            <content type="html"><![CDATA[<h3 id="1-前言">1. 前言</h3>
+typedef struct redisDb { dict *dict; /* The keyspace for this DB */ dict *expires; /* Timeout of keys with a timeout set */ dict *blocking_keys; /* Keys with clients waiting for data (BLPOP)*/ dict *ready_keys; /* Blocked keys that received a PUSH */ dict *watched_keys; /* WATCHED keys for MULTI/EXEC CAS */ int id; /* Database ID */ long long avg_ttl; /* Average TTL, just for stats */ list *defrag_later; /* List of key names to attempt to defrag one by one, gradually." />
+<meta name="keywords" content=", redis" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="https://Huang-zh.github.io/posts/redis1/" />
+
+
+    <title>
+        
+            Redis存储原理剖析&lt;一&gt; :: 此间的少年 
+        
+    </title>
+
+
+
+
+
+<link rel="stylesheet" href="/main.b78c3be9451dc4ca61ca377f3dc2cf2e6345a44c2bae46216a322ef366daa399.css" integrity="sha256-t4w76UUdxMphyjd/PcLPLmNFpEwrrkYhajIu82bao5k=">
+
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="msapplication-TileColor" content="">
+
+
+<meta itemprop="name" content="Redis存储原理剖析&lt;一&gt;">
+<meta itemprop="description" content="1. 前言  2022年，是充满挑战性的一年。
+这一年，我选择离开了自己熟悉的信息化领域，把精力投向了互联网金融。
+在22年的后半程，鉴于平台和团队所带来的效应，个人也在高频交易业务领域吸收了足够多的知识。过程中，认知的颠覆和自我的怀疑常常是共存。
+所幸这些经历最后都能够作为养分，支撑我一步步走到当下。
+这个系列的文章，初稿实际上在22年的年底就已经完成。但碍于平日里事务繁忙兼琐事繁多，使得日子一再蹉跎，一直推迟到23年过半，才开始尝试去重新梳理其中的些许细节，并准备将它发表在博客里。
+初稿原本诞生于22年在高频交易系统的技术选型、架构搭建和研发过程中。当时和团队里优秀的工程师们对redis尝试不断地深入探索，试图吸收其在架构设计方面的优点，并思考对于交易业务领域可以如何进行二次开发以达到发挥极致性能的目的，从而形成了这份初稿。当然，由于保密机制，文档中原先存在的定制化方案和敏感信息已去除，但对redis架构有兴趣的朋友，仍然可以通过这个系列洞悉redis在设计方面的优点。
+过程中难免会因为篇幅原因删除细枝末节的代码，这也是为更好的去掌握主流程，让整个文档脉络更清晰而做的取舍。若对内容有异议，可通过邮箱联系我。
+ huangzh 2023.08.25    阅读本文档存在一些门槛，不建议新手直接阅读，建议大家先掌握以下必要的技能：  良好的c语言基础。 掌握多路复用编程网络模型。 对操作系统中io的认知。 学习并调试过其他常用中间件代码的经验。 耐心。   redis的存储模型，是典型的hash存储。即一个key对应一个或多个值，这在redis支持的数据类型有着明确的体现，redis一共支持五种类型的数据结构存储：
+ string hash（又称为set） list zset zlist  从广义上来看，这五种类型数据的存储都可以用key-value形式去实现，无非是value所对应的值的形式有所不同。
+ 2. hash存储引擎 提到redis，不得不先提及hash存储引擎的概念，一个典型的hash存储引擎原理如下图所示：
+这种基于hash的存储方式，与传统关系性数据库有着非常大的区别。
+在内存中通过一定的hash算法均匀的散列key值，使不同的key均匀的散落在hashtable的不同栏位。
+由于相同的key可能对应不同的value，因此hashtable每个栏位实际上采用挂载链表的形式存储每一个value节点。
+每个value节点中，包含三个最重要的元素：
+ position：value的起始位置 size：value对应的长度 fileid：value存储的文件标识符  当然，节点中当然可以包含其他额外的值，不同软件有着自己的额外添加的元素。
+但是，不约而外的，通过这三个必要的元素，可以找到key对应的value究竟存储于哪个文件，以及value在该文件中对应的起始位置和长度。
+通过这种方式，实际上可以很方便的查找key-value元素。同时，这种方式将hashtable中每个栏位的写入由随机写（hash值随机）转变为顺序写（每个栏位的数据只需要顺序往该栏位对应的文件中添加即可，通过节点链表顺序连接），大大提高了写入的效率。
+同时，使用hash存储引擎还存在以下特点：
+ 时间复杂度o(1)。 满足“=”，“IN”条件查询。 不支持范围查询，比如between关键字。 不支持order by关键字排序。   3. redis数据模型 我们在描述一种存储类型的中间件时，无论它是缓存类的存储，亦或是传统写入磁盘的关系性数据库存储，都存在它们各自最基础也是最核心的数据存储模型，这里我个人习惯把它叫做数据模型，基于数据模型才能实现上层复杂的结构存储。
+redis的数据模型，可以把它看成字典，一种基于key-value存储的数据结构，底层由数组实现的基于hashtable的拉链法存储。
+以下是从redis源码中提取的四种以此从外到内的核心数据模型，其中redisDb为最外层，抽丝剥茧之后，不难发现真正的数据存储于底层的dictEntry：
+typedef struct redisDb { dict *dict; /* The keyspace for this DB */ dict *expires; /* Timeout of keys with a timeout set */ dict *blocking_keys; /* Keys with clients waiting for data (BLPOP)*/ dict *ready_keys; /* Blocked keys that received a PUSH */ dict *watched_keys; /* WATCHED keys for MULTI/EXEC CAS */ int id; /* Database ID */ long long avg_ttl; /* Average TTL, just for stats */ list *defrag_later; /* List of key names to attempt to defrag one by one, gradually."><meta itemprop="datePublished" content="2023-08-25T22:10:44+08:00" />
+<meta itemprop="dateModified" content="2023-08-25T22:10:44+08:00" />
+<meta itemprop="wordCount" content="1135"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="keywords" content="redis," />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://Huang-zh.github.io"/>
+
+<meta name="twitter:title" content="Redis存储原理剖析&lt;一&gt;"/>
+<meta name="twitter:description" content="1. 前言  2022年，是充满挑战性的一年。
+这一年，我选择离开了自己熟悉的信息化领域，把精力投向了互联网金融。
+在22年的后半程，鉴于平台和团队所带来的效应，个人也在高频交易业务领域吸收了足够多的知识。过程中，认知的颠覆和自我的怀疑常常是共存。
+所幸这些经历最后都能够作为养分，支撑我一步步走到当下。
+这个系列的文章，初稿实际上在22年的年底就已经完成。但碍于平日里事务繁忙兼琐事繁多，使得日子一再蹉跎，一直推迟到23年过半，才开始尝试去重新梳理其中的些许细节，并准备将它发表在博客里。
+初稿原本诞生于22年在高频交易系统的技术选型、架构搭建和研发过程中。当时和团队里优秀的工程师们对redis尝试不断地深入探索，试图吸收其在架构设计方面的优点，并思考对于交易业务领域可以如何进行二次开发以达到发挥极致性能的目的，从而形成了这份初稿。当然，由于保密机制，文档中原先存在的定制化方案和敏感信息已去除，但对redis架构有兴趣的朋友，仍然可以通过这个系列洞悉redis在设计方面的优点。
+过程中难免会因为篇幅原因删除细枝末节的代码，这也是为更好的去掌握主流程，让整个文档脉络更清晰而做的取舍。若对内容有异议，可通过邮箱联系我。
+ huangzh 2023.08.25    阅读本文档存在一些门槛，不建议新手直接阅读，建议大家先掌握以下必要的技能：  良好的c语言基础。 掌握多路复用编程网络模型。 对操作系统中io的认知。 学习并调试过其他常用中间件代码的经验。 耐心。   redis的存储模型，是典型的hash存储。即一个key对应一个或多个值，这在redis支持的数据类型有着明确的体现，redis一共支持五种类型的数据结构存储：
+ string hash（又称为set） list zset zlist  从广义上来看，这五种类型数据的存储都可以用key-value形式去实现，无非是value所对应的值的形式有所不同。
+ 2. hash存储引擎 提到redis，不得不先提及hash存储引擎的概念，一个典型的hash存储引擎原理如下图所示：
+这种基于hash的存储方式，与传统关系性数据库有着非常大的区别。
+在内存中通过一定的hash算法均匀的散列key值，使不同的key均匀的散落在hashtable的不同栏位。
+由于相同的key可能对应不同的value，因此hashtable每个栏位实际上采用挂载链表的形式存储每一个value节点。
+每个value节点中，包含三个最重要的元素：
+ position：value的起始位置 size：value对应的长度 fileid：value存储的文件标识符  当然，节点中当然可以包含其他额外的值，不同软件有着自己的额外添加的元素。
+但是，不约而外的，通过这三个必要的元素，可以找到key对应的value究竟存储于哪个文件，以及value在该文件中对应的起始位置和长度。
+通过这种方式，实际上可以很方便的查找key-value元素。同时，这种方式将hashtable中每个栏位的写入由随机写（hash值随机）转变为顺序写（每个栏位的数据只需要顺序往该栏位对应的文件中添加即可，通过节点链表顺序连接），大大提高了写入的效率。
+同时，使用hash存储引擎还存在以下特点：
+ 时间复杂度o(1)。 满足“=”，“IN”条件查询。 不支持范围查询，比如between关键字。 不支持order by关键字排序。   3. redis数据模型 我们在描述一种存储类型的中间件时，无论它是缓存类的存储，亦或是传统写入磁盘的关系性数据库存储，都存在它们各自最基础也是最核心的数据存储模型，这里我个人习惯把它叫做数据模型，基于数据模型才能实现上层复杂的结构存储。
+redis的数据模型，可以把它看成字典，一种基于key-value存储的数据结构，底层由数组实现的基于hashtable的拉链法存储。
+以下是从redis源码中提取的四种以此从外到内的核心数据模型，其中redisDb为最外层，抽丝剥茧之后，不难发现真正的数据存储于底层的dictEntry：
+typedef struct redisDb { dict *dict; /* The keyspace for this DB */ dict *expires; /* Timeout of keys with a timeout set */ dict *blocking_keys; /* Keys with clients waiting for data (BLPOP)*/ dict *ready_keys; /* Blocked keys that received a PUSH */ dict *watched_keys; /* WATCHED keys for MULTI/EXEC CAS */ int id; /* Database ID */ long long avg_ttl; /* Average TTL, just for stats */ list *defrag_later; /* List of key names to attempt to defrag one by one, gradually."/>
+
+
+
+    <meta property="og:title" content="Redis存储原理剖析&lt;一&gt;" />
+<meta property="og:description" content="1. 前言  2022年，是充满挑战性的一年。
+这一年，我选择离开了自己熟悉的信息化领域，把精力投向了互联网金融。
+在22年的后半程，鉴于平台和团队所带来的效应，个人也在高频交易业务领域吸收了足够多的知识。过程中，认知的颠覆和自我的怀疑常常是共存。
+所幸这些经历最后都能够作为养分，支撑我一步步走到当下。
+这个系列的文章，初稿实际上在22年的年底就已经完成。但碍于平日里事务繁忙兼琐事繁多，使得日子一再蹉跎，一直推迟到23年过半，才开始尝试去重新梳理其中的些许细节，并准备将它发表在博客里。
+初稿原本诞生于22年在高频交易系统的技术选型、架构搭建和研发过程中。当时和团队里优秀的工程师们对redis尝试不断地深入探索，试图吸收其在架构设计方面的优点，并思考对于交易业务领域可以如何进行二次开发以达到发挥极致性能的目的，从而形成了这份初稿。当然，由于保密机制，文档中原先存在的定制化方案和敏感信息已去除，但对redis架构有兴趣的朋友，仍然可以通过这个系列洞悉redis在设计方面的优点。
+过程中难免会因为篇幅原因删除细枝末节的代码，这也是为更好的去掌握主流程，让整个文档脉络更清晰而做的取舍。若对内容有异议，可通过邮箱联系我。
+ huangzh 2023.08.25    阅读本文档存在一些门槛，不建议新手直接阅读，建议大家先掌握以下必要的技能：  良好的c语言基础。 掌握多路复用编程网络模型。 对操作系统中io的认知。 学习并调试过其他常用中间件代码的经验。 耐心。   redis的存储模型，是典型的hash存储。即一个key对应一个或多个值，这在redis支持的数据类型有着明确的体现，redis一共支持五种类型的数据结构存储：
+ string hash（又称为set） list zset zlist  从广义上来看，这五种类型数据的存储都可以用key-value形式去实现，无非是value所对应的值的形式有所不同。
+ 2. hash存储引擎 提到redis，不得不先提及hash存储引擎的概念，一个典型的hash存储引擎原理如下图所示：
+这种基于hash的存储方式，与传统关系性数据库有着非常大的区别。
+在内存中通过一定的hash算法均匀的散列key值，使不同的key均匀的散落在hashtable的不同栏位。
+由于相同的key可能对应不同的value，因此hashtable每个栏位实际上采用挂载链表的形式存储每一个value节点。
+每个value节点中，包含三个最重要的元素：
+ position：value的起始位置 size：value对应的长度 fileid：value存储的文件标识符  当然，节点中当然可以包含其他额外的值，不同软件有着自己的额外添加的元素。
+但是，不约而外的，通过这三个必要的元素，可以找到key对应的value究竟存储于哪个文件，以及value在该文件中对应的起始位置和长度。
+通过这种方式，实际上可以很方便的查找key-value元素。同时，这种方式将hashtable中每个栏位的写入由随机写（hash值随机）转变为顺序写（每个栏位的数据只需要顺序往该栏位对应的文件中添加即可，通过节点链表顺序连接），大大提高了写入的效率。
+同时，使用hash存储引擎还存在以下特点：
+ 时间复杂度o(1)。 满足“=”，“IN”条件查询。 不支持范围查询，比如between关键字。 不支持order by关键字排序。   3. redis数据模型 我们在描述一种存储类型的中间件时，无论它是缓存类的存储，亦或是传统写入磁盘的关系性数据库存储，都存在它们各自最基础也是最核心的数据存储模型，这里我个人习惯把它叫做数据模型，基于数据模型才能实现上层复杂的结构存储。
+redis的数据模型，可以把它看成字典，一种基于key-value存储的数据结构，底层由数组实现的基于hashtable的拉链法存储。
+以下是从redis源码中提取的四种以此从外到内的核心数据模型，其中redisDb为最外层，抽丝剥茧之后，不难发现真正的数据存储于底层的dictEntry：
+typedef struct redisDb { dict *dict; /* The keyspace for this DB */ dict *expires; /* Timeout of keys with a timeout set */ dict *blocking_keys; /* Keys with clients waiting for data (BLPOP)*/ dict *ready_keys; /* Blocked keys that received a PUSH */ dict *watched_keys; /* WATCHED keys for MULTI/EXEC CAS */ int id; /* Database ID */ long long avg_ttl; /* Average TTL, just for stats */ list *defrag_later; /* List of key names to attempt to defrag one by one, gradually." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://Huang-zh.github.io/posts/redis1/" /><meta property="og:image" content="https://Huang-zh.github.io"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-08-25T22:10:44+08:00" />
+<meta property="article:modified_time" content="2023-08-25T22:10:44+08:00" /><meta property="og:site_name" content="此间的少年" />
+
+
+
+
+
+
+    <meta property="article:section" content="redis原理" />
+
+
+
+    <meta property="article:published_time" content="2023-08-25 22:10:44 &#43;0800 CST" />
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    
+        <body>
+    
+    
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text ">
+                huan.g</span>
+            <span class="logo__cursor" style=
+                  "
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">关于我</a></li><li><a href="/posts/">文章</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+        </span>
+    </span>
+</header>
+
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        6 minutes
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="https://Huang-zh.github.io/posts/redis1/">Redis存储原理剖析&lt;一&gt;</a>
+      </h1>
+
+      
+
+      
+
+      
+
+      <div class="post-content">
+        <h3 id="1-前言">1. 前言</h3>
 <blockquote>
 <p>2022年，是充满挑战性的一年。</p>
 <p>这一年，我选择离开了自己熟悉的信息化领域，把精力投向了互联网金融。</p>
@@ -534,22 +731,117 @@ sds <span style="color:#a6e22e">sdsnewlen</span>(<span style="color:#66d9ef">con
 <p>在设计key的过程中，应当避免key过长。</p>
 <p>同时，redis针对这种由于key的字节长度引起的存储容量问题，有着自己的key删除策略和过期淘汰机制。</p>
 <p>key删除策略和过期淘汰机制将会在后续的章节中展开分析。</p>
-]]></content>
-        </item>
+
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://Huang-zh.github.io/tags/redis/">redis</a></span>
         
-        <item>
-            <title>浮生如梦</title>
-            <link>https://Huang-zh.github.io/posts/firstpost/</link>
-            <pubDate>Thu, 24 Aug 2023 00:00:00 +0000</pubDate>
+    </p>
+
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder meta-icon"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+
+        <span class="tag"><a href="https://Huang-zh.github.io/categories/redis%E5%8E%9F%E7%90%86/">redis原理</a></span>
+        
+    </p>
+
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        1135 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2023-08-25
+        
+
+        
+      </p>
+    </div>
+
+    
+    <div class="pagination">
+        
+
+        <div class="pagination__buttons">
             
-            <guid>https://Huang-zh.github.io/posts/firstpost/</guid>
-            <description>你眼中怎么还有一团火
-叫我不知道该如何</description>
-            <content type="html"><![CDATA[<p>你眼中怎么还有一团火</p>
-<p>叫我不知道该如何</p>
-<!-- raw HTML omitted -->
-]]></content>
-        </item>
+
+            
+            <span class="button next">
+                <a href="https://Huang-zh.github.io/posts/firstpost/">
+                    <span class="button__text">浮生如梦</span>
+                    <span class="button__icon">→</span>
+                </a>
+            </span>
+            
+        </div>
+    </div>
+
+
+    
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            
+            <span><a href="https://Huang-zh.github.io">huang.zh</a></span>
+            
+            
+            
+        </div>
+    </div>
+    
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span><a href="http://beian.miit.gov.cn">浙ICP备19022115号-1</a></span>
+        </div>
+    </div>
+    
+</footer>
+
+
+
+            
+        </div>
+
         
-    </channel>
-</rss>
+
+
+
+<script type="text/javascript" src="/bundle.min.644292943ae47eef02fcd64b11757aeb8caeeaebf473a823b62099edccac808e8d82689359f285e5d95994e5ad5ae3b9c1ccc281eb1828e67d0ba6630f95b832.js" integrity="sha512-ZEKSlDrkfu8C/NZLEXV664yu6uv0c6gjtiCZ7cysgI6NgmiTWfKF5dlZlOWtWuO5wczCgesYKOZ9C6ZjD5W4Mg=="></script>
+
+
+
+    </body>
+</html>
