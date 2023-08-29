@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="[huangzh]">
+<meta name="description" content="6. key删除策略 redis中，对于过期key的淘汰机制，可以分为以下两种：
+ 定期删除：一种主动删除策略，定期去轮询存储了key的过期时间的字典。 惰性删除：在寻找/写入dictEntry的时候判断是否过期，属于被动删除策略。  6.1 惰性删除 惰性删除的代码，入口在db.c中的expireIfNeeded，该方法由执行查找命令或写入命令的方法调用，在执行真正的命令之前，做key的删除判断以及删除操作：
+int expireIfNeeded(redisDb *db, robj *key) { //设定了过期时间且未过期的key会在这一步直接返回  if (!keyIsExpired(db,key)) return 0; //当前redis节点过期了，但是存在master节点。  //意味着当前属于slave节点，返回1，由master执行删除后同步至slave  if (server.masterhost != NULL) return 1; //过期key的数量&#43;1  server.stat_expiredkeys&#43;&#43;; //把过期的key的消息传播到slave，同时将该key的删除命令写入到aof文件  propagateExpire(db,key,server.lazyfree_lazy_expire); //通知监听了该key的客户端，通知key的过期事件  notifyKeyspaceEvent(NOTIFY_EXPIRED, &amp;#34;expired&amp;#34;,key,db-&amp;gt;id); //根据设定的删除方式，决定采用同步删除还是异步删除  return server.lazyfree_lazy_expire ? dbAsyncDelete(db,key) : dbSyncDelete(db,key); } int keyIsExpired(redisDb *db, robj *key) { //获得设定的过期时间戳  mstime_t when = getExpire(db,key); mstime_t now; //如果时间戳小于0，说明没有设置过期时间  if (when &amp;lt; 0) return 0; //loading状态下不允许进行过期判断  if (server." />
+<meta name="keywords" content=", redis" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="https://Huang-zh.github.io/posts/redis2/" />
+
+
+    <title>
+        
+            Redis存储原理剖析&lt;二&gt;：key的惰性删除--同步删除策略 :: 此间的少年 
+        
+    </title>
+
+
+
+
+
+<link rel="stylesheet" href="/main.b78c3be9451dc4ca61ca377f3dc2cf2e6345a44c2bae46216a322ef366daa399.css" integrity="sha256-t4w76UUdxMphyjd/PcLPLmNFpEwrrkYhajIu82bao5k=">
+
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="msapplication-TileColor" content="">
+
+
+<meta itemprop="name" content="Redis存储原理剖析&lt;二&gt;：key的惰性删除--同步删除策略">
+<meta itemprop="description" content="6. key删除策略 redis中，对于过期key的淘汰机制，可以分为以下两种：
+ 定期删除：一种主动删除策略，定期去轮询存储了key的过期时间的字典。 惰性删除：在寻找/写入dictEntry的时候判断是否过期，属于被动删除策略。  6.1 惰性删除 惰性删除的代码，入口在db.c中的expireIfNeeded，该方法由执行查找命令或写入命令的方法调用，在执行真正的命令之前，做key的删除判断以及删除操作：
+int expireIfNeeded(redisDb *db, robj *key) { //设定了过期时间且未过期的key会在这一步直接返回  if (!keyIsExpired(db,key)) return 0; //当前redis节点过期了，但是存在master节点。  //意味着当前属于slave节点，返回1，由master执行删除后同步至slave  if (server.masterhost != NULL) return 1; //过期key的数量&#43;1  server.stat_expiredkeys&#43;&#43;; //把过期的key的消息传播到slave，同时将该key的删除命令写入到aof文件  propagateExpire(db,key,server.lazyfree_lazy_expire); //通知监听了该key的客户端，通知key的过期事件  notifyKeyspaceEvent(NOTIFY_EXPIRED, &#34;expired&#34;,key,db-&gt;id); //根据设定的删除方式，决定采用同步删除还是异步删除  return server.lazyfree_lazy_expire ? dbAsyncDelete(db,key) : dbSyncDelete(db,key); } int keyIsExpired(redisDb *db, robj *key) { //获得设定的过期时间戳  mstime_t when = getExpire(db,key); mstime_t now; //如果时间戳小于0，说明没有设置过期时间  if (when &lt; 0) return 0; //loading状态下不允许进行过期判断  if (server."><meta itemprop="datePublished" content="2023-08-29T19:10:44+08:00" />
+<meta itemprop="dateModified" content="2023-08-29T19:10:44+08:00" />
+<meta itemprop="wordCount" content="498"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="keywords" content="redis," />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://Huang-zh.github.io"/>
+
+<meta name="twitter:title" content="Redis存储原理剖析&lt;二&gt;：key的惰性删除--同步删除策略"/>
+<meta name="twitter:description" content="6. key删除策略 redis中，对于过期key的淘汰机制，可以分为以下两种：
+ 定期删除：一种主动删除策略，定期去轮询存储了key的过期时间的字典。 惰性删除：在寻找/写入dictEntry的时候判断是否过期，属于被动删除策略。  6.1 惰性删除 惰性删除的代码，入口在db.c中的expireIfNeeded，该方法由执行查找命令或写入命令的方法调用，在执行真正的命令之前，做key的删除判断以及删除操作：
+int expireIfNeeded(redisDb *db, robj *key) { //设定了过期时间且未过期的key会在这一步直接返回  if (!keyIsExpired(db,key)) return 0; //当前redis节点过期了，但是存在master节点。  //意味着当前属于slave节点，返回1，由master执行删除后同步至slave  if (server.masterhost != NULL) return 1; //过期key的数量&#43;1  server.stat_expiredkeys&#43;&#43;; //把过期的key的消息传播到slave，同时将该key的删除命令写入到aof文件  propagateExpire(db,key,server.lazyfree_lazy_expire); //通知监听了该key的客户端，通知key的过期事件  notifyKeyspaceEvent(NOTIFY_EXPIRED, &#34;expired&#34;,key,db-&gt;id); //根据设定的删除方式，决定采用同步删除还是异步删除  return server.lazyfree_lazy_expire ? dbAsyncDelete(db,key) : dbSyncDelete(db,key); } int keyIsExpired(redisDb *db, robj *key) { //获得设定的过期时间戳  mstime_t when = getExpire(db,key); mstime_t now; //如果时间戳小于0，说明没有设置过期时间  if (when &lt; 0) return 0; //loading状态下不允许进行过期判断  if (server."/>
+
+
+
+    <meta property="og:title" content="Redis存储原理剖析&lt;二&gt;：key的惰性删除--同步删除策略" />
+<meta property="og:description" content="6. key删除策略 redis中，对于过期key的淘汰机制，可以分为以下两种：
+ 定期删除：一种主动删除策略，定期去轮询存储了key的过期时间的字典。 惰性删除：在寻找/写入dictEntry的时候判断是否过期，属于被动删除策略。  6.1 惰性删除 惰性删除的代码，入口在db.c中的expireIfNeeded，该方法由执行查找命令或写入命令的方法调用，在执行真正的命令之前，做key的删除判断以及删除操作：
+int expireIfNeeded(redisDb *db, robj *key) { //设定了过期时间且未过期的key会在这一步直接返回  if (!keyIsExpired(db,key)) return 0; //当前redis节点过期了，但是存在master节点。  //意味着当前属于slave节点，返回1，由master执行删除后同步至slave  if (server.masterhost != NULL) return 1; //过期key的数量&#43;1  server.stat_expiredkeys&#43;&#43;; //把过期的key的消息传播到slave，同时将该key的删除命令写入到aof文件  propagateExpire(db,key,server.lazyfree_lazy_expire); //通知监听了该key的客户端，通知key的过期事件  notifyKeyspaceEvent(NOTIFY_EXPIRED, &#34;expired&#34;,key,db-&gt;id); //根据设定的删除方式，决定采用同步删除还是异步删除  return server.lazyfree_lazy_expire ? dbAsyncDelete(db,key) : dbSyncDelete(db,key); } int keyIsExpired(redisDb *db, robj *key) { //获得设定的过期时间戳  mstime_t when = getExpire(db,key); mstime_t now; //如果时间戳小于0，说明没有设置过期时间  if (when &lt; 0) return 0; //loading状态下不允许进行过期判断  if (server." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://Huang-zh.github.io/posts/redis2/" /><meta property="og:image" content="https://Huang-zh.github.io"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-08-29T19:10:44+08:00" />
+<meta property="article:modified_time" content="2023-08-29T19:10:44+08:00" /><meta property="og:site_name" content="此间的少年" />
+<meta property="og:see_also" content="https://Huang-zh.github.io/posts/redis1/" />
+
+
+
+
+
+    <meta property="article:section" content="redis原理" />
+
+
+
+    <meta property="article:published_time" content="2023-08-29 19:10:44 &#43;0800 CST" />
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    
+        <body>
+    
+    
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text ">
+                huan.g</span>
+            <span class="logo__cursor" style=
+                  "
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">关于我</a></li><li><a href="/posts/">文章</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+        </span>
+    </span>
+</header>
+
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        3 minutes
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="https://Huang-zh.github.io/posts/redis2/">Redis存储原理剖析&lt;二&gt;：key的惰性删除&ndash;同步删除策略</a>
+      </h1>
+
+      
+
+      
+
+      
+
+      <div class="post-content">
+        <h3 id="6-key删除策略">6. key删除策略</h3>
+<p>redis中，对于过期key的淘汰机制，可以分为以下两种：</p>
+<ul>
+<li>定期删除：一种主动删除策略，定期去轮询存储了key的过期时间的字典。</li>
+<li>惰性删除：在寻找/写入dictEntry的时候判断是否过期，属于被动删除策略。</li>
+</ul>
+<h4 id="61-惰性删除">6.1 惰性删除</h4>
+<p>惰性删除的代码，入口在db.c中的expireIfNeeded，该方法由执行查找命令或写入命令的方法调用，在执行真正的命令之前，做key的删除判断以及删除操作：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">expireIfNeeded</span>(redisDb <span style="color:#f92672">*</span>db, robj <span style="color:#f92672">*</span>key) {
+  	<span style="color:#75715e">//设定了过期时间且未过期的key会在这一步直接返回
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>keyIsExpired(db,key)) <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+		<span style="color:#75715e">//当前redis节点过期了，但是存在master节点。
+</span><span style="color:#75715e"></span>  	<span style="color:#75715e">//意味着当前属于slave节点，返回1，由master执行删除后同步至slave
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (server.masterhost <span style="color:#f92672">!=</span> NULL) <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>;
+  	
+  	<span style="color:#75715e">//过期key的数量+1
+</span><span style="color:#75715e"></span>    server.stat_expiredkeys<span style="color:#f92672">++</span>;
+  	
+  	<span style="color:#75715e">//把过期的key的消息传播到slave，同时将该key的删除命令写入到aof文件
+</span><span style="color:#75715e"></span>    propagateExpire(db,key,server.lazyfree_lazy_expire);
+  	<span style="color:#75715e">//通知监听了该key的客户端，通知key的过期事件
+</span><span style="color:#75715e"></span>    notifyKeyspaceEvent(NOTIFY_EXPIRED,
+        <span style="color:#e6db74">&#34;expired&#34;</span>,key,db<span style="color:#f92672">-&gt;</span>id);
+  	<span style="color:#75715e">//根据设定的删除方式，决定采用同步删除还是异步删除
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> server.lazyfree_lazy_expire <span style="color:#f92672">?</span> dbAsyncDelete(db,key) <span style="color:#f92672">:</span>
+                                         dbSyncDelete(db,key);
+}
+
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">keyIsExpired</span>(redisDb <span style="color:#f92672">*</span>db, robj <span style="color:#f92672">*</span>key) {
+  	<span style="color:#75715e">//获得设定的过期时间戳
+</span><span style="color:#75715e"></span>    mstime_t when <span style="color:#f92672">=</span> getExpire(db,key);
+    mstime_t now;
+		<span style="color:#75715e">//如果时间戳小于0，说明没有设置过期时间
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (when <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>) <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>; 
+
+    <span style="color:#75715e">//loading状态下不允许进行过期判断
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (server.loading) <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+
+    <span style="color:#75715e">//获得系统当前时间
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (server.lua_caller) {
+        now <span style="color:#f92672">=</span> server.lua_time_start;
+    }
+    <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (server.fixed_time_expire <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) {
+        now <span style="color:#f92672">=</span> server.mstime;
+    }
+    <span style="color:#66d9ef">else</span> {
+        now <span style="color:#f92672">=</span> mstime();
+    }
+
+    <span style="color:#75715e">//执行判断
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> now <span style="color:#f92672">&gt;</span> when;
+}
+
+<span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> <span style="color:#a6e22e">getExpire</span>(redisDb <span style="color:#f92672">*</span>db, robj <span style="color:#f92672">*</span>key) {
+    dictEntry <span style="color:#f92672">*</span>de;
+
+   	<span style="color:#75715e">//如果存储expireTime的字典为空 或者 当前key没有设置过期时间，返回-1
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (dictSize(db<span style="color:#f92672">-&gt;</span>expires) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">||</span>
+       (de <span style="color:#f92672">=</span> dictFind(db<span style="color:#f92672">-&gt;</span>expires,key<span style="color:#f92672">-&gt;</span>ptr)) <span style="color:#f92672">==</span> NULL) <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
+
+    <span style="color:#75715e">//安全保护机制，确保存储在expireDict中的key也存在于dataDict中
+</span><span style="color:#75715e"></span>    serverAssertWithInfo(NULL,key,dictFind(db<span style="color:#f92672">-&gt;</span>dict,key<span style="color:#f92672">-&gt;</span>ptr) <span style="color:#f92672">!=</span> NULL);
+  	<span style="color:#75715e">//取得过期时间戳并返回
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> dictGetSignedIntegerVal(de);
+}
+</code></pre></div><p>简略画出这段代码调用的时序图：
+
+<script async type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js">
+    var config = {
+      startOnLoad:true,
+      theme:'neutral',
+      align:'left'
+    };
+    mermaid.initialize(config);
+  </script>
+  
+  <div class="mermaid">
+    
+  sequenceDiagram
+　　participant expireIfNeeded
+　　participant keyIsExpired
+　　participant getExpire
+　　participant dictFind
+　　expireIfNeeded->>keyIsExpired:invoke
+　　keyIsExpired->>getExpire:invoke
+　　getExpire->>dictFind:invoke
+　　Note OVER dictFind: 从expireDict中获取value
+　　dictFind-->>getExpire:return value
+　　Note OVER getExpire: 解析value获取过期时间戳
+　　getExpire-->>keyIsExpired:return
+　　Note OVER keyIsExpired: 将时间戳和系统当前时间比较
+　　keyIsExpired-->>expireIfNeeded:return
+　　Note OVER expireIfNeeded: 判断是否过期、是否为master节点
+　　Note OVER expireIfNeeded: 通知slave节点进行key删除，并将删除命令写入AOF文件
+　　Note OVER expireIfNeeded: 向监听了key的客户端发布key过期事件
+　　Note OVER expireIfNeeded: 根据预设的删除方式，选择同步或者是异步删除key对应的dictEntry
+
+  </div>
+</p>
+<p>其中，在使用具体的删除方式时，涉及到一个值lazyfree_lazy_expire，它需要我们在redis.conf文件中进行配置：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">lazyfree-lazy-expire no
+</code></pre></div><p>可以看到默认值为no，即代表在删除是会采用同步删除，如果将该项置为yes，则采用异步删除的模式。</p>
+<p>接下来，分别来看一下同步删除和异步删除的代码实现。</p>
+<h5 id="611-同步删除">6.1.1 同步删除</h5>
+<p>同步删除的代码比较简单：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">dbSyncDelete</span>(redisDb <span style="color:#f92672">*</span>db, robj <span style="color:#f92672">*</span>key) {
+    <span style="color:#75715e">//如果expireDict大于0，先进行expireDict的删除
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (dictSize(db<span style="color:#f92672">-&gt;</span>expires) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) dictDelete(db<span style="color:#f92672">-&gt;</span>expires,key<span style="color:#f92672">-&gt;</span>ptr);
+  	<span style="color:#75715e">//再进行dataDict的删除
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (dictDelete(db<span style="color:#f92672">-&gt;</span>dict,key<span style="color:#f92672">-&gt;</span>ptr) <span style="color:#f92672">==</span> DICT_OK) {
+      	<span style="color:#75715e">//如果当前是集群模式，则定位到具体存储dictEntry的slot，进行remove操作
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> (server.cluster_enabled) slotToKeyDel(key);
+        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">1</span>;
+    } <span style="color:#66d9ef">else</span> {
+        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+    }
+}
+
+<span style="color:#66d9ef">int</span> <span style="color:#a6e22e">dictDelete</span>(dict <span style="color:#f92672">*</span>ht, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>key) {
+    <span style="color:#66d9ef">return</span> dictGenericDelete(ht,key,<span style="color:#ae81ff">0</span>) <span style="color:#f92672">?</span> DICT_OK : DICT_ERR;
+}
+
+<span style="color:#66d9ef">static</span> dictEntry <span style="color:#f92672">*</span><span style="color:#a6e22e">dictGenericDelete</span>(dict <span style="color:#f92672">*</span>d, <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>key, <span style="color:#66d9ef">int</span> nofree) {
+    <span style="color:#66d9ef">uint64_t</span> h, idx;
+    dictEntry <span style="color:#f92672">*</span>he, <span style="color:#f92672">*</span>prevHe;
+    <span style="color:#66d9ef">int</span> table;
+		<span style="color:#75715e">//dataDict和expireDict同时为空的情况下直接返回NULL
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (d<span style="color:#f92672">-&gt;</span>ht[<span style="color:#ae81ff">0</span>].used <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> d<span style="color:#f92672">-&gt;</span>ht[<span style="color:#ae81ff">1</span>].used <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) <span style="color:#66d9ef">return</span> NULL;
+		<span style="color:#75715e">//判断是否正在扩容，如果正在扩容则帮助推进hashTable的expand过程
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (dictIsRehashing(d)) _dictRehashStep(d);
+  	<span style="color:#75715e">//得到hash值
+</span><span style="color:#75715e"></span>    h <span style="color:#f92672">=</span> dictHashKey(d, key);
+
+    <span style="color:#66d9ef">for</span> (table <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; table <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">1</span>; table<span style="color:#f92672">++</span>) {
+        idx <span style="color:#f92672">=</span> h <span style="color:#f92672">&amp;</span> d<span style="color:#f92672">-&gt;</span>ht[table].sizemask;
+      	<span style="color:#75715e">//定位到存储在hash桶中的链表头节点
+</span><span style="color:#75715e"></span>        he <span style="color:#f92672">=</span> d<span style="color:#f92672">-&gt;</span>ht[table].table[idx];
+        prevHe <span style="color:#f92672">=</span> NULL;
+      	<span style="color:#75715e">//开始从链表的头部开始，依次向后查找
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">while</span>(he) {
+            <span style="color:#66d9ef">if</span> (key<span style="color:#f92672">==</span>he<span style="color:#f92672">-&gt;</span>key <span style="color:#f92672">||</span> dictCompareKeys(d, key, he<span style="color:#f92672">-&gt;</span>key)) {
+              	<span style="color:#75715e">//链表解链操作
+</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">if</span> (prevHe)
+                    prevHe<span style="color:#f92672">-&gt;</span>next <span style="color:#f92672">=</span> he<span style="color:#f92672">-&gt;</span>next;
+                <span style="color:#66d9ef">else</span>
+                    d<span style="color:#f92672">-&gt;</span>ht[table].table[idx] <span style="color:#f92672">=</span> he<span style="color:#f92672">-&gt;</span>next;
+                <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>nofree) {
+                  	<span style="color:#75715e">//nofree传入的值为0，表示立马释放dictEntry以及其中key和value占用的内存
+</span><span style="color:#75715e"></span>                    dictFreeKey(d, he);
+                    dictFreeVal(d, he);
+                    zfree(he);
+                }
+                d<span style="color:#f92672">-&gt;</span>ht[table].used<span style="color:#f92672">--</span>;
+                <span style="color:#66d9ef">return</span> he;
+            }
+            prevHe <span style="color:#f92672">=</span> he;
+            he <span style="color:#f92672">=</span> he<span style="color:#f92672">-&gt;</span>next;
+        }
+        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>dictIsRehashing(d)) <span style="color:#66d9ef">break</span>;
+    }
+    <span style="color:#66d9ef">return</span> NULL;
+}
+</code></pre></div><p>其中释放内存主要是三个方法dictFreeKey，dictFreeVal，zfree，前两个方法直接调用key和value的destructor，依次看看key和value的释放过程：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">define dictFreeKey(d, entry) 
+    <span style="color:#66d9ef">if</span> ((d)<span style="color:#f92672">-&gt;</span>type<span style="color:#f92672">-&gt;</span>keyDestructor) 
+        (d)<span style="color:#f92672">-&gt;</span>type<span style="color:#f92672">-&gt;</span>keyDestructor((d)<span style="color:#f92672">-&gt;</span>privdata, (entry)<span style="color:#f92672">-&gt;</span>key)
+
+define dictFreeVal(d, entry) 
+    <span style="color:#66d9ef">if</span> ((d)<span style="color:#f92672">-&gt;</span>type<span style="color:#f92672">-&gt;</span>valDestructor) 
+        (d)<span style="color:#f92672">-&gt;</span>type<span style="color:#f92672">-&gt;</span>valDestructor((d)<span style="color:#f92672">-&gt;</span>privdata, (entry)<span style="color:#f92672">-&gt;</span>v.val)
+</code></pre></div><p>在server.c中，可以找到对应的keyDestructor和valDestructor的原型：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c">dictType dbDictType <span style="color:#f92672">=</span> {
+    dictSdsHash,               
+    NULL,                       
+    NULL,                       
+    dictSdsKeyCompare,     
+  	<span style="color:#75715e">//负责key的销毁
+</span><span style="color:#75715e"></span>    dictSdsDestructor, 
+  	<span style="color:#75715e">//负责value的销毁
+</span><span style="color:#75715e"></span>    dictObjectDestructor  
+};
+</code></pre></div><p>可以看到，key的销毁实际上就是释放存储具体key值的sds：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">dictSdsDestructor</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>privdata, <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>val)
+{
+    DICT_NOTUSED(privdata);
+
+    sdsfree(val);
+}
+</code></pre></div><p>但是对于value，就会存在比较多的类型：string、list、set、zset、hash&hellip;，根据redisobj中的type调用不同的free方法，同时value的删除依据就是引用计数法：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">dictObjectDestructor</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>privdata, <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>val)
+{
+    DICT_NOTUSED(privdata);
+
+    <span style="color:#66d9ef">if</span> (val <span style="color:#f92672">==</span> NULL) <span style="color:#66d9ef">return</span>;
+    decrRefCount(val);
+}
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">decrRefCount</span>(robj <span style="color:#f92672">*</span>o) {
+    <span style="color:#66d9ef">if</span> (o<span style="color:#f92672">-&gt;</span>refcount <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>) {
+      	<span style="color:#75715e">//使用引用计数法作为依据进行删除
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">switch</span>(o<span style="color:#f92672">-&gt;</span>type) {
+        <span style="color:#66d9ef">case</span> OBJ_STRING: freeStringObject(o); <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> OBJ_LIST: freeListObject(o); <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> OBJ_SET: freeSetObject(o); <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> OBJ_ZSET: freeZsetObject(o); <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> OBJ_HASH: freeHashObject(o); <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> OBJ_MODULE: freeModuleObject(o); <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">case</span> OBJ_STREAM: freeStreamObject(o); <span style="color:#66d9ef">break</span>;
+        <span style="color:#66d9ef">default</span><span style="color:#f92672">:</span> serverPanic(<span style="color:#e6db74">&#34;Unknown object type&#34;</span>); <span style="color:#66d9ef">break</span>;
+        }
+        zfree(o);
+    } <span style="color:#66d9ef">else</span> {
+        <span style="color:#66d9ef">if</span> (o<span style="color:#f92672">-&gt;</span>refcount <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">0</span>) serverPanic(<span style="color:#e6db74">&#34;decrRefCount against refcount &lt;= 0&#34;</span>);
+        <span style="color:#66d9ef">if</span> (o<span style="color:#f92672">-&gt;</span>refcount <span style="color:#f92672">!=</span> OBJ_SHARED_REFCOUNT) o<span style="color:#f92672">-&gt;</span>refcount<span style="color:#f92672">--</span>;
+    }
+}
+</code></pre></div><p>不同的value类型有着不同的释放内存方法，但是它们都调用了zfree，接下来看看zfree的方法内部实现：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">zfree</span>(<span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>ptr) {
+  	<span style="color:#75715e">//ptr指针为void类型，可以指向任意数据类型的内存
+</span><span style="color:#75715e"></span><span style="color:#75715e">#ifndef HAVE_MALLOC_SIZE
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">void</span> <span style="color:#f92672">*</span>realptr;
+    size_t oldsize;
+<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>		<span style="color:#75715e">//根据不同的宏定义，释放不同大小的内存，但是都调用了free方法
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (ptr <span style="color:#f92672">==</span> NULL) <span style="color:#66d9ef">return</span>;
+<span style="color:#75715e">#ifdef HAVE_MALLOC_SIZE
+</span><span style="color:#75715e"></span>    update_zmalloc_stat_free(zmalloc_size(ptr));
+    free(ptr);
+<span style="color:#75715e">#else
+</span><span style="color:#75715e"></span>    realptr <span style="color:#f92672">=</span> (<span style="color:#66d9ef">char</span><span style="color:#f92672">*</span>)ptr<span style="color:#f92672">-</span>PREFIX_SIZE;
+    oldsize <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>((size_t<span style="color:#f92672">*</span>)realptr);
+    update_zmalloc_stat_free(oldsize<span style="color:#f92672">+</span>PREFIX_SIZE);
+    free(realptr);
+<span style="color:#75715e">#endif
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>底层调用了free接口，这属于操作系统提供的标准库函数，以我的macos为例，free函数存在于_malloc.h头文件定义中。一些linux系统可能会定义在stdlib标准库头文件中。</p>
+
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://Huang-zh.github.io/tags/redis/">redis</a></span>
+        
+    </p>
+
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder meta-icon"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+
+        <span class="tag"><a href="https://Huang-zh.github.io/categories/redis%E5%8E%9F%E7%90%86/">redis原理</a></span>
+        
+    </p>
+
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        498 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2023-08-29
+        
+
+        
+      </p>
+    </div>
+
+    
+    <div class="pagination">
+        
+
+        <div class="pagination__buttons">
+            
+
+            
+            <span class="button next">
+                <a href="https://Huang-zh.github.io/posts/redis1/">
+                    <span class="button__text">Redis存储原理剖析&lt;一&gt;：存储模型和基础命令解析</span>
+                    <span class="button__icon">→</span>
+                </a>
+            </span>
+            
+        </div>
+    </div>
+
+
+    
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            
+            <span><a href="https://Huang-zh.github.io">huang.zh</a></span>
+            
+            
+            
+        </div>
+    </div>
+    
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span><a href="http://beian.miit.gov.cn">浙ICP备19022115号-1</a></span>
+        </div>
+    </div>
+    
+</footer>
+
+
+
+            
+        </div>
+
+        
+
+
+
+<script type="text/javascript" src="/bundle.min.644292943ae47eef02fcd64b11757aeb8caeeaebf473a823b62099edccac808e8d82689359f285e5d95994e5ad5ae3b9c1ccc281eb1828e67d0ba6630f95b832.js" integrity="sha512-ZEKSlDrkfu8C/NZLEXV664yu6uv0c6gjtiCZ7cysgI6NgmiTWfKF5dlZlOWtWuO5wczCgesYKOZ9C6ZjD5W4Mg=="></script>
+
+
+
+    </body>
+</html>

@@ -6,9 +6,20 @@
     <description>Recent content in redis原理 on 此间的少年</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Fri, 25 Aug 2023 22:10:44 +0800</lastBuildDate><atom:link href="https://Huang-zh.github.io/categories/redis%E5%8E%9F%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 29 Aug 2023 19:10:44 +0800</lastBuildDate><atom:link href="https://Huang-zh.github.io/categories/redis%E5%8E%9F%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Redis存储原理剖析&lt;一&gt;</title>
+      <title>Redis存储原理剖析&lt;二&gt;：key的惰性删除--同步删除策略</title>
+      <link>https://Huang-zh.github.io/posts/redis2/</link>
+      <pubDate>Tue, 29 Aug 2023 19:10:44 +0800</pubDate>
+      
+      <guid>https://Huang-zh.github.io/posts/redis2/</guid>
+      <description>6. key删除策略 redis中，对于过期key的淘汰机制，可以分为以下两种：
+ 定期删除：一种主动删除策略，定期去轮询存储了key的过期时间的字典。 惰性删除：在寻找/写入dictEntry的时候判断是否过期，属于被动删除策略。  6.1 惰性删除 惰性删除的代码，入口在db.c中的expireIfNeeded，该方法由执行查找命令或写入命令的方法调用，在执行真正的命令之前，做key的删除判断以及删除操作：
+int expireIfNeeded(redisDb *db, robj *key) { //设定了过期时间且未过期的key会在这一步直接返回  if (!keyIsExpired(db,key)) return 0; //当前redis节点过期了，但是存在master节点。  //意味着当前属于slave节点，返回1，由master执行删除后同步至slave  if (server.masterhost != NULL) return 1; //过期key的数量+1  server.stat_expiredkeys++; //把过期的key的消息传播到slave，同时将该key的删除命令写入到aof文件  propagateExpire(db,key,server.lazyfree_lazy_expire); //通知监听了该key的客户端，通知key的过期事件  notifyKeyspaceEvent(NOTIFY_EXPIRED, &amp;#34;expired&amp;#34;,key,db-&amp;gt;id); //根据设定的删除方式，决定采用同步删除还是异步删除  return server.lazyfree_lazy_expire ? dbAsyncDelete(db,key) : dbSyncDelete(db,key); } int keyIsExpired(redisDb *db, robj *key) { //获得设定的过期时间戳  mstime_t when = getExpire(db,key); mstime_t now; //如果时间戳小于0，说明没有设置过期时间  if (when &amp;lt; 0) return 0; //loading状态下不允许进行过期判断  if (server.</description>
+    </item>
+    
+    <item>
+      <title>Redis存储原理剖析&lt;一&gt;：存储模型和基础命令解析</title>
       <link>https://Huang-zh.github.io/posts/redis1/</link>
       <pubDate>Fri, 25 Aug 2023 22:10:44 +0800</pubDate>
       

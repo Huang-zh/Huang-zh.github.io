@@ -35,7 +35,7 @@ typedef struct redisDb { dict *dict; /* The keyspace for this DB */ dict *expire
 
     <title>
         
-            Redis存储原理剖析&lt;一&gt; :: 此间的少年 
+            Redis存储原理剖析&lt;一&gt;：存储模型和基础命令解析 :: 此间的少年 
         
     </title>
 
@@ -56,7 +56,7 @@ typedef struct redisDb { dict *dict; /* The keyspace for this DB */ dict *expire
     <meta name="msapplication-TileColor" content="">
 
 
-<meta itemprop="name" content="Redis存储原理剖析&lt;一&gt;">
+<meta itemprop="name" content="Redis存储原理剖析&lt;一&gt;：存储模型和基础命令解析">
 <meta itemprop="description" content="1. 前言  2022年，是充满挑战性的一年。
 这一年，我选择离开了自己熟悉的信息化领域，把精力投向了互联网金融。
 在22年的后半程，鉴于平台和团队所带来的效应，个人也在高频交易业务领域吸收了足够多的知识。过程中，认知的颠覆和自我的怀疑常常是共存。
@@ -85,7 +85,7 @@ typedef struct redisDb { dict *dict; /* The keyspace for this DB */ dict *expire
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://Huang-zh.github.io"/>
 
-<meta name="twitter:title" content="Redis存储原理剖析&lt;一&gt;"/>
+<meta name="twitter:title" content="Redis存储原理剖析&lt;一&gt;：存储模型和基础命令解析"/>
 <meta name="twitter:description" content="1. 前言  2022年，是充满挑战性的一年。
 这一年，我选择离开了自己熟悉的信息化领域，把精力投向了互联网金融。
 在22年的后半程，鉴于平台和团队所带来的效应，个人也在高频交易业务领域吸收了足够多的知识。过程中，认知的颠覆和自我的怀疑常常是共存。
@@ -111,7 +111,7 @@ typedef struct redisDb { dict *dict; /* The keyspace for this DB */ dict *expire
 
 
 
-    <meta property="og:title" content="Redis存储原理剖析&lt;一&gt;" />
+    <meta property="og:title" content="Redis存储原理剖析&lt;一&gt;：存储模型和基础命令解析" />
 <meta property="og:description" content="1. 前言  2022年，是充满挑战性的一年。
 这一年，我选择离开了自己熟悉的信息化领域，把精力投向了互联网金融。
 在22年的后半程，鉴于平台和团队所带来的效应，个人也在高频交易业务领域吸收了足够多的知识。过程中，认知的颠覆和自我的怀疑常常是共存。
@@ -138,7 +138,7 @@ typedef struct redisDb { dict *dict; /* The keyspace for this DB */ dict *expire
 <meta property="og:url" content="https://Huang-zh.github.io/posts/redis1/" /><meta property="og:image" content="https://Huang-zh.github.io"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2023-08-25T22:10:44+08:00" />
 <meta property="article:modified_time" content="2023-08-25T22:10:44+08:00" /><meta property="og:site_name" content="此间的少年" />
-
+<meta property="og:see_also" content="https://Huang-zh.github.io/posts/redis2/" />
 
 
 
@@ -223,7 +223,7 @@ typedef struct redisDb { dict *dict; /* The keyspace for this DB */ dict *expire
 
     <article>
       <h1 class="post-title">
-        <a href="https://Huang-zh.github.io/posts/redis1/">Redis存储原理剖析&lt;一&gt;</a>
+        <a href="https://Huang-zh.github.io/posts/redis1/">Redis存储原理剖析&lt;一&gt;：存储模型和基础命令解析</a>
       </h1>
 
       
@@ -786,6 +786,13 @@ sds <span style="color:#a6e22e">sdsnewlen</span>(<span style="color:#66d9ef">con
         
 
         <div class="pagination__buttons">
+            
+            <span class="button previous">
+                <a href="https://Huang-zh.github.io/posts/redis2/">
+                    <span class="button__icon">←</span>
+                    <span class="button__text">Redis存储原理剖析&lt;二&gt;：key的惰性删除--同步删除策略</span>
+                </a>
+            </span>
             
 
             
