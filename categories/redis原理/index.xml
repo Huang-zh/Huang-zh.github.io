@@ -6,7 +6,19 @@
     <description>Recent content in redis原理 on 此间的少年</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 29 Aug 2023 19:10:44 +0800</lastBuildDate><atom:link href="https://Huang-zh.github.io/categories/redis%E5%8E%9F%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 01 Sep 2023 10:10:44 +0800</lastBuildDate><atom:link href="https://Huang-zh.github.io/categories/redis%E5%8E%9F%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis存储原理剖析&lt;三&gt;：key的惰性删除--异步删除策略</title>
+      <link>https://Huang-zh.github.io/posts/redis3/</link>
+      <pubDate>Fri, 01 Sep 2023 10:10:44 +0800</pubDate>
+      
+      <guid>https://Huang-zh.github.io/posts/redis3/</guid>
+      <description>前面我们介绍了key在惰性删除时同步删除过程的实现，具体可见：
+ Redis存储原理剖析&amp;lt;二&amp;gt;：key的惰性删除&amp;ndash;同步删除策略  本篇文章，我们将继续探索惰性删除时，key的异步删除过程的实现。
+6.1.2 异步删除 直接看异步删除的代码：
+#define LAZYFREE_THRESHOLD 64 int dbAsyncDelete(redisDb *db, robj *key) { // 第一步，进行expireDict的删除，仍旧保留dataDict中的dictEntry  if (dictSize(db-&amp;gt;expires) &amp;gt; 0) dictDelete(db-&amp;gt;expires,key-&amp;gt;ptr); // 第二步，进行unlink操作，只是简单的把dataDict内部hash桶里的链表解链  // 内部调用的dictGenericDelete函数在同步删除代码中分析过，区别是此处nofree传入的值为1，即不进行内存释放  dictEntry *de = dictUnlink(db-&amp;gt;dict,key-&amp;gt;ptr); if (de) { robj *val = dictGetVal(de); // 计算当前释放value内存需要的开销，根据value的类型会得到不同的开销  size_t free_effort = lazyfreeGetFreeEffort(val); // 第三步，如果开销过大，并且当前引用计数为1，添加任务调度进行异步释放value  if (free_effort &amp;gt; LAZYFREE_THRESHOLD &amp;amp;&amp;amp; val-&amp;gt;refcount == 1) { atomicIncr(lazyfree_objects,1); bioCreateBackgroundJob(BIO_LAZY_FREE,val,NULL,NULL); dictSetVal(db-&amp;gt;dict,de,NULL); } } // 如果此时dictEntry仍未被释放/或是开销不大，触发兜底机制，直接调用dictFreeUnlinkedEntry进行key和value以及dictEntry的释放  // dictFreeUnlinkedEntry内部仍旧调用dictFreeKey，dictFreeVal，zfree，在同步删除中已经分析过  if (de) { dictFreeUnlinkedEntry(db-&amp;gt;dict,de); //集群模式下，寻找对应的slot进行remove操作  if (server.</description>
+    </item>
+    
     <item>
       <title>Redis存储原理剖析&lt;二&gt;：key的惰性删除--同步删除策略</title>
       <link>https://Huang-zh.github.io/posts/redis2/</link>
