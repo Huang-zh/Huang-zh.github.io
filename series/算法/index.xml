@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>算法 on 此间的少年</title>
+    <link>https://Huang-zh.github.io/series/%E7%AE%97%E6%B3%95/</link>
+    <description>Recent content in 算法 on 此间的少年</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 05 Sep 2023 21:16:44 +0800</lastBuildDate><atom:link href="https://Huang-zh.github.io/series/%E7%AE%97%E6%B3%95/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode算法手记：658.找到 K 个最接近的元素</title>
+      <link>https://Huang-zh.github.io/posts/leetcode658/</link>
+      <pubDate>Tue, 05 Sep 2023 21:16:44 +0800</pubDate>
+      
+      <guid>https://Huang-zh.github.io/posts/leetcode658/</guid>
+      <description>给定一个排序好的数组 arr ，两个整数 k 和 x ，从数组中找到最靠近 x（两数之差最小）的 k 个数。返回的结果必须要是按升序排好的。
+整数 a 比整数 b 更接近 x 需要满足：
+  |a - x| &amp;lt; |b - x| 或者
+  |a - x| == |b - x| 且 a &amp;lt; b
+  示例 1：
+输入：arr = [1,2,3,4,5], k = 4, x = 3
+输出：[1,2,3,4]
+示例 2：
+输入：arr = [1,2,3,4,5], k = 4, x = -1
+输出：[1,2,3,4]
+提示：
+1 &amp;lt;= k &amp;lt;= arr.</description>
+    </item>
+    
+  </channel>
+</rss>

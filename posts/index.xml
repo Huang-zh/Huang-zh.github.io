@@ -5,8 +5,129 @@
         <description>Recent content in Posts on 此间的少年</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Fri, 01 Sep 2023 10:10:44 +0800</lastBuildDate>
+        <lastBuildDate>Tue, 05 Sep 2023 21:16:44 +0800</lastBuildDate>
         <atom:link href="https://Huang-zh.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>LeetCode算法手记：658.找到 K 个最接近的元素</title>
+            <link>https://Huang-zh.github.io/posts/leetcode658/</link>
+            <pubDate>Tue, 05 Sep 2023 21:16:44 +0800</pubDate>
+            
+            <guid>https://Huang-zh.github.io/posts/leetcode658/</guid>
+            <description>给定一个排序好的数组 arr ，两个整数 k 和 x ，从数组中找到最靠近 x（两数之差最小）的 k 个数。返回的结果必须要是按升序排好的。
+整数 a 比整数 b 更接近 x 需要满足：
+  |a - x| &amp;lt; |b - x| 或者
+  |a - x| == |b - x| 且 a &amp;lt; b
+  示例 1：
+输入：arr = [1,2,3,4,5], k = 4, x = 3
+输出：[1,2,3,4]
+示例 2：
+输入：arr = [1,2,3,4,5], k = 4, x = -1
+输出：[1,2,3,4]
+提示：
+1 &amp;lt;= k &amp;lt;= arr.</description>
+            <content type="html"><![CDATA[<blockquote>
+<p>给定一个排序好的数组 arr ，两个整数 k 和 x ，从数组中找到最靠近 x（两数之差最小）的 k 个数。返回的结果必须要是按升序排好的。</p>
+<p>整数 a 比整数 b 更接近 x 需要满足：</p>
+<ul>
+<li>
+<p>|a - x| &lt; |b - x| 或者</p>
+</li>
+<li>
+<p>|a - x| == |b - x| 且 a &lt; b</p>
+</li>
+</ul>
+<p>示例 1：</p>
+<p>输入：arr = [1,2,3,4,5], k = 4, x = 3</p>
+<p>输出：[1,2,3,4]</p>
+<p>示例 2：</p>
+<p>输入：arr = [1,2,3,4,5], k = 4, x = -1</p>
+<p>输出：[1,2,3,4]</p>
+<p>提示：</p>
+<p>1 &lt;= k &lt;= arr.length</p>
+<p>1 &lt;= arr.length &lt;= 104</p>
+<p>arr 按升序排列</p>
+<p>-104 &lt;= arr[i], x &lt;= 104</p>
+</blockquote>
+<h3 id="思路">思路：</h3>
+<p>找到数组中从左到右第一次出现x的下标（index），在该下标的左右维护两个指针，分别向左和向右递进来寻找其他更贴近的元素。</p>
+<h4 id="思路递推">思路递推</h4>
+<p>以[1,2,3,4,5,5,5,6,8]为例，k为4，x为5，即寻找4个最接近5的数字，并由小到大排序返回。可以知道index为4，此时维护left指针为index-1即3，right指针为index即4，开始递进指针，过程如下：</p>
+<ol>
+<li>left = 3，right = 4，判断此时两指针元素与x的差值，发现right处的差值为0，即差值更小，则将right指针向右递进为5。</li>
+<li>left = 3，right = 5，判断此时两指针元素与x的差值，发现right处的差值为0，即差值更小，则将right指针向右递进为6。</li>
+<li>left = 3，right = 6，判断此时两指针元素与x的差值，发现right处的差值为0，即差值更小，则将right指针向右递进为7。</li>
+<li>left = 3，right = 7，判断此时两指针元素与x的差值，发现两处的差值均为1，即差值相等，根据提议，差值相等时更接近的值需要有更小的下标，则将left指针向左递进为2。</li>
+<li>满足4个数字，退出搜寻。</li>
+</ol>
+<p>此时还要注意几个边界值：</p>
+<ul>
+<li>左右指针不能够越出数组边界，当一侧到达边界时，即代表该侧无法再获取接近的值，只需要递进另一侧的指针，从另一侧获取更接近的值。</li>
+<li>怎么退出搜寻？不难发现可以通过k的递减来实现循环控制，由于right一开始值为index，即代表right指针一开始对应的元素肯定会被纳入结果，所以循环实际上只用进行k-1次。</li>
+</ul>
+<h3 id="代码实现">代码实现：</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LeetCode658</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">findClosestElements</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span><span style="color:#f92672">[]</span> arr<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> k<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> x<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#75715e">//找到数组中最左端x对应的下标index
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//在index左右分别维护双指针left和right，其中left指针向左递进，right指针从index向右递进
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//在递进的过程中判断两边的差值，差值较小的一侧表明更接近x，对应侧的指针继续递进寻找下一个更接近的值
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">//递进的过程中注意判断是否超出数组边界，若当前侧超出数组边界则另一侧指针递进，直到right-left = k为止
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">int</span> index <span style="color:#f92672">=</span> leftBondBinarySearch<span style="color:#f92672">(</span>arr<span style="color:#f92672">,</span> x<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">int</span> left <span style="color:#f92672">=</span> index <span style="color:#f92672">-</span> 1<span style="color:#f92672">,</span>right <span style="color:#f92672">=</span> index<span style="color:#f92672">;</span>
+        List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> result <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;&gt;();</span>
+        <span style="color:#75715e">//循环只能进行k-1次，因为一开始right下标对应的元素就是本身，即差值为0，肯定会被纳入结果，因此只要再找出k-1个数即可
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>k<span style="color:#f92672">--</span> <span style="color:#f92672">&gt;</span> 0<span style="color:#f92672">){</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>left <span style="color:#f92672">&lt;</span> 0<span style="color:#f92672">)</span>
+                <span style="color:#75715e">//超出左边界，右侧指针递进
+</span><span style="color:#75715e"></span>                right<span style="color:#f92672">++;</span>
+            <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>right <span style="color:#f92672">&gt;</span> arr<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span> <span style="color:#f92672">-</span> 1<span style="color:#f92672">)</span>
+                <span style="color:#75715e">//超出右边界，左侧指针递进
+</span><span style="color:#75715e"></span>                left<span style="color:#f92672">--;</span>
+            <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>x <span style="color:#f92672">-</span> arr<span style="color:#f92672">[</span>left<span style="color:#f92672">]</span> <span style="color:#f92672">&lt;=</span> arr<span style="color:#f92672">[</span>right<span style="color:#f92672">]</span> <span style="color:#f92672">-</span> x<span style="color:#f92672">)</span>
+                <span style="color:#75715e">//两侧差值取小的一侧递进，如果相等则取下标更小的元素
+</span><span style="color:#75715e"></span>                left<span style="color:#f92672">--;</span>
+            <span style="color:#66d9ef">else</span>
+                right<span style="color:#f92672">++;</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#75715e">//此时left和right的差值为k+1，从left+1处开始获取第一个元素
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> left<span style="color:#f92672">+</span>1<span style="color:#f92672">;</span> i <span style="color:#f92672">&lt;</span> right<span style="color:#f92672">;</span> i<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+            result<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>arr<span style="color:#f92672">[</span>i<span style="color:#f92672">]);</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> result<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * @Author huang.zh
+</span><span style="color:#75715e">     * @Description 找到数组中最左端出现的值为target的元素下标，即二分左边界搜索
+</span><span style="color:#75715e">     * @Date 9:43 PM 2023/9/5
+</span><span style="color:#75715e">     * @Param [arr, target]
+</span><span style="color:#75715e">     * @return
+</span><span style="color:#75715e">     **/</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">leftBondBinarySearch</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span><span style="color:#f92672">[]</span> arr<span style="color:#f92672">,</span><span style="color:#66d9ef">int</span> target<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">int</span> left <span style="color:#f92672">=</span> 0<span style="color:#f92672">,</span>right <span style="color:#f92672">=</span> arr<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span> <span style="color:#f92672">-</span> 1<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>left <span style="color:#f92672">&lt;</span> right<span style="color:#f92672">){</span>
+            <span style="color:#66d9ef">int</span> mid <span style="color:#f92672">=</span> left <span style="color:#f92672">+</span> <span style="color:#f92672">(</span>right <span style="color:#f92672">-</span> left<span style="color:#f92672">)/</span>2<span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>arr<span style="color:#f92672">[</span>mid<span style="color:#f92672">]</span> <span style="color:#f92672">==</span> target<span style="color:#f92672">){</span>
+                <span style="color:#75715e">//命中元素，右指针重置，在[left,mid]中寻找更左端的值为target的元素
+</span><span style="color:#75715e"></span>                right <span style="color:#f92672">=</span> mid<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>arr<span style="color:#f92672">[</span>mid<span style="color:#f92672">]</span> <span style="color:#f92672">&lt;</span> target<span style="color:#f92672">){</span>
+                left <span style="color:#f92672">=</span> mid <span style="color:#f92672">+</span> 1<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+                right <span style="color:#f92672">=</span> mid <span style="color:#f92672">-</span> 1<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> left<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">(){</span>
+        List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> list <span style="color:#f92672">=</span> findClosestElements<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span><span style="color:#f92672">[]{</span>1<span style="color:#f92672">,</span> 2<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 4<span style="color:#f92672">,</span> 5<span style="color:#f92672">},</span> 2<span style="color:#f92672">,</span> 4<span style="color:#f92672">);</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">(</span>list<span style="color:#f92672">.</span><span style="color:#a6e22e">toArray</span><span style="color:#f92672">()));</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div>]]></content>
+        </item>
         
         <item>
             <title>Redis存储原理剖析&lt;三&gt;：key的惰性删除--异步删除策略</title>
