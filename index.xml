@@ -6,7 +6,19 @@
     <description>Recent content on 此间的少年</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Tue, 05 Sep 2023 21:16:44 +0800</lastBuildDate><atom:link href="https://Huang-zh.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 07 Sep 2023 19:02:25 +0800</lastBuildDate><atom:link href="https://Huang-zh.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode算法手记：777.在LR字符串中交换相邻字符</title>
+      <link>https://Huang-zh.github.io/posts/leetcode777/</link>
+      <pubDate>Thu, 07 Sep 2023 19:02:25 +0800</pubDate>
+      
+      <guid>https://Huang-zh.github.io/posts/leetcode777/</guid>
+      <description>在一个由 ‘L’ , ‘R’ 和 ‘X’ 三个字符组成的字符串（例如&amp;#34;RXXLRXRXL&amp;#34;）中进行移动操作。 一次移动操作指用一个 “LX” 替换一个 “XL”，或者用一个 “XR” 替换一个 “RX”。 现给定起始字符串 start 和结束字符串 end，请编写代码，当且仅当存在一系列移动操作使得 start 可以转换成 end 时， 返回 True。 输入：start = &amp;#34;RXXLRXRXL&amp;#34;, end = &amp;#34;XRLXXRRLX&amp;#34; 输出：True 解释： 我们可以通过以下几步将 start 转换成 end： RXXLRXRXL -&amp;gt; XRXLRXRXL -&amp;gt; XRLXRXRXL -&amp;gt; XRLXXRRXL -&amp;gt; XRLXXRRLX 提示： 1 &amp;lt;= len(start) = len(end) &amp;lt;= 10000。 start 和 end 中的字符串仅限于’L’, ‘R’和’X’。 思路： 如果一个start可以完成到end的转换，那么，两个字符串中L和R的相对位置一定会保持一致。
+可以在start和end上分别各自定义指针i和j，跳过X直到第一个L或者R出现，此时判断s[i]和s[j]是否相等，如果不相等则不满足相对顺序，无法完成转换。
+XL被LX替换，RX被XR替换，则意味着：
+ 如果能完成转换，最终end中第N个L的下标，只能小于或等于start中第N个L的下标，即L只允许左移或原地停留。 如果能完成转换，最终end中第M个R的下标，只能大于或等于start中第M个R的下标，即R只允许右移或原地停留。  思路递推 以题目中的start = &amp;ldquo;RXXLRXRXL&amp;rdquo;, end = &amp;ldquo;XRLXXRRLX&amp;quot;为例：</description>
+    </item>
+    
     <item>
       <title>LeetCode算法手记：658.找到 K 个最接近的元素</title>
       <link>https://Huang-zh.github.io/posts/leetcode658/</link>
