@@ -6,14 +6,24 @@
     <description>Recent content in 算法 on 此间的少年</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 07 Sep 2023 19:02:25 +0800</lastBuildDate><atom:link href="https://Huang-zh.github.io/tags/%E7%AE%97%E6%B3%95/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 09 Sep 2023 21:02:25 +0800</lastBuildDate><atom:link href="https://Huang-zh.github.io/tags/%E7%AE%97%E6%B3%95/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode算法手记：792.匹配子序列的单词数</title>
+      <link>https://Huang-zh.github.io/posts/leetcode792/</link>
+      <pubDate>Sat, 09 Sep 2023 21:02:25 +0800</pubDate>
+      
+      <guid>https://Huang-zh.github.io/posts/leetcode792/</guid>
+      <description>给定字符串 s 和字符串数组 words, 返回 words[i] 中是 s 的子序列的单词个数。 字符串的子序列是从原始字符串中生成的新字符串，可以从中删去一些字符(可以是 none)，而不改变其余字符的相对顺序。 例如， “ace” 是 “abcde” 的子序列。 示例 1： 输入: s = “abcde”, words = [“a”,“bb”,“acd”,“ace”] 输出: 3 解释: 有三个是 s 的子序列的单词: “a”, “acd”, “ace”。 示例 2： 输入: s = “dsahjpjauf”, words = [“ahjpjau”,“ja”,“ahbwzgqnuk”,“tnmlanowax”] 输出: 2 提示： 1 &amp;lt;= s.length &amp;lt;= 5 * 104 1 &amp;lt;= words.length &amp;lt;= 5000 1 &amp;lt;= words[i].length &amp;lt;= 50 words[i]和 s 都只由小写字母组成。 思路 对于字符串s和字符串t，若s为t的子序列，则需要满足以下几点：
+ s中的所有字符的相对顺序，必须和这些字符在t中出现的相对顺序保持一致，例如s为ace，t为abcde，则s为t的子序列，此时a、c、e三个字符在两个字符串中出现的相对顺序保持一致，t可以通过删除b和d两个字符来得到s。 若s由一个或多个相同字符组成，那么该字符在s中出现的次数必然小于等于t中该字符出现的次数，例如字符串a、aa、aaa均为字符串aabade的子序列，但aaaa不是字符串aabade的子序列。  那么，维护一个数组，记录下原字符串t中每一个字符t[i]出现的位置i，然后对于要判断子序列的样本s，遍历s的每个字符，判断以下几点：</description>
+    </item>
+    
     <item>
       <title>LeetCode算法手记：777.在LR字符串中交换相邻字符</title>
       <link>https://Huang-zh.github.io/posts/leetcode777/</link>
       <pubDate>Thu, 07 Sep 2023 19:02:25 +0800</pubDate>
       
       <guid>https://Huang-zh.github.io/posts/leetcode777/</guid>
-      <description>在一个由 ‘L’ , ‘R’ 和 ‘X’ 三个字符组成的字符串（例如&amp;#34;RXXLRXRXL&amp;#34;）中进行移动操作。 一次移动操作指用一个 “LX” 替换一个 “XL”，或者用一个 “XR” 替换一个 “RX”。 现给定起始字符串 start 和结束字符串 end，请编写代码，当且仅当存在一系列移动操作使得 start 可以转换成 end 时， 返回 True。 输入：start = &amp;#34;RXXLRXRXL&amp;#34;, end = &amp;#34;XRLXXRRLX&amp;#34; 输出：True 解释： 我们可以通过以下几步将 start 转换成 end： RXXLRXRXL -&amp;gt; XRXLRXRXL -&amp;gt; XRLXRXRXL -&amp;gt; XRLXXRRXL -&amp;gt; XRLXXRRLX 提示： 1 &amp;lt;= len(start) = len(end) &amp;lt;= 10000。 start 和 end 中的字符串仅限于’L’, ‘R’和’X’。 思路： 如果一个start可以完成到end的转换，那么，两个字符串中L和R的相对位置一定会保持一致。
+      <description>在一个由 ‘L’ , ‘R’ 和 ‘X’ 三个字符组成的字符串（例如&amp;#34;RXXLRXRXL&amp;#34;）中进行移动操作。 一次移动操作指用一个 “LX” 替换一个 “XL”，或者用一个 “XR” 替换一个 “RX”。 现给定起始字符串 start 和结束字符串 end，请编写代码，当且仅当存在一系列移动操作使得 start 可以转换成 end 时， 返回 True。 输入：start = &amp;#34;RXXLRXRXL&amp;#34;, end = &amp;#34;XRLXXRRLX&amp;#34; 输出：True 解释： 我们可以通过以下几步将 start 转换成 end： RXXLRXRXL -&amp;gt; XRXLRXRXL -&amp;gt; XRLXRXRXL -&amp;gt; XRLXXRRXL -&amp;gt; XRLXXRRLX 提示： 1 &amp;lt;= len(start) = len(end) &amp;lt;= 10000。 start 和 end 中的字符串仅限于’L’, ‘R’和’X’。 思路 如果一个start可以完成到end的转换，那么，两个字符串中L和R的相对位置一定会保持一致。
 可以在start和end上分别各自定义指针i和j，跳过X直到第一个L或者R出现，此时判断s[i]和s[j]是否相等，如果不相等则不满足相对顺序，无法完成转换。
 XL被LX替换，RX被XR替换，则意味着：
  如果能完成转换，最终end中第N个L的下标，只能小于或等于start中第N个L的下标，即L只允许左移或原地停留。 如果能完成转换，最终end中第M个R的下标，只能大于或等于start中第M个R的下标，即R只允许右移或原地停留。  思路递推 以题目中的start = &amp;ldquo;RXXLRXRXL&amp;rdquo;, end = &amp;ldquo;XRLXXRRLX&amp;quot;为例：</description>

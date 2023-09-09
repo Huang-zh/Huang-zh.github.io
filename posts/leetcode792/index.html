@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="[huangzh]">
+<meta name="description" content="给定字符串 s 和字符串数组 words, 返回 words[i] 中是 s 的子序列的单词个数。 字符串的子序列是从原始字符串中生成的新字符串，可以从中删去一些字符(可以是 none)，而不改变其余字符的相对顺序。 例如， “ace” 是 “abcde” 的子序列。 示例 1： 输入: s = “abcde”, words = [“a”,“bb”,“acd”,“ace”] 输出: 3 解释: 有三个是 s 的子序列的单词: “a”, “acd”, “ace”。 示例 2： 输入: s = “dsahjpjauf”, words = [“ahjpjau”,“ja”,“ahbwzgqnuk”,“tnmlanowax”] 输出: 2 提示： 1 &amp;lt;= s.length &amp;lt;= 5 * 104 1 &amp;lt;= words.length &amp;lt;= 5000 1 &amp;lt;= words[i].length &amp;lt;= 50 words[i]和 s 都只由小写字母组成。 思路 对于字符串s和字符串t，若s为t的子序列，则需要满足以下几点：
+ s中的所有字符的相对顺序，必须和这些字符在t中出现的相对顺序保持一致，例如s为ace，t为abcde，则s为t的子序列，此时a、c、e三个字符在两个字符串中出现的相对顺序保持一致，t可以通过删除b和d两个字符来得到s。 若s由一个或多个相同字符组成，那么该字符在s中出现的次数必然小于等于t中该字符出现的次数，例如字符串a、aa、aaa均为字符串aabade的子序列，但aaaa不是字符串aabade的子序列。  那么，维护一个数组，记录下原字符串t中每一个字符t[i]出现的位置i，然后对于要判断子序列的样本s，遍历s的每个字符，判断以下几点：" />
+<meta name="keywords" content=", 算法" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="https://Huang-zh.github.io/posts/leetcode792/" />
+
+
+    <title>
+        
+            LeetCode算法手记：792.匹配子序列的单词数 :: 此间的少年 
+        
+    </title>
+
+
+
+
+
+<link rel="stylesheet" href="/main.b78c3be9451dc4ca61ca377f3dc2cf2e6345a44c2bae46216a322ef366daa399.css" integrity="sha256-t4w76UUdxMphyjd/PcLPLmNFpEwrrkYhajIu82bao5k=">
+
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="msapplication-TileColor" content="">
+
+
+<meta itemprop="name" content="LeetCode算法手记：792.匹配子序列的单词数">
+<meta itemprop="description" content="给定字符串 s 和字符串数组 words, 返回 words[i] 中是 s 的子序列的单词个数。 字符串的子序列是从原始字符串中生成的新字符串，可以从中删去一些字符(可以是 none)，而不改变其余字符的相对顺序。 例如， “ace” 是 “abcde” 的子序列。 示例 1： 输入: s = “abcde”, words = [“a”,“bb”,“acd”,“ace”] 输出: 3 解释: 有三个是 s 的子序列的单词: “a”, “acd”, “ace”。 示例 2： 输入: s = “dsahjpjauf”, words = [“ahjpjau”,“ja”,“ahbwzgqnuk”,“tnmlanowax”] 输出: 2 提示： 1 &lt;= s.length &lt;= 5 * 104 1 &lt;= words.length &lt;= 5000 1 &lt;= words[i].length &lt;= 50 words[i]和 s 都只由小写字母组成。 思路 对于字符串s和字符串t，若s为t的子序列，则需要满足以下几点：
+ s中的所有字符的相对顺序，必须和这些字符在t中出现的相对顺序保持一致，例如s为ace，t为abcde，则s为t的子序列，此时a、c、e三个字符在两个字符串中出现的相对顺序保持一致，t可以通过删除b和d两个字符来得到s。 若s由一个或多个相同字符组成，那么该字符在s中出现的次数必然小于等于t中该字符出现的次数，例如字符串a、aa、aaa均为字符串aabade的子序列，但aaaa不是字符串aabade的子序列。  那么，维护一个数组，记录下原字符串t中每一个字符t[i]出现的位置i，然后对于要判断子序列的样本s，遍历s的每个字符，判断以下几点："><meta itemprop="datePublished" content="2023-09-09T21:02:25+08:00" />
+<meta itemprop="dateModified" content="2023-09-09T21:02:25+08:00" />
+<meta itemprop="wordCount" content="330"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="keywords" content="算法," />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://Huang-zh.github.io"/>
+
+<meta name="twitter:title" content="LeetCode算法手记：792.匹配子序列的单词数"/>
+<meta name="twitter:description" content="给定字符串 s 和字符串数组 words, 返回 words[i] 中是 s 的子序列的单词个数。 字符串的子序列是从原始字符串中生成的新字符串，可以从中删去一些字符(可以是 none)，而不改变其余字符的相对顺序。 例如， “ace” 是 “abcde” 的子序列。 示例 1： 输入: s = “abcde”, words = [“a”,“bb”,“acd”,“ace”] 输出: 3 解释: 有三个是 s 的子序列的单词: “a”, “acd”, “ace”。 示例 2： 输入: s = “dsahjpjauf”, words = [“ahjpjau”,“ja”,“ahbwzgqnuk”,“tnmlanowax”] 输出: 2 提示： 1 &lt;= s.length &lt;= 5 * 104 1 &lt;= words.length &lt;= 5000 1 &lt;= words[i].length &lt;= 50 words[i]和 s 都只由小写字母组成。 思路 对于字符串s和字符串t，若s为t的子序列，则需要满足以下几点：
+ s中的所有字符的相对顺序，必须和这些字符在t中出现的相对顺序保持一致，例如s为ace，t为abcde，则s为t的子序列，此时a、c、e三个字符在两个字符串中出现的相对顺序保持一致，t可以通过删除b和d两个字符来得到s。 若s由一个或多个相同字符组成，那么该字符在s中出现的次数必然小于等于t中该字符出现的次数，例如字符串a、aa、aaa均为字符串aabade的子序列，但aaaa不是字符串aabade的子序列。  那么，维护一个数组，记录下原字符串t中每一个字符t[i]出现的位置i，然后对于要判断子序列的样本s，遍历s的每个字符，判断以下几点："/>
+
+
+
+    <meta property="og:title" content="LeetCode算法手记：792.匹配子序列的单词数" />
+<meta property="og:description" content="给定字符串 s 和字符串数组 words, 返回 words[i] 中是 s 的子序列的单词个数。 字符串的子序列是从原始字符串中生成的新字符串，可以从中删去一些字符(可以是 none)，而不改变其余字符的相对顺序。 例如， “ace” 是 “abcde” 的子序列。 示例 1： 输入: s = “abcde”, words = [“a”,“bb”,“acd”,“ace”] 输出: 3 解释: 有三个是 s 的子序列的单词: “a”, “acd”, “ace”。 示例 2： 输入: s = “dsahjpjauf”, words = [“ahjpjau”,“ja”,“ahbwzgqnuk”,“tnmlanowax”] 输出: 2 提示： 1 &lt;= s.length &lt;= 5 * 104 1 &lt;= words.length &lt;= 5000 1 &lt;= words[i].length &lt;= 50 words[i]和 s 都只由小写字母组成。 思路 对于字符串s和字符串t，若s为t的子序列，则需要满足以下几点：
+ s中的所有字符的相对顺序，必须和这些字符在t中出现的相对顺序保持一致，例如s为ace，t为abcde，则s为t的子序列，此时a、c、e三个字符在两个字符串中出现的相对顺序保持一致，t可以通过删除b和d两个字符来得到s。 若s由一个或多个相同字符组成，那么该字符在s中出现的次数必然小于等于t中该字符出现的次数，例如字符串a、aa、aaa均为字符串aabade的子序列，但aaaa不是字符串aabade的子序列。  那么，维护一个数组，记录下原字符串t中每一个字符t[i]出现的位置i，然后对于要判断子序列的样本s，遍历s的每个字符，判断以下几点：" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://Huang-zh.github.io/posts/leetcode792/" /><meta property="og:image" content="https://Huang-zh.github.io"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-09-09T21:02:25+08:00" />
+<meta property="article:modified_time" content="2023-09-09T21:02:25+08:00" /><meta property="og:site_name" content="此间的少年" />
+
+
+
+
+
+
+    <meta property="article:section" content="算法手记" />
+
+
+
+    <meta property="article:published_time" content="2023-09-09 21:02:25 &#43;0800 CST" />
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    
+        <body>
+    
+    
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text ">
+                huan.g</span>
+            <span class="logo__cursor" style=
+                  "
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">关于我</a></li><li><a href="/categories/">分类</a></li><li><a href="/posts/">文章</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+        </span>
+    </span>
+</header>
+
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        2 minutes
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="https://Huang-zh.github.io/posts/leetcode792/">LeetCode算法手记：792.匹配子序列的单词数</a>
+      </h1>
+
+      
+
+      
+
+      
+
+      <div class="post-content">
+        <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">给定字符串 s 和字符串数组 words, 返回 words[i] 中是 s 的子序列的单词个数。
+
+字符串的子序列是从原始字符串中生成的新字符串，可以从中删去一些字符(可以是 none)，而不改变其余字符的相对顺序。
+
+例如， “ace” 是 “abcde” 的子序列。
+
+示例 1：
+输入: s = “abcde”, words = [“a”,“bb”,“acd”,“ace”]
+输出: 3
+解释: 有三个是 s 的子序列的单词: “a”, “acd”, “ace”。
+
+示例 2：
+输入: s = “dsahjpjauf”, words = [“ahjpjau”,“ja”,“ahbwzgqnuk”,“tnmlanowax”]
+输出: 2
+
+提示：
+1 &lt;= s.length &lt;= 5 * 104
+1 &lt;= words.length &lt;= 5000
+1 &lt;= words[i].length &lt;= 50
+words[i]和 s 都只由小写字母组成。
+</code></pre></div><h3 id="思路">思路</h3>
+<p>对于字符串s和字符串t，若s为t的子序列，则需要满足以下几点：</p>
+<ul>
+<li>s中的所有字符的相对顺序，必须和这些字符在t中出现的相对顺序保持一致，例如s为ace，t为abcde，则s为t的子序列，此时a、c、e三个字符在两个字符串中出现的相对顺序保持一致，t可以通过删除b和d两个字符来得到s。</li>
+<li>若s由一个或多个相同字符组成，那么该字符在s中出现的次数必然小于等于t中该字符出现的次数，例如字符串a、aa、aaa均为字符串aabade的子序列，但aaaa不是字符串aabade的子序列。</li>
+</ul>
+<p>那么，维护一个数组，记录下原字符串t中每一个字符t[i]出现的位置i，然后对于要判断子序列的样本s，遍历s的每个字符，判断以下几点：</p>
+<ul>
+<li>如果对于当前字符s[i]，数组中找不到对应的位置记录，则说明s[i]字符在t中不曾出现，不满足子序列要求。</li>
+<li>如果能够找到对应的位置记录，则说明s[i]字符在t中有出现，需要判断s[i]字符在t中出现的个数，如果超过t中出现该字符的个数，不满足子序列要求。</li>
+<li>如果对于字符串s，上面两点均满足子序列的要求，则说明当前字符串s在[0,i]位置的字符构成的字符串已满足子序列要求，指针向后遍历下一个s[i+1]字符，同时，由于相对顺序保持一致，将j向后移动，s[i+1]将和t[i+1]进行判断。</li>
+</ul>
+<h3 id="代码实现">代码实现</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"> <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">numMatchingSubseq</span><span style="color:#f92672">(</span>String s<span style="color:#f92672">,</span> String<span style="color:#f92672">[]</span> words<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> numMatchingSubseqByLeftBondBinarySearch<span style="color:#f92672">(</span>s<span style="color:#f92672">,</span> words<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * @Author huang.zh
+</span><span style="color:#75715e">     * @Description //二分查找解法，判断子序列个数
+</span><span style="color:#75715e">     * @Date 10:21 PM 2023/9/9
+</span><span style="color:#75715e">     * @Param [s, words]
+</span><span style="color:#75715e">     * @return
+</span><span style="color:#75715e">     **/</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">numMatchingSubseqByLeftBondBinarySearch</span><span style="color:#f92672">(</span>String s<span style="color:#f92672">,</span> String<span style="color:#f92672">[]</span> words<span style="color:#f92672">){</span>
+        ArrayList<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;[]</span> arrays <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">[</span>26<span style="color:#f92672">];</span>
+        <span style="color:#66d9ef">int</span> sLength <span style="color:#f92672">=</span> s<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">();</span>
+        <span style="color:#75715e">//对原样本进行预处理，记录s中每一个字符出现的下标位置
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span> i <span style="color:#f92672">&lt;</span> sLength<span style="color:#f92672">;</span> i<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">int</span> index <span style="color:#f92672">=</span> s<span style="color:#f92672">.</span><span style="color:#a6e22e">charAt</span><span style="color:#f92672">(</span>i<span style="color:#f92672">)</span> <span style="color:#f92672">-</span> <span style="color:#e6db74">&#39;a&#39;</span><span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>arrays<span style="color:#f92672">[</span>index<span style="color:#f92672">]</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+                arrays<span style="color:#f92672">[</span>index<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;&gt;();</span>
+            <span style="color:#75715e">//记录当前字符s[i]对应的位置i
+</span><span style="color:#75715e"></span>            arrays<span style="color:#f92672">[</span>index<span style="color:#f92672">].</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span>i<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">int</span> result <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>String word <span style="color:#f92672">:</span> words<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>isSubSequence<span style="color:#f92672">(</span>word<span style="color:#f92672">,</span>arrays<span style="color:#f92672">))</span>
+                result<span style="color:#f92672">++;</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> result<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * @Author huang.zh
+</span><span style="color:#75715e">     * @Description 判断s是否为子序列
+</span><span style="color:#75715e">     * @Date 10:31 PM 2023/9/9
+</span><span style="color:#75715e">     * @Param [s, arrays]
+</span><span style="color:#75715e">     * @return
+</span><span style="color:#75715e">     **/</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">isSubSequence</span><span style="color:#f92672">(</span>String s<span style="color:#f92672">,</span>ArrayList<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;[]</span> arrays<span style="color:#f92672">){</span>
+        <span style="color:#75715e">//定义指针j，在搜寻过程中每找到一个字符就向后移动一位，确保s中每个字符的相对顺序必须和原字符串中一致，才能算作子序列
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span> i <span style="color:#f92672">&lt;</span> s<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">();</span> i<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">int</span> index <span style="color:#f92672">=</span> s<span style="color:#f92672">.</span><span style="color:#a6e22e">charAt</span><span style="color:#f92672">(</span>i<span style="color:#f92672">)</span> <span style="color:#f92672">-</span> <span style="color:#e6db74">&#39;a&#39;</span><span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>arrays<span style="color:#f92672">[</span>index<span style="color:#f92672">]</span> <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span>
+                <span style="color:#75715e">//当前字符在原字符串中没出现过，肯定不是子序列
+</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+            <span style="color:#75715e">//搜寻当前字符在原字符串中第一次出现的位置
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">//由于子序列的相对顺序必须和原字符串一致，所以point一定会落在[0,arrays[index].size())内
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">int</span> point <span style="color:#f92672">=</span> leftBondBinarySearch<span style="color:#f92672">(</span>arrays<span style="color:#f92672">[</span>index<span style="color:#f92672">],</span> j<span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>point <span style="color:#f92672">==</span> arrays<span style="color:#f92672">[</span>index<span style="color:#f92672">].</span><span style="color:#a6e22e">size</span><span style="color:#f92672">())</span>
+                <span style="color:#75715e">//防止重复字符超出原字符中同字符的长度上限，比如原字符为aa，s为aaa，显然不符合子序列
+</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+            <span style="color:#75715e">//当前字符满足条件，将j指针往后移动，用于下一个字符判断
+</span><span style="color:#75715e"></span>            j <span style="color:#f92672">=</span> arrays<span style="color:#f92672">[</span>index<span style="color:#f92672">].</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>point<span style="color:#f92672">)+</span>1<span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * @Author huang.zh
+</span><span style="color:#75715e">     * @Description 找到数组中第一个值为target的元素下标
+</span><span style="color:#75715e">     * @Date 10:23 PM 2023/9/9
+</span><span style="color:#75715e">     * @Param [list, target]
+</span><span style="color:#75715e">     * @return
+</span><span style="color:#75715e">     **/</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">leftBondBinarySearch</span><span style="color:#f92672">(</span>ArrayList<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> list<span style="color:#f92672">,</span><span style="color:#66d9ef">int</span> target<span style="color:#f92672">){</span>
+        <span style="color:#75715e">//注意high的取值，代表在左闭右开区间[low,high)中去搜寻第一个符合的元素
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">int</span> low <span style="color:#f92672">=</span> 0<span style="color:#f92672">,</span>high <span style="color:#f92672">=</span> list<span style="color:#f92672">.</span><span style="color:#a6e22e">size</span><span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>low <span style="color:#f92672">&lt;</span> high<span style="color:#f92672">){</span>
+            <span style="color:#66d9ef">int</span> mid <span style="color:#f92672">=</span> low <span style="color:#f92672">+</span> <span style="color:#f92672">(</span>high <span style="color:#f92672">-</span> low<span style="color:#f92672">)/</span>2<span style="color:#f92672">;</span>
+            Integer value <span style="color:#f92672">=</span> list<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>mid<span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>value <span style="color:#f92672">==</span> target<span style="color:#f92672">){</span>
+                <span style="color:#75715e">//命中，但是要向前搜索第一个元素
+</span><span style="color:#75715e"></span>                <span style="color:#75715e">//这里high赋值为mid，代表后续将在左闭右开区间[low,mid)即闭区间[low,mid-1]中搜寻
+</span><span style="color:#75715e"></span>                high <span style="color:#f92672">=</span> mid<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>value <span style="color:#f92672">&gt;</span> target<span style="color:#f92672">){</span>
+                high <span style="color:#f92672">=</span> mid<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+                low <span style="color:#f92672">=</span> mid<span style="color:#f92672">+</span>1<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> low<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">(){</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>numMatchingSubseq<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;abcde&#34;</span><span style="color:#f92672">,</span><span style="color:#66d9ef">new</span> String<span style="color:#f92672">[]{</span><span style="color:#e6db74">&#34;a&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;bb&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;acd&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;ace&#34;</span><span style="color:#f92672">}));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>numMatchingSubseq<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;dsahjpjauf&#34;</span><span style="color:#f92672">,</span><span style="color:#66d9ef">new</span> String<span style="color:#f92672">[]{</span><span style="color:#e6db74">&#34;ahjpjau&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;ja&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;ahbwzgqnuk&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;tnmlanowax&#34;</span><span style="color:#f92672">}));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>numMatchingSubseq<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;aa&#34;</span><span style="color:#f92672">,</span><span style="color:#66d9ef">new</span> String<span style="color:#f92672">[]{</span><span style="color:#e6db74">&#34;aaa&#34;</span><span style="color:#f92672">}));</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div>
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://Huang-zh.github.io/tags/%E7%AE%97%E6%B3%95/">算法</a></span>
+        
+    </p>
+
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder meta-icon"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+
+        <span class="tag"><a href="https://Huang-zh.github.io/categories/%E7%AE%97%E6%B3%95%E6%89%8B%E8%AE%B0/">算法手记</a></span>
+        
+    </p>
+
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        330 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2023-09-09
+        
+
+        
+      </p>
+    </div>
+
+    
+    <div class="pagination">
+        
+
+        <div class="pagination__buttons">
+            
+
+            
+            <span class="button next">
+                <a href="https://Huang-zh.github.io/posts/leetcode777/">
+                    <span class="button__text">LeetCode算法手记：777.在LR字符串中交换相邻字符</span>
+                    <span class="button__icon">→</span>
+                </a>
+            </span>
+            
+        </div>
+    </div>
+
+
+    
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            
+            <span><a href="https://Huang-zh.github.io">huang.zh</a></span>
+            
+            
+            
+        </div>
+    </div>
+    
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span><a href="http://beian.miit.gov.cn">浙ICP备19022115号-1</a></span>
+        </div>
+    </div>
+    
+</footer>
+
+
+
+            
+        </div>
+
+        
+
+
+
+<script type="text/javascript" src="/bundle.min.644292943ae47eef02fcd64b11757aeb8caeeaebf473a823b62099edccac808e8d82689359f285e5d95994e5ad5ae3b9c1ccc281eb1828e67d0ba6630f95b832.js" integrity="sha512-ZEKSlDrkfu8C/NZLEXV664yu6uv0c6gjtiCZ7cysgI6NgmiTWfKF5dlZlOWtWuO5wczCgesYKOZ9C6ZjD5W4Mg=="></script>
+
+
+
+    </body>
+</html>
