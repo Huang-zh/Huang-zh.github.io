@@ -5,8 +5,158 @@
         <description>Recent content in Posts on 此间的少年</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Sat, 09 Sep 2023 21:02:25 +0800</lastBuildDate>
+        <lastBuildDate>Mon, 11 Sep 2023 22:12:46 +0800</lastBuildDate>
         <atom:link href="https://Huang-zh.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>LeetCode算法手记：807.情感丰富的文字</title>
+            <link>https://Huang-zh.github.io/posts/leetcode807/</link>
+            <pubDate>Mon, 11 Sep 2023 22:12:46 +0800</pubDate>
+            
+            <guid>https://Huang-zh.github.io/posts/leetcode807/</guid>
+            <description>有时候人们会用重复写一些字母来表示额外的感受，比如 “hello” -&amp;gt; “heeellooo”, “hi” -&amp;gt; “hiii”。我们将相邻字母都相同的一串字符定义为相同字母组，例如：“h”, “eee”, “ll”, “ooo” 对于一个给定的字符串 S ，如果另一个单词能够通过将一些字母组扩张从而使其和 S 相同，我们将这个单词定义为可扩张的（stretchy）。扩张操作定义如下：选择一个字母组（包含字母 c ），然后往其中添加相同的字母 c 使其长度达到 3 或以上 例如，以 “hello” 为例，我们可以对字母组 “o” 扩张得到 “hellooo”，但是无法以同样的方法得到 “helloo” 因为字母组 “oo” 长度小于 3。此外，我们可以进行另一种扩张 “ll” -&amp;gt; “lllll” 以获得 “helllllooo”。如果 S = “helllllooo”，那么查询词 “hello” 是可扩张的，因为可以对它执行这两种扩张操作使得 query = “hello” -&amp;gt; “hellooo” -&amp;gt; “helllllooo” = 输入一组查询单词，输出其中可扩张的单词数量 示例 输入 S = “heeellooo” words = [“hello”, “hi”, “helo”] 输出： 解释 我们能通过扩张 “hello” 的 “e” 和 “o” 来得到 “heeellooo” 我们不能通过扩张 “helo” 来得到 “heeellooo” 因为 “ll” 的长度小于 3 提示 0 &amp;lt;= len(S) &amp;lt;= 100 0 &amp;lt;= len(words) &amp;lt;= 100 0 &amp;lt;= len(words[i]) &amp;lt;= 100 S 和所有在 words 中的单词都只由小写字母组成 思路 如果s能由word扩展而来，则遵守以下的判断原则：</description>
+            <content type="html"><![CDATA[<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">有时候人们会用重复写一些字母来表示额外的感受，比如 “hello” -&gt; “heeellooo”, “hi” -&gt; “hiii”。我们将相邻字母都相同的一串字符定义为相同字母组，例如：“h”, “eee”, “ll”, “ooo”
+
+对于一个给定的字符串 S ，如果另一个单词能够通过将一些字母组扩张从而使其和 S 相同，我们将这个单词定义为可扩张的（stretchy）。扩张操作定义如下：选择一个字母组（包含字母 c ），然后往其中添加相同的字母 c 使其长度达到 3 或以上
+
+例如，以 “hello” 为例，我们可以对字母组 “o” 扩张得到 “hellooo”，但是无法以同样的方法得到 “helloo” 因为字母组 “oo” 长度小于 3。此外，我们可以进行另一种扩张 “ll” -&gt; “lllll” 以获得 “helllllooo”。如果 S = “helllllooo”，那么查询词 “hello” 是可扩张的，因为可以对它执行这两种扩张操作使得 query = “hello” -&gt; “hellooo” -&gt; “helllllooo” = 输入一组查询单词，输出其中可扩张的单词数量
+
+示例
+
+输入
+S = “heeellooo”
+words = [“hello”, “hi”, “helo”]
+输出：
+解释
+我们能通过扩张 “hello” 的 “e” 和 “o” 来得到 “heeellooo”
+我们不能通过扩张 “helo” 来得到 “heeellooo” 因为 “ll” 的长度小于 3 
+
+提示
+0 &lt;= len(S) &lt;= 100
+0 &lt;= len(words) &lt;= 100
+0 &lt;= len(words[i]) &lt;= 100
+S 和所有在 words 中的单词都只由小写字母组成
+
+</code></pre></div><h3 id="思路">思路</h3>
+<p>如果s能由word扩展而来，则遵守以下的判断原则：</p>
+<ol>
+<li>
+<p>word中不同字符的相对顺序，和s中这些字符的相对顺序保持一致，也就是说，word中出现的字符必然出现在s中。比如hello可以扩展成heeellooo，因为h、e、l、o四个字符的相对顺序在两个字符串中保持一致。</p>
+</li>
+<li>
+<p>word中相同同字符连续出现的次数repeatWc，必然要小于或等于该字符在s中连续出现的次数repeatSc，同时，repeatSc至少为3。比如helo不可以扩展成heeellooo，虽然h、e、l、o四个字符的相对顺序在两个字符串中保持一致，但此时l字符在word中的repeatWc为1，而l字符在s中的repeatSc为2，虽然满足了repeatWc&lt;=repeatSc的原则，但是repeatSc小于3，所以无法扩展成s字符。</p>
+</li>
+</ol>
+<p>维护双指针i和j，在循环中分别遍历s中的每一个字符s[i]和word中的每一个字符w[j]，并进行如下判断：</p>
+<ul>
+<li>确保每一次循环中，s[i]和w[j]都相等，原因是能够扩展情况下，w[i]对应的不同字符相对顺序一定和s中这些字符的相对顺序保持一致。如果不相等，表明起码有一个字符在二者的相对顺序中不一致，不能够进行扩展。</li>
+<li>s[i]和w[j]相等的情况下，通过指针不断向后统计当前s[i]和w[j]连续重复出现的个数repeatSc和repeatWc，判断repeatSc和repeatWc的大小。</li>
+<li>当任意一个指针到达字符串末尾，在循环结束后判断双指针是否均完成对各自字符串中每个字符的搜寻，只有双方都到达末尾，才能证明之前的字符都经过循环中的判断，能够完成扩展转换。</li>
+</ul>
+<h4 id="思路递推">思路递推</h4>
+<p>以题目中的s=&ldquo;heeellooo&rdquo;,words = [“hello”, “hi”, “helo”]为例，遍历words中的每一个字符串word，分别判断是否能够完成扩展：</p>
+<ul>
+<li>
+<p>s=&ldquo;heeellooo&rdquo;,words=&ldquo;hello&rdquo;</p>
+<ul>
+<li>初始i = 0,j = 0，开始循环。</li>
+<li>s[i] = &lsquo;h&rsquo;，w[j] = &lsquo;h&rsquo;，两个字符相等。</li>
+<li>找到各自字符连续重复出现的个数，此时repeatSc = 1，repeatWc = 1，双指针分别向后移动当前重复的次数，由于二者相等，不违背规则，进入下一次循环。</li>
+<li>i = 1，j = 1，判断第二个字符。</li>
+<li>s[i] = &lsquo;e&rsquo;，w[j] = &lsquo;e&rsquo;，两个字符相等。</li>
+<li>找到各自字符连续重复出现的个数，此时repeatSc = 3，repeatWc = 1，双指针分别向后移动当前重复的次数，根据规则：repeatSc大于repeatWc并且repeatSc至少为3，不违背规则，进入下一次循环。</li>
+<li>i = 4，j = 2，判断第三个字符。</li>
+<li>s[i] = &lsquo;l&rsquo;，w[j] = &lsquo;l&rsquo;，两个字符相等。</li>
+<li>找到各自字符连续重复出现的个数，此时repeatSc = 2，repeatWc = 2，双指针分别向后移动当前重复的次数，由于二者相等，不违背规则，进入下一次循环。</li>
+<li>i = 6，j = 4，判断第四个字符。</li>
+<li>s[i] = &lsquo;o&rsquo;，w[j] = &lsquo;o&rsquo;，两个字符相等。</li>
+<li>找到各自字符连续重复出现的个数，此时repeatSc = 3，repeatWc = 1，双指针分别向后移动当前重复的次数，根据规则：repeatSc大于repeatWc并且repeatSc至少为3，不违背规则，进入下一次循环。</li>
+<li>此时i到达s的最末尾，退出循环。</li>
+<li>此时i和j均到达各自字符串的最末尾，所以可以完成扩展转换。</li>
+</ul>
+</li>
+<li>
+<p>s=&ldquo;heeellooo&rdquo;,words=&ldquo;hi&rdquo;</p>
+<ul>
+<li>初始i = 0,j = 0，开始循环。</li>
+<li>s[i] = &lsquo;h&rsquo;，w[j] = &lsquo;h&rsquo;，两个字符相等。</li>
+<li>找到各自字符连续重复出现的个数，此时repeatSc = 1，repeatWc = 1，双指针分别向后移动当前重复的次数，由于二者相等，不违背规则，进入下一次循环。</li>
+<li>i = 1，j = 1，判断第二个字符。</li>
+<li>s[i] = &lsquo;e&rsquo;，w[j] = &lsquo;i&rsquo;，两个字符不相等，不满足相对顺序，不可以完成转换。</li>
+</ul>
+</li>
+<li>
+<p>s=&ldquo;heeellooo&rdquo;,words=&ldquo;helo&rdquo;</p>
+<ul>
+<li>初始i = 0,j = 0，开始循环。</li>
+<li>s[i] = &lsquo;h&rsquo;，w[j] = &lsquo;h&rsquo;，两个字符相等。</li>
+<li>找到各自字符连续重复出现的个数，此时repeatSc = 1，repeatWc = 1，双指针分别向后移动当前重复的次数，由于二者相等，不违背规则，进入下一次循环。</li>
+<li>i = 1，j = 1，判断第二个字符。</li>
+<li>s[i] = &lsquo;e&rsquo;，w[j] = &lsquo;e&rsquo;，两个字符相等。</li>
+<li>找到各自字符连续重复出现的个数，此时repeatSc = 3，repeatWc = 1，双指针分别向后移动当前重复的次数，根据规则：repeatSc大于repeatWc并且repeatSc至少为3，不违背规则，进入下一次循环。</li>
+<li>i = 4，j = 2，判断第三个字符。</li>
+<li>s[i] = &lsquo;l&rsquo;，w[j] = &lsquo;l&rsquo;，两个字符相等。</li>
+<li>找到各自字符连续重复出现的个数，此时repeatSc = 2，repeatWc = 1，双指针分别向后移动当前重复的次数，由于二者相等，根据规则：repeatSc大于repeatWc并且repeatSc至少为3，此时repeatSc = 2，并没有达到3，不满足规则，无法完成扩展转换。</li>
+</ul>
+</li>
+</ul>
+<h3 id="代码实现">代码实现</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">expressiveWords</span><span style="color:#f92672">(</span>String s<span style="color:#f92672">,</span> String<span style="color:#f92672">[]</span> words<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">int</span> result <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>String word <span style="color:#f92672">:</span> words<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>canExpand<span style="color:#f92672">(</span>s<span style="color:#f92672">,</span>word<span style="color:#f92672">))</span>
+                result<span style="color:#f92672">++;</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> result<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">/**
+</span><span style="color:#75715e">     * @Author huang.zh
+</span><span style="color:#75715e">     * @Description 判断字符串s是否能由word扩展而来
+</span><span style="color:#75715e">     * @Date 9:59 PM 2023/9/11
+</span><span style="color:#75715e">     * @Param [s, word]
+</span><span style="color:#75715e">     * @return
+</span><span style="color:#75715e">     **/</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">canExpand</span><span style="color:#f92672">(</span>String s<span style="color:#f92672">,</span>String word<span style="color:#f92672">){</span>
+        <span style="color:#75715e">//定义双指针，分别遍历s中的每个字符s[i]和word中的每个字符w[j]
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> 0<span style="color:#f92672">,</span>j <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">int</span> sLength <span style="color:#f92672">=</span> s<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">(),</span>wLength <span style="color:#f92672">=</span> word<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">();</span>
+
+        <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>i <span style="color:#f92672">&lt;</span> sLength <span style="color:#f92672">&amp;&amp;</span> j <span style="color:#f92672">&lt;</span> wLength<span style="color:#f92672">){</span>
+            <span style="color:#75715e">// 如果s能由word扩展而来，则遵守以下的判断原则：
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// 1. word中不同字符的相对顺序，和s中这些字符的相对顺序保持一致，也就是说，word中出现的字符必然出现在s中。
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// 2. word中相同同字符连续出现的次数repeatWc，必然要小于或等于该字符在s中连续出现的次数repeatSc，同时，repeatSc至少为3
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>s<span style="color:#f92672">.</span><span style="color:#a6e22e">charAt</span><span style="color:#f92672">(</span>i<span style="color:#f92672">)</span> <span style="color:#f92672">!=</span> word<span style="color:#f92672">.</span><span style="color:#a6e22e">charAt</span><span style="color:#f92672">(</span>j<span style="color:#f92672">))</span>
+                <span style="color:#75715e">// word中出现的字符必然出现在s中，从首字母开始，每一次循环都需要保证s[i]和w[j]相等
+</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+            <span style="color:#75715e">// 此时两个字符相等，找出重复次数
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">int</span> repeatSc <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">char</span> repeatS <span style="color:#f92672">=</span> s<span style="color:#f92672">.</span><span style="color:#a6e22e">charAt</span><span style="color:#f92672">(</span>i<span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>i <span style="color:#f92672">&lt;</span> sLength <span style="color:#f92672">&amp;&amp;</span> s<span style="color:#f92672">.</span><span style="color:#a6e22e">charAt</span><span style="color:#f92672">(</span>i<span style="color:#f92672">)</span> <span style="color:#f92672">==</span> repeatS<span style="color:#f92672">){</span>
+                <span style="color:#75715e">//找出字符s[i]连续出现的个数
+</span><span style="color:#75715e"></span>                repeatSc<span style="color:#f92672">++;</span>
+                i<span style="color:#f92672">++;</span>
+            <span style="color:#f92672">}</span>
+            <span style="color:#66d9ef">int</span> repeatWc <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">char</span> repeatW <span style="color:#f92672">=</span> word<span style="color:#f92672">.</span><span style="color:#a6e22e">charAt</span><span style="color:#f92672">(</span>j<span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>j <span style="color:#f92672">&lt;</span> wLength <span style="color:#f92672">&amp;&amp;</span> word<span style="color:#f92672">.</span><span style="color:#a6e22e">charAt</span><span style="color:#f92672">(</span>j<span style="color:#f92672">)</span> <span style="color:#f92672">==</span> repeatW<span style="color:#f92672">){</span>
+                <span style="color:#75715e">//找出字符w[j]连续出现的个数
+</span><span style="color:#75715e"></span>                repeatWc<span style="color:#f92672">++;</span>
+                j<span style="color:#f92672">++;</span>
+            <span style="color:#f92672">}</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>repeatSc <span style="color:#f92672">&lt;</span> repeatWc <span style="color:#f92672">||</span> <span style="color:#f92672">(</span>repeatSc <span style="color:#f92672">!=</span> repeatWc <span style="color:#f92672">&amp;&amp;</span> repeatSc <span style="color:#f92672">&lt;</span> 3<span style="color:#f92672">))</span>
+                <span style="color:#75715e">//word中相同同字符连续出现的次数repeatWc，必然要小于或等于该字符在s中连续出现的次数repeatSc，同时，repeatSc至少为3
+</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#75715e">// 双指针各自走到尽头，代表每一个字符都完成判断
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> i <span style="color:#f92672">==</span> sLength <span style="color:#f92672">&amp;&amp;</span> j <span style="color:#f92672">==</span> wLength<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">(){</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>expressiveWords<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;heeellooo&#34;</span><span style="color:#f92672">,</span><span style="color:#66d9ef">new</span> String<span style="color:#f92672">[]{</span><span style="color:#e6db74">&#34;hello&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;hi&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;helo&#34;</span><span style="color:#f92672">}));</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div>]]></content>
+        </item>
         
         <item>
             <title>LeetCode算法手记：792.匹配子序列的单词数</title>

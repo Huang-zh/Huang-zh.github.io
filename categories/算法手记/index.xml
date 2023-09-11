@@ -6,7 +6,16 @@
     <description>Recent content in 算法手记 on 此间的少年</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 09 Sep 2023 21:02:25 +0800</lastBuildDate><atom:link href="https://Huang-zh.github.io/categories/%E7%AE%97%E6%B3%95%E6%89%8B%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 11 Sep 2023 22:12:46 +0800</lastBuildDate><atom:link href="https://Huang-zh.github.io/categories/%E7%AE%97%E6%B3%95%E6%89%8B%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode算法手记：807.情感丰富的文字</title>
+      <link>https://Huang-zh.github.io/posts/leetcode807/</link>
+      <pubDate>Mon, 11 Sep 2023 22:12:46 +0800</pubDate>
+      
+      <guid>https://Huang-zh.github.io/posts/leetcode807/</guid>
+      <description>有时候人们会用重复写一些字母来表示额外的感受，比如 “hello” -&amp;gt; “heeellooo”, “hi” -&amp;gt; “hiii”。我们将相邻字母都相同的一串字符定义为相同字母组，例如：“h”, “eee”, “ll”, “ooo” 对于一个给定的字符串 S ，如果另一个单词能够通过将一些字母组扩张从而使其和 S 相同，我们将这个单词定义为可扩张的（stretchy）。扩张操作定义如下：选择一个字母组（包含字母 c ），然后往其中添加相同的字母 c 使其长度达到 3 或以上 例如，以 “hello” 为例，我们可以对字母组 “o” 扩张得到 “hellooo”，但是无法以同样的方法得到 “helloo” 因为字母组 “oo” 长度小于 3。此外，我们可以进行另一种扩张 “ll” -&amp;gt; “lllll” 以获得 “helllllooo”。如果 S = “helllllooo”，那么查询词 “hello” 是可扩张的，因为可以对它执行这两种扩张操作使得 query = “hello” -&amp;gt; “hellooo” -&amp;gt; “helllllooo” = 输入一组查询单词，输出其中可扩张的单词数量 示例 输入 S = “heeellooo” words = [“hello”, “hi”, “helo”] 输出： 解释 我们能通过扩张 “hello” 的 “e” 和 “o” 来得到 “heeellooo” 我们不能通过扩张 “helo” 来得到 “heeellooo” 因为 “ll” 的长度小于 3 提示 0 &amp;lt;= len(S) &amp;lt;= 100 0 &amp;lt;= len(words) &amp;lt;= 100 0 &amp;lt;= len(words[i]) &amp;lt;= 100 S 和所有在 words 中的单词都只由小写字母组成 思路 如果s能由word扩展而来，则遵守以下的判断原则：</description>
+    </item>
+    
     <item>
       <title>LeetCode算法手记：792.匹配子序列的单词数</title>
       <link>https://Huang-zh.github.io/posts/leetcode792/</link>
