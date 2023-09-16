@@ -6,7 +6,21 @@
     <description>Recent content in 算法手记 on 此间的少年</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sat, 16 Sep 2023 20:35:38 +0800</lastBuildDate><atom:link href="https://Huang-zh.github.io/categories/%E7%AE%97%E6%B3%95%E6%89%8B%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 16 Sep 2023 21:33:23 +0800</lastBuildDate><atom:link href="https://Huang-zh.github.io/categories/%E7%AE%97%E6%B3%95%E6%89%8B%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode算法手记：1781.所有子字符串美丽值之和</title>
+      <link>https://Huang-zh.github.io/posts/leetcode1781/</link>
+      <pubDate>Sat, 16 Sep 2023 21:33:23 +0800</pubDate>
+      
+      <guid>https://Huang-zh.github.io/posts/leetcode1781/</guid>
+      <description>思路 通过双指针i，j进行双层循环，能够获得字符串s所有的子字符串。
+在每一次第二层循环之前，初始化一个长度为26的数组frequency，记录s[i]-s[j]组成的字符串中各字符出现的频率。
+同时维护一个maxNum用于记录当前s[i]-s[j]组成的字符串中最高的字符出现频率。
+在每一次子字符串获得后，获取s[i]-s[j]组成的字符串中最低的字符出现频率minNum。将maxNum和minNum的差值累加，最后得到result。
+思路递推 以实例一中s=&amp;ldquo;aabcb&amp;quot;为例：
+ 初始i = 0,j = 0。 初始化frequency数组，同时当前子字符串为&amp;quot;a&amp;rdquo;。 s[j] = &amp;lsquo;a&amp;rsquo;，frequency[s[j] - &amp;lsquo;a&amp;rsquo;] = frequency[0] = 1，maxNum = 1(a)，minNum = 1(a)，差值为0，result += 0，此时result = 0。 i = 0,j = 1。 当前子字符串为&amp;quot;aa&amp;quot;。 s[j] = &amp;lsquo;a&amp;rsquo;，frequency[s[j] - &amp;lsquo;a&amp;rsquo;] = frequency[0] = 2，maxNum = 2(a)，minNum = 2(a)，差值为0，result += 0，此时result = 0。 i = 0,j = 2。 当前子字符串为&amp;quot;aab&amp;quot;。 s[j] = &amp;lsquo;b&amp;rsquo;，frequency[s[j] - &amp;lsquo;a&amp;rsquo;] = frequency[1] = 1，maxNum = 2(a)，minNum = 1(b)，差值为1，result += 1，此时result = 1。 i = 0,j = 3。 当前子字符串为&amp;quot;aabc&amp;quot;。 s[j] = &amp;lsquo;c&amp;rsquo;，frequency[s[j] - &amp;lsquo;a&amp;rsquo;] = frequency[2] = 1，maxNum = 2(a)，minNum = 1(b/c)，差值为1，result += 1，此时result = 2.</description>
+    </item>
+    
     <item>
       <title>LeetCode算法手记：1764.通过连接另一个数组的子数组得到一个数组</title>
       <link>https://Huang-zh.github.io/posts/leetcode1764/</link>

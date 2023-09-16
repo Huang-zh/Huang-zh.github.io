@@ -5,8 +5,111 @@
         <description>Recent content in Posts on 此间的少年</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Sat, 16 Sep 2023 20:35:38 +0800</lastBuildDate>
+        <lastBuildDate>Sat, 16 Sep 2023 21:33:23 +0800</lastBuildDate>
         <atom:link href="https://Huang-zh.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>LeetCode算法手记：1781.所有子字符串美丽值之和</title>
+            <link>https://Huang-zh.github.io/posts/leetcode1781/</link>
+            <pubDate>Sat, 16 Sep 2023 21:33:23 +0800</pubDate>
+            
+            <guid>https://Huang-zh.github.io/posts/leetcode1781/</guid>
+            <description>思路 通过双指针i，j进行双层循环，能够获得字符串s所有的子字符串。
+在每一次第二层循环之前，初始化一个长度为26的数组frequency，记录s[i]-s[j]组成的字符串中各字符出现的频率。
+同时维护一个maxNum用于记录当前s[i]-s[j]组成的字符串中最高的字符出现频率。
+在每一次子字符串获得后，获取s[i]-s[j]组成的字符串中最低的字符出现频率minNum。将maxNum和minNum的差值累加，最后得到result。
+思路递推 以实例一中s=&amp;ldquo;aabcb&amp;quot;为例：
+ 初始i = 0,j = 0。 初始化frequency数组，同时当前子字符串为&amp;quot;a&amp;rdquo;。 s[j] = &amp;lsquo;a&amp;rsquo;，frequency[s[j] - &amp;lsquo;a&amp;rsquo;] = frequency[0] = 1，maxNum = 1(a)，minNum = 1(a)，差值为0，result += 0，此时result = 0。 i = 0,j = 1。 当前子字符串为&amp;quot;aa&amp;quot;。 s[j] = &amp;lsquo;a&amp;rsquo;，frequency[s[j] - &amp;lsquo;a&amp;rsquo;] = frequency[0] = 2，maxNum = 2(a)，minNum = 2(a)，差值为0，result += 0，此时result = 0。 i = 0,j = 2。 当前子字符串为&amp;quot;aab&amp;quot;。 s[j] = &amp;lsquo;b&amp;rsquo;，frequency[s[j] - &amp;lsquo;a&amp;rsquo;] = frequency[1] = 1，maxNum = 2(a)，minNum = 1(b)，差值为1，result += 1，此时result = 1。 i = 0,j = 3。 当前子字符串为&amp;quot;aabc&amp;quot;。 s[j] = &amp;lsquo;c&amp;rsquo;，frequency[s[j] - &amp;lsquo;a&amp;rsquo;] = frequency[2] = 1，maxNum = 2(a)，minNum = 1(b/c)，差值为1，result += 1，此时result = 2.</description>
+            <content type="html"><![CDATA[<h3 id="思路">思路</h3>
+<p>通过双指针i，j进行双层循环，能够获得字符串s所有的子字符串。</p>
+<p>在每一次第二层循环之前，初始化一个长度为26的数组frequency，记录s[i]-s[j]组成的字符串中各字符出现的频率。</p>
+<p>同时维护一个maxNum用于记录当前s[i]-s[j]组成的字符串中最高的字符出现频率。</p>
+<p>在每一次子字符串获得后，获取s[i]-s[j]组成的字符串中最低的字符出现频率minNum。将maxNum和minNum的差值累加，最后得到result。</p>
+<h4 id="思路递推">思路递推</h4>
+<p>以实例一中s=&ldquo;aabcb&quot;为例：</p>
+<ul>
+<li>初始i = 0,j = 0。</li>
+<li>初始化frequency数组，同时当前子字符串为&quot;a&rdquo;。</li>
+<li>s[j] = &lsquo;a&rsquo;，frequency[s[j] - &lsquo;a&rsquo;] = frequency[0] = 1，maxNum = 1(a)，minNum = 1(a)，差值为0，result += 0，此时result = 0。</li>
+<li>i = 0,j = 1。</li>
+<li>当前子字符串为&quot;aa&quot;。</li>
+<li>s[j] = &lsquo;a&rsquo;，frequency[s[j] - &lsquo;a&rsquo;] = frequency[0] = 2，maxNum = 2(a)，minNum = 2(a)，差值为0，result += 0，此时result = 0。</li>
+<li>i = 0,j = 2。</li>
+<li>当前子字符串为&quot;aab&quot;。</li>
+<li>s[j] = &lsquo;b&rsquo;，frequency[s[j] - &lsquo;a&rsquo;] = frequency[1] = 1，maxNum = 2(a)，minNum = 1(b)，差值为1，result += 1，此时result = 1。</li>
+<li>i = 0,j = 3。</li>
+<li>当前子字符串为&quot;aabc&quot;。</li>
+<li>s[j] = &lsquo;c&rsquo;，frequency[s[j] - &lsquo;a&rsquo;] = frequency[2] = 1，maxNum = 2(a)，minNum = 1(b/c)，差值为1，result += 1，此时result = 2.</li>
+<li>i = 0,j = 4。</li>
+<li>当前子字符串为&quot;aabcb&quot;。</li>
+<li>s[j] = &lsquo;b&rsquo;，frequency[s[j] - &lsquo;a&rsquo;] = frequency[1] = 2，maxNum = 2(a/b)，minNum = 1(c)，差值为1，result += 1，此时result = 3.</li>
+<li>i = 1,j = 1。</li>
+<li>初始化frequency数组，同时当前子字符串为&quot;a&quot;。</li>
+<li>s[j] = &lsquo;a&rsquo;，frequency[s[j] - &lsquo;a&rsquo;] = frequency[0] = 1，maxNum = 1(a)，minNum = 1(a)，差值为0，result += 0，此时result = 3。</li>
+<li>i = 1,j = 2。</li>
+<li>当前子字符串为&quot;ab&quot;。</li>
+<li>s[j] = &lsquo;b&rsquo;，frequency[s[j] - &lsquo;a&rsquo;] = frequency[1] = 1，maxNum = 1(a)，minNum = 1(a/b)，差值为0，result += 0，此时result = 3。</li>
+<li>i = 1,j = 3。</li>
+<li>当前子字符串为&quot;abc&quot;。</li>
+<li>s[j] = &lsquo;c&rsquo;，frequency[s[j] - &lsquo;a&rsquo;] = frequency[2] = 1，maxNum = 1(a/b/c)，minNum = 1(a/b/c)，差值为0，result += 0，此时result = 3。</li>
+<li>i = 1,j = 4。</li>
+<li>当前子字符串为&quot;abcb&quot;。</li>
+<li>s[j] = &lsquo;b&rsquo;，frequency[s[j] - &lsquo;a&rsquo;] = frequency[1] = 2，maxNum = 2(b)，minNum = 1(a/c)，差值为1，result += 1，此时result = 4。</li>
+<li>i = 2,j = 2。</li>
+<li>初始化frequency数组，同时当前子字符串为&quot;b&quot;。</li>
+<li>s[j] = &lsquo;b&rsquo;，frequency[s[j] - &lsquo;a&rsquo;] = frequency[1] = 1，maxNum = 1(b)，minNum = 1(b)，差值为0，result += 0，此时result = 4。</li>
+<li>i = 2,j = 3。</li>
+<li>当前子字符串为&quot;bc&quot;。</li>
+<li>s[j] = &lsquo;c&rsquo;，frequency[s[j] - &lsquo;a&rsquo;] = frequency[2] = 1，maxNum = 1(b/c)，minNum = 1(b/c)，差值为0，result += 0，此时result = 4。</li>
+<li>i = 2,j = 4。</li>
+<li>当前子字符串为&quot;bcb&quot;。</li>
+<li>s[j] = &lsquo;b&rsquo;，frequency[s[j] - &lsquo;a&rsquo;] = frequency[1] = 2，maxNum = 2(b)，minNum = 1(c)，差值为0，result += 1，此时result = 5。</li>
+<li>i = 3,j = 3。</li>
+<li>初始化frequency数组，同时当前子字符串为&quot;c&quot;。</li>
+<li>s[j] = &lsquo;c&rsquo;，frequency[s[j] - &lsquo;a&rsquo;] = frequency[2] = 1，maxNum = 1(c)，minNum = 1(c)，差值为0，result += 1，此时result = 5。</li>
+<li>i = 3,j = 4。</li>
+<li>当前子字符串为&quot;cb&quot;。</li>
+<li>s[j] = &lsquo;b&rsquo;，frequency[s[j] - &lsquo;a&rsquo;] = frequency[1] = 1，maxNum = 1(b/c)，minNum = 1(b/c)，差值为0，result += 1，此时result = 5。</li>
+<li>i = 4,j = 4。</li>
+<li>初始化frequency数组，同时当前子字符串为&quot;b&quot;。</li>
+<li>s[j] = &lsquo;b&rsquo;，frequency[s[j] - &lsquo;a&rsquo;] = frequency[1] = 1，maxNum = 1(b)，minNum = 1(b)，差值为0，result += 1，此时result = 5。</li>
+<li>遍历结束，result最终为5。</li>
+</ul>
+<h3 id="代码实现">代码实现</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">beautySum</span><span style="color:#f92672">(</span>String s<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">int</span> result <span style="color:#f92672">=</span> 0<span style="color:#f92672">,</span>length <span style="color:#f92672">=</span> s<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span> i <span style="color:#f92672">&lt;</span> length<span style="color:#f92672">;</span> i<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">// 记录s[i]-s[j]组成的字符串中各字符出现的频率
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">int</span><span style="color:#f92672">[]</span> frequency <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span><span style="color:#f92672">[</span>26<span style="color:#f92672">];</span>
+            <span style="color:#75715e">// 记录s[i]-s[j]组成的字符串中字符出现最多的频率
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">int</span> maxNum <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> i<span style="color:#f92672">;</span> j <span style="color:#f92672">&lt;</span> length<span style="color:#f92672">;</span> j<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">char</span> c <span style="color:#f92672">=</span> s<span style="color:#f92672">.</span><span style="color:#a6e22e">charAt</span><span style="color:#f92672">(</span>j<span style="color:#f92672">);</span>
+                <span style="color:#75715e">// 更新频率
+</span><span style="color:#75715e"></span>                frequency<span style="color:#f92672">[</span>c <span style="color:#f92672">-</span> <span style="color:#e6db74">&#39;a&#39;</span><span style="color:#f92672">]++;</span>
+                <span style="color:#75715e">// 遍历过程中直接选出当前最大的频率
+</span><span style="color:#75715e"></span>                maxNum <span style="color:#f92672">=</span> Math<span style="color:#f92672">.</span><span style="color:#a6e22e">max</span><span style="color:#f92672">(</span>maxNum<span style="color:#f92672">,</span>frequency<span style="color:#f92672">[</span>c <span style="color:#f92672">-</span> <span style="color:#e6db74">&#39;a&#39;</span><span style="color:#f92672">]);</span>
+                <span style="color:#75715e">// 遍历频率数组，找出最小的频率
+</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">int</span> minNum <span style="color:#f92672">=</span> length<span style="color:#f92672">;</span>
+                <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> k <span style="color:#f92672">:</span> frequency<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>k <span style="color:#f92672">&gt;</span> 0<span style="color:#f92672">){</span>
+                        minNum <span style="color:#f92672">=</span> Math<span style="color:#f92672">.</span><span style="color:#a6e22e">min</span><span style="color:#f92672">(</span>minNum<span style="color:#f92672">,</span>k<span style="color:#f92672">);</span>
+                    <span style="color:#f92672">}</span>
+                <span style="color:#f92672">}</span>
+                <span style="color:#75715e">// 差值累加
+</span><span style="color:#75715e"></span>                result <span style="color:#f92672">+=</span> maxNum <span style="color:#f92672">-</span> minNum<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> result<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">(){</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>beautySum<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;abaacc&#34;</span><span style="color:#f92672">));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>beautySum<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;aabcb&#34;</span><span style="color:#f92672">));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>beautySum<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;aabcbaa&#34;</span><span style="color:#f92672">));</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div>]]></content>
+        </item>
         
         <item>
             <title>LeetCode算法手记：1764.通过连接另一个数组的子数组得到一个数组</title>
