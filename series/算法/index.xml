@@ -13,7 +13,7 @@
       <pubDate>Sat, 16 Sep 2023 21:33:23 +0800</pubDate>
       
       <guid>https://Huang-zh.github.io/posts/leetcode1781/</guid>
-      <description>思路 通过双指针i，j进行双层循环，能够获得字符串s所有的子字符串。
+      <description>一个字符串的美丽值定义为：出现频率最高字符与出现频率最低字符的出现次数之差。 比方说，“abaacc” 的美丽值为 3 - 1 = 2 。 给你一个字符串 s ，请你返回它所有子字符串的美丽值之和。 示例 1： 输入：s = “aabcb” 输出：5 解释：美丽值不为零的字符串包括 [“aab”,“aabc”,“aabcb”,“abcb”,“bcb”] ，每一个字符串的美丽值都为 1。 示例 2： 输入：s = “aabcbaa” 输出：17 提示： 1 &amp;lt;= s.length &amp;lt;= 500 s 只包含小写英文字母。 思路 通过双指针i，j进行双层循环，能够获得字符串s所有的子字符串。
 在每一次第二层循环之前，初始化一个长度为26的数组frequency，记录s[i]-s[j]组成的字符串中各字符出现的频率。
 同时维护一个maxNum用于记录当前s[i]-s[j]组成的字符串中最高的字符出现频率。
 在每一次子字符串获得后，获取s[i]-s[j]组成的字符串中最低的字符出现频率minNum。将maxNum和minNum的差值累加，最后得到result。
