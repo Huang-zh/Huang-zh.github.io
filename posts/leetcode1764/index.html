@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="[huangzh]">
+<meta name="description" content="给你一个长度为 n 的二维整数数组 groups，同时给你一个整数数组 nums 。 你是否可以从 nums 中选出 n 个不相交的子数组，使得第 i 个子数组与 groups[i] （下标从 0 开始）完全相同，且如果 i &amp;gt; 0 ，那么第 (i-1) 个子数组在 nums 中出现的位置在第 i 个子数组前面。（也就是说，这些子数组在 nums 中出现的顺序需要与 groups 顺序相同） 如果你可以找出这样的 n 个子数组，请你返回 true，否则返回 false。 如果不存在下标为 k 的元素 nums[k] 属于不止一个子数组，就称这些子数组是不相交的。子数组指的是原数组中连续元素组成的一个序列。 示例 1： 输入：groups = [[1,-1,-1],[3,-2,0]], nums = [1,-1,0,1,-1,-1,3,-2,0] 输出：true 解释：你可以分别在 nums 中选出第 0 个子数组 [1,-1,-1] 和第 1 个子数组 [3,-2,0] 。 这两个子数组是不相交的，因为它们没有任何共同的元素。 示例 2： 输入：groups = [[10,-2],[1,2,3,4]], nums = [1,2,3,4,10,-2] 输出：false 解释：选择子数组 [1,2,3,4] 和 [10,-2] 是不正确的，因为它们出现的顺序与 groups 中顺序不同。[10,-2] 必须出现在 [1,2,3,4] 之前。 示例 3： 输入：groups = [[1,2,3],[3,4]], nums = [7,7,1,2,3,4,7,7] 输出：false 解释：选择子数组 [1,2,3] 和 [3,4,] 是不正确的，因为它们不是不相交子数组。它们有一个共同的元素 nums[4] （下标从 0 开始）。 提示： groups." />
+<meta name="keywords" content=", 算法" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="https://Huang-zh.github.io/posts/leetcode1764/" />
+
+
+    <title>
+        
+            LeetCode算法手记：1764.通过连接另一个数组的子数组得到一个数组 :: 此间的少年 
+        
+    </title>
+
+
+
+
+
+<link rel="stylesheet" href="/main.b78c3be9451dc4ca61ca377f3dc2cf2e6345a44c2bae46216a322ef366daa399.css" integrity="sha256-t4w76UUdxMphyjd/PcLPLmNFpEwrrkYhajIu82bao5k=">
+
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="msapplication-TileColor" content="">
+
+
+<meta itemprop="name" content="LeetCode算法手记：1764.通过连接另一个数组的子数组得到一个数组">
+<meta itemprop="description" content="给你一个长度为 n 的二维整数数组 groups，同时给你一个整数数组 nums 。 你是否可以从 nums 中选出 n 个不相交的子数组，使得第 i 个子数组与 groups[i] （下标从 0 开始）完全相同，且如果 i &gt; 0 ，那么第 (i-1) 个子数组在 nums 中出现的位置在第 i 个子数组前面。（也就是说，这些子数组在 nums 中出现的顺序需要与 groups 顺序相同） 如果你可以找出这样的 n 个子数组，请你返回 true，否则返回 false。 如果不存在下标为 k 的元素 nums[k] 属于不止一个子数组，就称这些子数组是不相交的。子数组指的是原数组中连续元素组成的一个序列。 示例 1： 输入：groups = [[1,-1,-1],[3,-2,0]], nums = [1,-1,0,1,-1,-1,3,-2,0] 输出：true 解释：你可以分别在 nums 中选出第 0 个子数组 [1,-1,-1] 和第 1 个子数组 [3,-2,0] 。 这两个子数组是不相交的，因为它们没有任何共同的元素。 示例 2： 输入：groups = [[10,-2],[1,2,3,4]], nums = [1,2,3,4,10,-2] 输出：false 解释：选择子数组 [1,2,3,4] 和 [10,-2] 是不正确的，因为它们出现的顺序与 groups 中顺序不同。[10,-2] 必须出现在 [1,2,3,4] 之前。 示例 3： 输入：groups = [[1,2,3],[3,4]], nums = [7,7,1,2,3,4,7,7] 输出：false 解释：选择子数组 [1,2,3] 和 [3,4,] 是不正确的，因为它们不是不相交子数组。它们有一个共同的元素 nums[4] （下标从 0 开始）。 提示： groups."><meta itemprop="datePublished" content="2023-09-16T20:35:38+08:00" />
+<meta itemprop="dateModified" content="2023-09-16T20:35:38+08:00" />
+<meta itemprop="wordCount" content="386"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="keywords" content="算法," />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://Huang-zh.github.io"/>
+
+<meta name="twitter:title" content="LeetCode算法手记：1764.通过连接另一个数组的子数组得到一个数组"/>
+<meta name="twitter:description" content="给你一个长度为 n 的二维整数数组 groups，同时给你一个整数数组 nums 。 你是否可以从 nums 中选出 n 个不相交的子数组，使得第 i 个子数组与 groups[i] （下标从 0 开始）完全相同，且如果 i &gt; 0 ，那么第 (i-1) 个子数组在 nums 中出现的位置在第 i 个子数组前面。（也就是说，这些子数组在 nums 中出现的顺序需要与 groups 顺序相同） 如果你可以找出这样的 n 个子数组，请你返回 true，否则返回 false。 如果不存在下标为 k 的元素 nums[k] 属于不止一个子数组，就称这些子数组是不相交的。子数组指的是原数组中连续元素组成的一个序列。 示例 1： 输入：groups = [[1,-1,-1],[3,-2,0]], nums = [1,-1,0,1,-1,-1,3,-2,0] 输出：true 解释：你可以分别在 nums 中选出第 0 个子数组 [1,-1,-1] 和第 1 个子数组 [3,-2,0] 。 这两个子数组是不相交的，因为它们没有任何共同的元素。 示例 2： 输入：groups = [[10,-2],[1,2,3,4]], nums = [1,2,3,4,10,-2] 输出：false 解释：选择子数组 [1,2,3,4] 和 [10,-2] 是不正确的，因为它们出现的顺序与 groups 中顺序不同。[10,-2] 必须出现在 [1,2,3,4] 之前。 示例 3： 输入：groups = [[1,2,3],[3,4]], nums = [7,7,1,2,3,4,7,7] 输出：false 解释：选择子数组 [1,2,3] 和 [3,4,] 是不正确的，因为它们不是不相交子数组。它们有一个共同的元素 nums[4] （下标从 0 开始）。 提示： groups."/>
+
+
+
+    <meta property="og:title" content="LeetCode算法手记：1764.通过连接另一个数组的子数组得到一个数组" />
+<meta property="og:description" content="给你一个长度为 n 的二维整数数组 groups，同时给你一个整数数组 nums 。 你是否可以从 nums 中选出 n 个不相交的子数组，使得第 i 个子数组与 groups[i] （下标从 0 开始）完全相同，且如果 i &gt; 0 ，那么第 (i-1) 个子数组在 nums 中出现的位置在第 i 个子数组前面。（也就是说，这些子数组在 nums 中出现的顺序需要与 groups 顺序相同） 如果你可以找出这样的 n 个子数组，请你返回 true，否则返回 false。 如果不存在下标为 k 的元素 nums[k] 属于不止一个子数组，就称这些子数组是不相交的。子数组指的是原数组中连续元素组成的一个序列。 示例 1： 输入：groups = [[1,-1,-1],[3,-2,0]], nums = [1,-1,0,1,-1,-1,3,-2,0] 输出：true 解释：你可以分别在 nums 中选出第 0 个子数组 [1,-1,-1] 和第 1 个子数组 [3,-2,0] 。 这两个子数组是不相交的，因为它们没有任何共同的元素。 示例 2： 输入：groups = [[10,-2],[1,2,3,4]], nums = [1,2,3,4,10,-2] 输出：false 解释：选择子数组 [1,2,3,4] 和 [10,-2] 是不正确的，因为它们出现的顺序与 groups 中顺序不同。[10,-2] 必须出现在 [1,2,3,4] 之前。 示例 3： 输入：groups = [[1,2,3],[3,4]], nums = [7,7,1,2,3,4,7,7] 输出：false 解释：选择子数组 [1,2,3] 和 [3,4,] 是不正确的，因为它们不是不相交子数组。它们有一个共同的元素 nums[4] （下标从 0 开始）。 提示： groups." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://Huang-zh.github.io/posts/leetcode1764/" /><meta property="og:image" content="https://Huang-zh.github.io"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-09-16T20:35:38+08:00" />
+<meta property="article:modified_time" content="2023-09-16T20:35:38+08:00" /><meta property="og:site_name" content="此间的少年" />
+
+
+
+
+
+
+    <meta property="article:section" content="算法手记" />
+
+
+
+    <meta property="article:published_time" content="2023-09-16 20:35:38 &#43;0800 CST" />
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    
+        <body>
+    
+    
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text ">
+                huan.g</span>
+            <span class="logo__cursor" style=
+                  "
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">关于我</a></li><li><a href="/categories/">分类</a></li><li><a href="/posts/">文章</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+        </span>
+    </span>
+</header>
+
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        2 minutes
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="https://Huang-zh.github.io/posts/leetcode1764/">LeetCode算法手记：1764.通过连接另一个数组的子数组得到一个数组</a>
+      </h1>
+
+      
+
+      
+
+      
+
+      <div class="post-content">
+        <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">给你一个长度为 n 的二维整数数组 groups，同时给你一个整数数组 nums 。
+你是否可以从 nums 中选出 n 个不相交的子数组，使得第 i 个子数组与 groups[i] （下标从 0 开始）完全相同，且如果 i &gt; 0 ，那么第 (i-1) 个子数组在 nums 中出现的位置在第 i 个子数组前面。（也就是说，这些子数组在 nums 中出现的顺序需要与 groups 顺序相同）
+如果你可以找出这样的 n 个子数组，请你返回 true，否则返回 false。
+如果不存在下标为 k 的元素 nums[k] 属于不止一个子数组，就称这些子数组是不相交的。子数组指的是原数组中连续元素组成的一个序列。
+
+示例 1：
+输入：groups = [[1,-1,-1],[3,-2,0]], nums = [1,-1,0,1,-1,-1,3,-2,0]
+输出：true
+解释：你可以分别在 nums 中选出第 0 个子数组 [1,-1,-1] 和第 1 个子数组 [3,-2,0] 。
+这两个子数组是不相交的，因为它们没有任何共同的元素。
+
+示例 2：
+输入：groups = [[10,-2],[1,2,3,4]], nums = [1,2,3,4,10,-2]
+输出：false
+解释：选择子数组 [1,2,3,4] 和 [10,-2] 是不正确的，因为它们出现的顺序与 groups 中顺序不同。[10,-2] 必须出现在 [1,2,3,4] 之前。
+
+示例 3：
+输入：groups = [[1,2,3],[3,4]], nums = [7,7,1,2,3,4,7,7]
+输出：false
+解释：选择子数组 [1,2,3] 和 [3,4,] 是不正确的，因为它们不是不相交子数组。它们有一个共同的元素 nums[4] （下标从 0 开始）。
+
+提示：
+groups.length == n
+1 &lt;= n &lt;= 103
+1 &lt;= groups[i].length, sum(groups[i].length) &lt;= 103
+1 &lt;= nums.length &lt;= 103
+-107 &lt;= groups[i][j], nums[k] &lt;= 107
+</code></pre></div><h3 id="思路">思路</h3>
+<p>定义双指针i和j，分别指向groups[i]和nums[j]，同时注意双指针不可超出其指向的数组边界。
+在i和j循环的过程中，有k指针指向groups[i]中第k个元素groups[i][k]，如果nums[j+k]和groups[i][k]不相等，则i原地停留，j往后递进，直到找到和groups[i][k]相等的元素为止。</p>
+<p>同时需要注意边界：由于要生成n个不相交的子数组，即保证每一组groups[i]都是子数组，对于j指针而言，如果j+groups[i].length超出了nums[j]的边界，则说明groups[i]以及之后的数组都无法作为nums[j]的子数组。</p>
+<p>若groups[i]可以作为子数组，则i往后递进，同时为了确保每一个groups[i]不相交，j要越过当前已匹配的元素，即往后移动的长度为groups[i].length。</p>
+<h4 id="思路递推">思路递推</h4>
+<p>以实例一：groups = [[1,-1,-1],[3,-2,0]], nums = [1,-1,0,1,-1,-1,3,-2,0]为例</p>
+<ul>
+<li>初始状态，i = 0,j = 0，nums.length = 9</li>
+<li>groups[i] = [1,-1,-1]，nums[j] = 1</li>
+<li>j(0)+group[i].length(3) &lt;= nums.length(9)，遍历继续</li>
+<li>遍历groups[i]，发现groups[i][2] = -1,nums[j+2] = nums[2] = 0，二者不相等，j往后递进+1.</li>
+<li>i = 0,j = 1</li>
+<li>groups[i] = [1,-1,-1]，nums[j] = -1</li>
+<li>j(1)+group[i].length(3) &lt; nums.length(9)，遍历继续</li>
+<li>遍历groups[i]，发现groups[i][0] = 1,nums[j+0] = nums[1] = -1，二者不相等，j往后递进+1.</li>
+<li>i = 0,j = 2</li>
+<li>groups[i] = [1,-1,-1]，nums[j] = 0</li>
+<li>j(2)+group[i].length(3) &lt; nums.length(9)，遍历继续</li>
+<li>遍历groups[i]，发现groups[i][0] = 1,nums[j+0] = nums[2] = 0，二者不相等，j往后递进+1.</li>
+<li>i = 0,j = 3</li>
+<li>groups[i] = [1,-1,-1]，nums[j] = 1</li>
+<li>j(3)+group[i].length(3) &lt; nums.length(9)，遍历继续</li>
+<li>遍历groups[i]，发现:
+<ul>
+<li>groups[i][0] = nums[j+0] = nums[3] = 1</li>
+<li>groups[i][1] = nums[j+1] = nums[4] = -1</li>
+<li>groups[i][2] = nums[j+2] = nums[5] = -1</li>
+<li>因此，groups[i]可以作为nums的一个不相交子序列，i往后递进+1，同时为了保证子数组不相交，j往后递进groups[i].length的长度</li>
+</ul>
+</li>
+<li>i = 1,j = 6</li>
+<li>groups[i] = [3，-2,0]，nums[j] = 3</li>
+<li>j(6)+group[i].length(3) &lt;= nums.length(9)，遍历继续</li>
+<li>遍历groups[i]，发现:
+<ul>
+<li>groups[i][0] = nums[j+0] = nums[6] = 3</li>
+<li>groups[i][1] = nums[j+1] = nums[7] = -2</li>
+<li>groups[i][2] = nums[j+2] = nums[8] = 0</li>
+<li>因此，groups[i]可以作为nums的一个不相交子序列，i往后递进+1，同时为了保证子数组不相交，j往后递进groups[i].length的长度</li>
+</ul>
+</li>
+<li>i = 3，j = 9，二者达到各自的数组边界，结束循环</li>
+<li>判断i是否和groups.length相等，只有i到达groups末尾，才能证明groups[0]&hellip;groups[i-1]均可以构成不相交子数组。</li>
+</ul>
+<h3 id="代码实现">代码实现</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">  <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">canChoose</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span><span style="color:#f92672">[][]</span> groups<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span><span style="color:#f92672">[]</span> nums<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">int</span> groupLength <span style="color:#f92672">=</span> groups<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">,</span>numLength <span style="color:#f92672">=</span> nums<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">;</span>
+        <span style="color:#75715e">// 双指针，分别指向groups[i]和nums[j]
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> 0<span style="color:#f92672">,</span>j <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>i <span style="color:#f92672">&lt;</span> groupLength <span style="color:#f92672">&amp;&amp;</span> j <span style="color:#f92672">&lt;</span> numLength<span style="color:#f92672">){</span>
+            <span style="color:#75715e">// 判断当前groups[i]是否为nums的连续子序列
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">int</span> currentLength <span style="color:#f92672">=</span> groups<span style="color:#f92672">[</span>i<span style="color:#f92672">].</span><span style="color:#a6e22e">length</span><span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>j <span style="color:#f92672">+</span> currentLength <span style="color:#f92672">&gt;</span> numLength<span style="color:#f92672">)</span>
+                <span style="color:#75715e">// 如果当前j加上group[i]的长度若超过nums的总长度，则说明无法生成groupLength个连续子数组
+</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">boolean</span> isSub <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> k <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span> k <span style="color:#f92672">&lt;</span> currentLength<span style="color:#f92672">;</span> k<span style="color:#f92672">++)</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>groups<span style="color:#f92672">[</span>i<span style="color:#f92672">][</span>k<span style="color:#f92672">]</span> <span style="color:#f92672">!=</span> nums<span style="color:#f92672">[</span>j<span style="color:#f92672">+</span>k<span style="color:#f92672">]){</span>
+                    <span style="color:#75715e">// 如果当前group[i]的第k个元素和nums[j+k]的元素不相等，则让j指针往后移动，直到匹配到相等的元素为止
+</span><span style="color:#75715e"></span>                    isSub <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+                    <span style="color:#66d9ef">break</span><span style="color:#f92672">;</span>
+                <span style="color:#f92672">}</span>
+            <span style="color:#f92672">}</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>isSub<span style="color:#f92672">){</span>
+                <span style="color:#75715e">// group[i]已完成匹配，转向下一个group子数组
+</span><span style="color:#75715e"></span>                i<span style="color:#f92672">++;</span>
+                <span style="color:#75715e">// 为了保证不相交，j往后递进group[i]的长度，跳过nums中已匹配的元素
+</span><span style="color:#75715e"></span>                j <span style="color:#f92672">+=</span> currentLength<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+                <span style="color:#75715e">// 说明当前groups[i]不匹配，i原地停留，j指针往后移动，直到匹配到和group[i]中元素相等的元素为止
+</span><span style="color:#75715e"></span>                j<span style="color:#f92672">++;</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#75715e">// 如果i指向groups末尾，则说明所有的groups[i]均能成为nums的不相交的子数组
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> i <span style="color:#f92672">==</span> groupLength<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">(){</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>canChoose<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span><span style="color:#f92672">[][]{{</span>1<span style="color:#f92672">,-</span>1<span style="color:#f92672">,-</span>1<span style="color:#f92672">},{</span>3<span style="color:#f92672">,-</span>2<span style="color:#f92672">,</span>0<span style="color:#f92672">}},</span><span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span><span style="color:#f92672">[]{</span>1<span style="color:#f92672">,-</span>1<span style="color:#f92672">,</span>0<span style="color:#f92672">,</span>1<span style="color:#f92672">,-</span>1<span style="color:#f92672">,-</span>1<span style="color:#f92672">,</span>3<span style="color:#f92672">,-</span>2<span style="color:#f92672">,</span>0<span style="color:#f92672">}));</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>canChoose<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span><span style="color:#f92672">[][]{{</span>10<span style="color:#f92672">,-</span>2<span style="color:#f92672">},{</span>1<span style="color:#f92672">,</span>2<span style="color:#f92672">,</span>3<span style="color:#f92672">,</span>4<span style="color:#f92672">}},</span><span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span><span style="color:#f92672">[]{</span>1<span style="color:#f92672">,</span>2<span style="color:#f92672">,</span>3<span style="color:#f92672">,</span>4<span style="color:#f92672">,</span>10<span style="color:#f92672">,-</span>2<span style="color:#f92672">}));</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div>
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://Huang-zh.github.io/tags/%E7%AE%97%E6%B3%95/">算法</a></span>
+        
+    </p>
+
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder meta-icon"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+
+        <span class="tag"><a href="https://Huang-zh.github.io/categories/%E7%AE%97%E6%B3%95%E6%89%8B%E8%AE%B0/">算法手记</a></span>
+        
+    </p>
+
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        386 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2023-09-16
+        
+
+        
+      </p>
+    </div>
+
+    
+    <div class="pagination">
+        
+
+        <div class="pagination__buttons">
+            
+
+            
+            <span class="button next">
+                <a href="https://Huang-zh.github.io/posts/leetcode807/">
+                    <span class="button__text">LeetCode算法手记：807.情感丰富的文字</span>
+                    <span class="button__icon">→</span>
+                </a>
+            </span>
+            
+        </div>
+    </div>
+
+
+    
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            
+            <span><a href="https://Huang-zh.github.io">huang.zh</a></span>
+            
+            
+            
+        </div>
+    </div>
+    
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span><a href="http://beian.miit.gov.cn">浙ICP备19022115号-1</a></span>
+        </div>
+    </div>
+    
+</footer>
+
+
+
+            
+        </div>
+
+        
+
+
+
+<script type="text/javascript" src="/bundle.min.644292943ae47eef02fcd64b11757aeb8caeeaebf473a823b62099edccac808e8d82689359f285e5d95994e5ad5ae3b9c1ccc281eb1828e67d0ba6630f95b832.js" integrity="sha512-ZEKSlDrkfu8C/NZLEXV664yu6uv0c6gjtiCZ7cysgI6NgmiTWfKF5dlZlOWtWuO5wczCgesYKOZ9C6ZjD5W4Mg=="></script>
+
+
+
+    </body>
+</html>
