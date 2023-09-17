@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="[huangzh]">
+<meta name="description" content="给定两个由一些闭区间组成的列表，firstList 和 secondList ，其中 firstList[i] = [start i, end i] 而 secondList[j] = [start j, end j] 。 每个区间列表都是成对不相交的，并且已经排序 。返回这两个区间列表的交集 。 形式上，闭区间 [a, b]（其中 a &amp;lt;= b）表示实数 x 的集合，而 a &amp;lt;= x &amp;lt;= b 。 两个闭区间的交集是一组实数，要么为空集，要么为闭区间。例如，[1, 3] 和 [2, 4] 的交集为 [2, 3] 。 示例 1： 输入：firstList = [[0,2],[5,10],[13,23],[24,25]], secondList = [[1,5],[8,12],[15,24],[25,26]] 输出：[[1,2],[5,5],[8,10],[15,23],[24,24],[25,25]] 示例 2： 输入：firstList = [[1,3],[5,9]], secondList = [ ] 输出：[ ] 示例 3： 输入：firstList = [], secondList = [[4,8],[10,12]] 输出：[ ] 示例 4： 输入：firstList = [[1,7]], secondList = [[3,10]] 输出：[[3,7]] 提示： 0 &amp;lt;= firstList." />
+<meta name="keywords" content=", 算法" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="https://Huang-zh.github.io/posts/leetcode986/" />
+
+
+    <title>
+        
+            LeetCode算法手记：986.区间列表的交集 :: 此间的少年 
+        
+    </title>
+
+
+
+
+
+<link rel="stylesheet" href="/main.b78c3be9451dc4ca61ca377f3dc2cf2e6345a44c2bae46216a322ef366daa399.css" integrity="sha256-t4w76UUdxMphyjd/PcLPLmNFpEwrrkYhajIu82bao5k=">
+
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="msapplication-TileColor" content="">
+
+
+<meta itemprop="name" content="LeetCode算法手记：986.区间列表的交集">
+<meta itemprop="description" content="给定两个由一些闭区间组成的列表，firstList 和 secondList ，其中 firstList[i] = [start i, end i] 而 secondList[j] = [start j, end j] 。 每个区间列表都是成对不相交的，并且已经排序 。返回这两个区间列表的交集 。 形式上，闭区间 [a, b]（其中 a &lt;= b）表示实数 x 的集合，而 a &lt;= x &lt;= b 。 两个闭区间的交集是一组实数，要么为空集，要么为闭区间。例如，[1, 3] 和 [2, 4] 的交集为 [2, 3] 。 示例 1： 输入：firstList = [[0,2],[5,10],[13,23],[24,25]], secondList = [[1,5],[8,12],[15,24],[25,26]] 输出：[[1,2],[5,5],[8,10],[15,23],[24,24],[25,25]] 示例 2： 输入：firstList = [[1,3],[5,9]], secondList = [ ] 输出：[ ] 示例 3： 输入：firstList = [], secondList = [[4,8],[10,12]] 输出：[ ] 示例 4： 输入：firstList = [[1,7]], secondList = [[3,10]] 输出：[[3,7]] 提示： 0 &lt;= firstList."><meta itemprop="datePublished" content="2023-09-17T12:10:26+08:00" />
+<meta itemprop="dateModified" content="2023-09-17T12:10:26+08:00" />
+<meta itemprop="wordCount" content="317"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="keywords" content="算法," />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://Huang-zh.github.io"/>
+
+<meta name="twitter:title" content="LeetCode算法手记：986.区间列表的交集"/>
+<meta name="twitter:description" content="给定两个由一些闭区间组成的列表，firstList 和 secondList ，其中 firstList[i] = [start i, end i] 而 secondList[j] = [start j, end j] 。 每个区间列表都是成对不相交的，并且已经排序 。返回这两个区间列表的交集 。 形式上，闭区间 [a, b]（其中 a &lt;= b）表示实数 x 的集合，而 a &lt;= x &lt;= b 。 两个闭区间的交集是一组实数，要么为空集，要么为闭区间。例如，[1, 3] 和 [2, 4] 的交集为 [2, 3] 。 示例 1： 输入：firstList = [[0,2],[5,10],[13,23],[24,25]], secondList = [[1,5],[8,12],[15,24],[25,26]] 输出：[[1,2],[5,5],[8,10],[15,23],[24,24],[25,25]] 示例 2： 输入：firstList = [[1,3],[5,9]], secondList = [ ] 输出：[ ] 示例 3： 输入：firstList = [], secondList = [[4,8],[10,12]] 输出：[ ] 示例 4： 输入：firstList = [[1,7]], secondList = [[3,10]] 输出：[[3,7]] 提示： 0 &lt;= firstList."/>
+
+
+
+    <meta property="og:title" content="LeetCode算法手记：986.区间列表的交集" />
+<meta property="og:description" content="给定两个由一些闭区间组成的列表，firstList 和 secondList ，其中 firstList[i] = [start i, end i] 而 secondList[j] = [start j, end j] 。 每个区间列表都是成对不相交的，并且已经排序 。返回这两个区间列表的交集 。 形式上，闭区间 [a, b]（其中 a &lt;= b）表示实数 x 的集合，而 a &lt;= x &lt;= b 。 两个闭区间的交集是一组实数，要么为空集，要么为闭区间。例如，[1, 3] 和 [2, 4] 的交集为 [2, 3] 。 示例 1： 输入：firstList = [[0,2],[5,10],[13,23],[24,25]], secondList = [[1,5],[8,12],[15,24],[25,26]] 输出：[[1,2],[5,5],[8,10],[15,23],[24,24],[25,25]] 示例 2： 输入：firstList = [[1,3],[5,9]], secondList = [ ] 输出：[ ] 示例 3： 输入：firstList = [], secondList = [[4,8],[10,12]] 输出：[ ] 示例 4： 输入：firstList = [[1,7]], secondList = [[3,10]] 输出：[[3,7]] 提示： 0 &lt;= firstList." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://Huang-zh.github.io/posts/leetcode986/" /><meta property="og:image" content="https://Huang-zh.github.io"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-09-17T12:10:26+08:00" />
+<meta property="article:modified_time" content="2023-09-17T12:10:26+08:00" /><meta property="og:site_name" content="此间的少年" />
+
+
+
+
+
+
+    <meta property="article:section" content="算法手记" />
+
+
+
+    <meta property="article:published_time" content="2023-09-17 12:10:26 &#43;0800 CST" />
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    
+        <body>
+    
+    
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text ">
+                huan.g</span>
+            <span class="logo__cursor" style=
+                  "
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/about/">关于我</a></li><li><a href="/categories/">分类</a></li><li><a href="/posts/">文章</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+        </span>
+    </span>
+</header>
+
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        2 minutes
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="https://Huang-zh.github.io/posts/leetcode986/">LeetCode算法手记：986.区间列表的交集</a>
+      </h1>
+
+      
+
+      
+
+      
+
+      <div class="post-content">
+        <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">给定两个由一些闭区间组成的列表，firstList 和 secondList ，其中 firstList[i] = [start i, end i] 而 secondList[j] = [start j, end j] 。
+
+每个区间列表都是成对不相交的，并且已经排序 。返回这两个区间列表的交集 。
+
+形式上，闭区间 [a, b]（其中 a &lt;= b）表示实数 x 的集合，而 a &lt;= x &lt;= b 。
+
+两个闭区间的交集是一组实数，要么为空集，要么为闭区间。例如，[1, 3] 和 [2, 4] 的交集为 [2, 3] 。
+
+示例 1：
+输入：firstList = [[0,2],[5,10],[13,23],[24,25]], secondList = [[1,5],[8,12],[15,24],[25,26]]
+输出：[[1,2],[5,5],[8,10],[15,23],[24,24],[25,25]]
+
+示例 2：
+输入：firstList = [[1,3],[5,9]], secondList = [ ]
+输出：[ ]
+
+示例 3：
+输入：firstList = [], secondList = [[4,8],[10,12]]
+输出：[ ]
+
+示例 4：
+输入：firstList = [[1,7]], secondList = [[3,10]]
+输出：[[3,7]]
+
+提示：
+0 &lt;= firstList.length, secondList.length &lt;= 1000
+firstList.length + secondList.length &gt;= 1
+0 &lt;= start i &lt; end i &lt;= 109
+end i &lt; start i+1
+0 &lt;= start j &lt; end j &lt;= 109
+end j &lt; start j+1
+
+</code></pre></div><h3 id="思路">思路</h3>
+<p>维护双指针i，j，各自指向两个区间列表，对应[starti,endi]和[startj,endj]。</p>
+<p>其实如果两个区间[starti,endi]和[startj,endj]存在交集，则必然遵循这样的规律：</p>
+<ul>
+<li>
+<ol>
+<li>endj必然大于等于starti，同时，endi必然大于等于startj。</li>
+</ol>
+</li>
+<li>
+<ol start="2">
+<li>交集的开闭区间必然为[max(starti,startj),min(endi,endj)]。</li>
+</ol>
+</li>
+</ul>
+<p><img src="https://qiniu.lemonhuang.com/LeetCode986.png" alt="相交区间"></p>
+<p>同时，对于区间的末尾，需要做判断：</p>
+<ul>
+<li>
+<p>如果endi在endj之后，说明区间i向后延伸更长的范围，可能会和下一个区间j有交集，此时需要判断下一个j区间。</p>
+</li>
+<li>
+<p>如果endj在endi之后，说明区间j向后延伸更长的范围，可能会和下一个区间i有交集，此时需要判断下一个i区间。</p>
+</li>
+</ul>
+<h4 id="思路递推">思路递推</h4>
+<p>以实例一中的firstList = [[0,2],[5,10],[13,23],[24,25]], secondList = [[1,5],[8,12],[15,24],[25,26]]为例：</p>
+<ul>
+<li>初始化，i = 0，j = 0。</li>
+<li>[starti,endi]对应[0,2],[startj,endj]对应[1,5]，发现endj大于等于starti且endi大于等于startj，得到相交区间[max(starti,startj),min(endi,endj)] = [1,2]，加入结果集。</li>
+<li>此时endj大于endi，说明区间j向后延伸更长的范围，可能会和下一个区间i有交集，此时需要判断下一个i区间，因此i++向后递进。</li>
+<li>i = 1，j = 0。</li>
+<li>[starti,endi]对应[5,10],[startj,endj]对应[1,5]，发现endj大于等于starti且endi大于等于startj，得到相交区间[max(starti,startj),min(endi,endj)] = [5,5]，加入结果集。</li>
+<li>此时endi大于endj，说明区间i向后延伸更长的范围，可能会和下一个区间j有交集，此时需要判断下一个j区间，因此j++向后递进。</li>
+<li>i = 1，j = 1。</li>
+<li>[starti,endi]对应[5,10],[startj,endj]对应[8,12]，发现endj大于等于starti且endi大于等于startj，得到相交区间[max(starti,startj),min(endi,endj)] = [8,10]，加入结果集。</li>
+<li>此时endj大于endi，说明区间j向后延伸更长的范围，可能会和下一个区间i有交集，此时需要判断下一个i区间，因此i++向后递进。</li>
+<li>i = 2，j = 1。</li>
+<li>[starti,endi]对应[13,23],[startj,endj]对应[8,12]，发现不满足endj大于等于starti且endi大于等于startj，无法得到相交区间。</li>
+<li>此时endi大于endj，说明区间i向后延伸更长的范围，可能会和下一个区间j有交集，此时需要判断下一个j区间，因此j++向后递进。</li>
+<li>i = 2，j = 2。</li>
+<li>[starti,endi]对应[13,23],[startj,endj]对应[15,24]，发现endj大于等于starti且endi大于等于startj，得到相交区间[max(starti,startj),min(endi,endj)] = [15,23]，加入结果集。</li>
+<li>此时endj大于endi，说明区间j向后延伸更长的范围，可能会和下一个区间i有交集，此时需要判断下一个i区间，因此i++向后递进。</li>
+<li>i = 3，j = 2。</li>
+<li>[starti,endi]对应[24,25],[startj,endj]对应[15,24]，发现endj大于等于starti且endi大于等于startj，得到相交区间[max(starti,startj),min(endi,endj)] = [24,24]，加入结果集。</li>
+<li>此时endi大于endj，说明区间i向后延伸更长的范围，可能会和下一个区间j有交集，此时需要判断下一个j区间，因此j++向后递进。</li>
+<li>i = 3，j = 3。</li>
+<li>[starti,endi]对应[24,25],[startj,endj]对应[25,26]，发现endj大于等于starti且endi大于等于startj，得到相交区间[max(starti,startj),min(endi,endj)] = [25,25]，加入结果集。</li>
+<li>此时endj大于endi，说明区间j向后延伸更长的范围，可能会和下一个区间i有交集，此时需要判断下一个i区间，因此i++向后递进。</li>
+<li>i = 4，j = 3，由于i已经超越数组边界，退出循环。</li>
+<li>最终结果为[[1,2],[5,5],[8,10],[15,23],[24,24],[25,25]]</li>
+</ul>
+<h3 id="代码实现">代码实现</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">int</span><span style="color:#f92672">[][]</span> <span style="color:#a6e22e">intervalIntersection</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span><span style="color:#f92672">[][]</span> firstList<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span><span style="color:#f92672">[][]</span> secondList<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">int</span> fLength <span style="color:#f92672">=</span> firstList<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">,</span>sLength <span style="color:#f92672">=</span> secondList<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> 0<span style="color:#f92672">,</span>j <span style="color:#f92672">=</span> 0<span style="color:#f92672">;</span>
+        List<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">[]&gt;</span> list <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ArrayList<span style="color:#f92672">&lt;&gt;();</span>
+        <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>i <span style="color:#f92672">&lt;</span> fLength <span style="color:#f92672">&amp;&amp;</span> j <span style="color:#f92672">&lt;</span> sLength<span style="color:#f92672">){</span>
+            <span style="color:#66d9ef">int</span> startI <span style="color:#f92672">=</span> firstList<span style="color:#f92672">[</span>i<span style="color:#f92672">][</span>0<span style="color:#f92672">],</span>endI <span style="color:#f92672">=</span> firstList<span style="color:#f92672">[</span>i<span style="color:#f92672">][</span>1<span style="color:#f92672">];</span>
+            <span style="color:#66d9ef">int</span> startJ <span style="color:#f92672">=</span> secondList<span style="color:#f92672">[</span>j<span style="color:#f92672">][</span>0<span style="color:#f92672">],</span>endJ <span style="color:#f92672">=</span> secondList<span style="color:#f92672">[</span>j<span style="color:#f92672">][</span>1<span style="color:#f92672">];</span>
+            <span style="color:#75715e">//只有endJ大于等于startI 且 startJ 大于等于endI 才能证明两者存在交集
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>endJ <span style="color:#f92672">&gt;=</span> startI <span style="color:#f92672">&amp;&amp;</span> endI <span style="color:#f92672">&gt;=</span> startJ <span style="color:#f92672">){</span>
+                list<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span><span style="color:#f92672">[]{</span>Math<span style="color:#f92672">.</span><span style="color:#a6e22e">max</span><span style="color:#f92672">(</span>startI<span style="color:#f92672">,</span>startJ<span style="color:#f92672">),</span>Math<span style="color:#f92672">.</span><span style="color:#a6e22e">min</span><span style="color:#f92672">(</span>endI<span style="color:#f92672">,</span>endJ<span style="color:#f92672">)});</span>
+            <span style="color:#f92672">}</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>endJ <span style="color:#f92672">&lt;</span> endI<span style="color:#f92672">){</span>
+                j<span style="color:#f92672">++;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+                i<span style="color:#f92672">++;</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> list<span style="color:#f92672">.</span><span style="color:#a6e22e">toArray</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span><span style="color:#f92672">[</span>0<span style="color:#f92672">][</span>0<span style="color:#f92672">]);</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">(){</span>
+        <span style="color:#66d9ef">int</span><span style="color:#f92672">[][]</span> ints <span style="color:#f92672">=</span> intervalIntersection<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span><span style="color:#f92672">[][]{{</span>0<span style="color:#f92672">,</span> 2<span style="color:#f92672">},</span> <span style="color:#f92672">{</span>5<span style="color:#f92672">,</span> 10<span style="color:#f92672">},</span> <span style="color:#f92672">{</span>13<span style="color:#f92672">,</span> 23<span style="color:#f92672">},</span> <span style="color:#f92672">{</span>24<span style="color:#f92672">,</span> 25<span style="color:#f92672">}},</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span><span style="color:#f92672">[][]{{</span>1<span style="color:#f92672">,</span> 5<span style="color:#f92672">},</span> <span style="color:#f92672">{</span>8<span style="color:#f92672">,</span> 12<span style="color:#f92672">},</span> <span style="color:#f92672">{</span>15<span style="color:#f92672">,</span> 24<span style="color:#f92672">},</span> <span style="color:#f92672">{</span>25<span style="color:#f92672">,</span> 26<span style="color:#f92672">}});</span>
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">int</span><span style="color:#f92672">[]</span> anInt <span style="color:#f92672">:</span> ints<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span>Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">(</span>anInt<span style="color:#f92672">));</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div>
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://Huang-zh.github.io/tags/%E7%AE%97%E6%B3%95/">算法</a></span>
+        
+    </p>
+
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder meta-icon"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+
+        <span class="tag"><a href="https://Huang-zh.github.io/categories/%E7%AE%97%E6%B3%95%E6%89%8B%E8%AE%B0/">算法手记</a></span>
+        
+    </p>
+
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        317 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2023-09-17
+        
+
+        
+      </p>
+    </div>
+
+    
+    <div class="pagination">
+        
+
+        <div class="pagination__buttons">
+            
+
+            
+            <span class="button next">
+                <a href="https://Huang-zh.github.io/posts/leetcode1781/">
+                    <span class="button__text">LeetCode算法手记：1781.所有子字符串美丽值之和</span>
+                    <span class="button__icon">→</span>
+                </a>
+            </span>
+            
+        </div>
+    </div>
+
+
+    
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            
+            <span><a href="https://Huang-zh.github.io">huang.zh</a></span>
+            
+            
+            
+        </div>
+    </div>
+    
+    
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span><a href="http://beian.miit.gov.cn">浙ICP备19022115号-1</a></span>
+        </div>
+    </div>
+    
+</footer>
+
+
+
+            
+        </div>
+
+        
+
+
+
+<script type="text/javascript" src="/bundle.min.644292943ae47eef02fcd64b11757aeb8caeeaebf473a823b62099edccac808e8d82689359f285e5d95994e5ad5ae3b9c1ccc281eb1828e67d0ba6630f95b832.js" integrity="sha512-ZEKSlDrkfu8C/NZLEXV664yu6uv0c6gjtiCZ7cysgI6NgmiTWfKF5dlZlOWtWuO5wczCgesYKOZ9C6ZjD5W4Mg=="></script>
+
+
+
+    </body>
+</html>
