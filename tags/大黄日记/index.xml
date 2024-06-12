@@ -6,7 +6,26 @@
     <description>Recent content in 大黄日记 on 此间的少年</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Thu, 24 Aug 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://Huang-zh.github.io/tags/%E5%A4%A7%E9%BB%84%E6%97%A5%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 12 Jun 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://Huang-zh.github.io/tags/%E5%A4%A7%E9%BB%84%E6%97%A5%E8%AE%B0/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>一些思绪</title>
+      <link>https://Huang-zh.github.io/posts/20240612/</link>
+      <pubDate>Wed, 12 Jun 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://Huang-zh.github.io/posts/20240612/</guid>
+      <description>时间来到了2024年，甲辰龙年，正直初夏，芒种才过，雨水很多。
+今年他的吉他更加陈旧了，弦枕处的裂痕更深了，那是时间流逝的痕迹。
+像是一位老朋友，经历了很多岁月，熟悉的不能再熟悉。
+掐指一算，这把琴已经相伴他左右十个年头，如弹指一挥间，书上说的白驹过隙大抵就是如此。
+斑驳的护板，锈迹斑斑的品丝，以及褪去颜色的商标。始终不舍得更换任意一个零部件。
+无数个深夜，拨动琴弦的时候，无数杂糅的感觉就涌上心头。
+那是彼时为梦想付出的努力，为挫折而发泄的负面情绪。
+那些无人问津的夜晚，在清亮的月光下倾诉着去成长。
+
+无他，今夜脑子里闪过很多记忆里的画面。跑马灯一般放映着过去的时光，光怪陆离，璀璨耀眼。
+所以就在这个夏夜，蝉鸣到来之际，记录一点自己杂乱无章的思绪。吹散在躁动的晚风里。</description>
+    </item>
+    
     <item>
       <title>浮生如梦</title>
       <link>https://Huang-zh.github.io/posts/firstpost/</link>
@@ -29,7 +48,8 @@
 奔波游离的人
 失约的人
 摇摇晃的人
-妙悟的人</description>
+妙悟的人
+var config = { startOnLoad:true, theme:&#39;neutral&#39;, align:&#39;left&#39; }; mermaid.initialize(config);  pie title French Words I Know &#34;Merde&#34; : 50 &#34;Oui&#34; : 35 &#34;Alors&#34; : 10 &#34;Non&#34; : 5  -- </description>
     </item>
     
   </channel>
