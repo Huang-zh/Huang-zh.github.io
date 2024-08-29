@@ -268,7 +268,7 @@ typedef struct redisDb { dict *dict; /* The keyspace for this DB */ dict *expire
 <hr>
 <h3 id="2-hash存储引擎">2. hash存储引擎</h3>
 <p>提到redis，不得不先提及hash存储引擎的概念，一个典型的hash存储引擎原理如下图所示：</p>
-<p><img src="https://qiniu.lemonhuang.com/hash.png" alt="hash存储示意"></p>
+<p><img src="https://s21.ax1x.com/2024/08/29/pAA26XQ.png" alt="hash存储示意"></p>
 <p>这种基于hash的存储方式，与传统关系性数据库有着非常大的区别。</p>
 <p>在内存中通过一定的hash算法均匀的散列key值，使不同的key均匀的散落在hashtable的不同栏位。</p>
 <p>由于相同的key可能对应不同的value，因此hashtable每个栏位实际上采用挂载链表的形式存储每一个value节点。</p>
@@ -693,7 +693,7 @@ sds <span style="color:#a6e22e">sdsnewlen</span>(<span style="color:#66d9ef">con
 </p>
 <p>比起一层层深入的跟踪源码，这种时序图能更直观的反应代码执行时的主体流程，也更考验对代码整体逻辑的总结归纳能力。</p>
 <p>至此，通过两个简单案例的分析，由浅入深，可以洞悉redis在存储数据时其字典数据结构的全貌：</p>
-<p><img src="https://qiniu.lemonhuang.com/Untitled%20Diagram.drawio%20%281%29.png" alt="redis存储数据模型"></p>
+<p><img src="https://s21.ax1x.com/2024/08/29/pAA2y6g.png" alt="redis存储数据模型"></p>
 <hr>
 <h3 id="5-key对内存的影响">5. Key对内存的影响</h3>
 <p>实际上，在redis中，一个key往往需要存储在两个hashtable中，一个是存储data的ht，而另一份则是存储了过期时间戳的ht。也就意味着，如果为一个key设置了expireTime，那么在redis会存在两份key，这使得在一些极端情况不得不考虑key的大小对内存占用的影响。</p>

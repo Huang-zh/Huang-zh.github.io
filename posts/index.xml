@@ -5,8 +5,45 @@
         <description>Recent content in Posts on 此间的少年</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en</language>
-        <lastBuildDate>Tue, 27 Aug 2024 00:00:00 +0000</lastBuildDate>
+        <lastBuildDate>Thu, 29 Aug 2024 00:00:00 +0000</lastBuildDate>
         <atom:link href="https://Huang-zh.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>在泉州</title>
+            <link>https://Huang-zh.github.io/posts/20240829/</link>
+            <pubDate>Thu, 29 Aug 2024 00:00:00 +0000</pubDate>
+            
+            <guid>https://Huang-zh.github.io/posts/20240829/</guid>
+            <description>整理相册的时候，突然看到一组照片，是2023年春节，自己独自在泉州的时候记录下的风景。
+那么，我决定在2024年的8月份，尝试用一种回忆的叙事方式，把镜头拉回在泉州流浪的日子里。
+东街路口 我的第一站，从泉州站直接乘坐的士到达东街，它位于泉州的老城区，和游客打卡地西街相连，但鲜有游客会在东街上漫无目的地游荡。
+那天下午，从浙江穿越到这座闽南的城市之后，在路口抬起头，便看到了趴在天上的云朵，有一种久违的松弛感，让前一日还在卖命工作的我感到无比的释然。我对自己说，这几天便让自己在这座城市里好好的流浪。
+东街楼宇 这里的楼宇，透露着强烈的岭南风格，红砖和下午四点的阳光相交辉映，有一种红尘滚滚的美。
+它们所呈现的，不是那种江南水乡小镇上统一规划并修缮后的工业古态，而是真实的、令人觉得质朴而恰到好处的，脚踏实地的古早味。
+那些本地的市民，骑着小电驴每日穿梭在这样一片建筑群里，想必也很惬意吧。
+红砖房 站在一幢不起眼的两层小楼前，抬头观察了好久，一切都是如此的和谐。
+开元寺西塔 终究是逛到了西街，逛到了开元寺，充满历史的西塔，在过去好长一段时间内被不断修缮和重建，得以保留今日的面貌。
+时光列车仍在往回穿梭，未完待续&amp;hellip;&amp;hellip;</description>
+            <content type="html"><![CDATA[<p>整理相册的时候，突然看到一组照片，是2023年春节，自己独自在泉州的时候记录下的风景。</p>
+<p>那么，我决定在2024年的8月份，尝试用一种回忆的叙事方式，把镜头拉回在泉州流浪的日子里。</p>
+<p><img src="https://s21.ax1x.com/2024/08/29/pAARe9f.jpg" alt="东街.jpg"></p>
+<div align="center">东街路口</div>
+<p>我的第一站，从泉州站直接乘坐的士到达东街，它位于泉州的老城区，和游客打卡地西街相连，但鲜有游客会在东街上漫无目的地游荡。</p>
+<p>那天下午，从浙江穿越到这座闽南的城市之后，在路口抬起头，便看到了趴在天上的云朵，有一种久违的松弛感，让前一日还在卖命工作的我感到无比的释然。我对自己说，这几天便让自己在这座城市里好好的流浪。</p>
+<p><img src="https://s21.ax1x.com/2024/08/29/pAAWP2T.jpg" alt="东街楼宇.jpg"></p>
+<div align="center">东街楼宇</div>
+<p>这里的楼宇，透露着强烈的岭南风格，红砖和下午四点的阳光相交辉映，有一种红尘滚滚的美。</p>
+<p>它们所呈现的，不是那种江南水乡小镇上统一规划并修缮后的工业古态，而是真实的、令人觉得质朴而恰到好处的，脚踏实地的古早味。</p>
+<p>那些本地的市民，骑着小电驴每日穿梭在这样一片建筑群里，想必也很惬意吧。</p>
+<p><img src="https://s21.ax1x.com/2024/08/29/pAAWtII.jpg" alt="红砖房.jpg"></p>
+<div align="center">红砖房</div>
+<p>站在一幢不起眼的两层小楼前，抬头观察了好久，一切都是如此的和谐。</p>
+<p><img src="https://s21.ax1x.com/2024/08/29/pAAWBQS.jpg" alt="开元寺西塔.jpg"></p>
+<div align="center">开元寺西塔</div>
+<p>终究是逛到了西街，逛到了开元寺，充满历史的西塔，在过去好长一段时间内被不断修缮和重建，得以保留今日的面貌。</p>
+<p>时光列车仍在往回穿梭，未完待续&hellip;&hellip;</p>
+]]></content>
+        </item>
         
         <item>
             <title>自在如风</title>
@@ -1723,7 +1760,7 @@ typedef struct redisDb { dict *dict; /* The keyspace for this DB */ dict *expire
 <hr>
 <h3 id="2-hash存储引擎">2. hash存储引擎</h3>
 <p>提到redis，不得不先提及hash存储引擎的概念，一个典型的hash存储引擎原理如下图所示：</p>
-<p><img src="https://qiniu.lemonhuang.com/hash.png" alt="hash存储示意"></p>
+<p><img src="https://s21.ax1x.com/2024/08/29/pAA26XQ.png" alt="hash存储示意"></p>
 <p>这种基于hash的存储方式，与传统关系性数据库有着非常大的区别。</p>
 <p>在内存中通过一定的hash算法均匀的散列key值，使不同的key均匀的散落在hashtable的不同栏位。</p>
 <p>由于相同的key可能对应不同的value，因此hashtable每个栏位实际上采用挂载链表的形式存储每一个value节点。</p>
@@ -2148,7 +2185,7 @@ sds <span style="color:#a6e22e">sdsnewlen</span>(<span style="color:#66d9ef">con
 </p>
 <p>比起一层层深入的跟踪源码，这种时序图能更直观的反应代码执行时的主体流程，也更考验对代码整体逻辑的总结归纳能力。</p>
 <p>至此，通过两个简单案例的分析，由浅入深，可以洞悉redis在存储数据时其字典数据结构的全貌：</p>
-<p><img src="https://qiniu.lemonhuang.com/Untitled%20Diagram.drawio%20%281%29.png" alt="redis存储数据模型"></p>
+<p><img src="https://s21.ax1x.com/2024/08/29/pAA2y6g.png" alt="redis存储数据模型"></p>
 <hr>
 <h3 id="5-key对内存的影响">5. Key对内存的影响</h3>
 <p>实际上，在redis中，一个key往往需要存储在两个hashtable中，一个是存储data的ht，而另一份则是存储了过期时间戳的ht。也就意味着，如果为一个key设置了expireTime，那么在redis会存在两份key，这使得在一些极端情况不得不考虑key的大小对内存占用的影响。</p>
