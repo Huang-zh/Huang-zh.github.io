@@ -5,8 +5,538 @@
         <description>Recent content in Posts on 此间的少年</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en</language>
-        <lastBuildDate>Thu, 29 Aug 2024 00:00:00 +0000</lastBuildDate>
+        <lastBuildDate>Mon, 02 Sep 2024 00:00:00 +0000</lastBuildDate>
         <atom:link href="https://Huang-zh.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>云交易系统开发手册</title>
+            <link>https://Huang-zh.github.io/posts/native-trade-system-devlop-log/</link>
+            <pubDate>Mon, 02 Sep 2024 00:00:00 +0000</pubDate>
+            
+            <guid>https://Huang-zh.github.io/posts/native-trade-system-devlop-log/</guid>
+            <description>1. 依赖和中间件   open-jdk 17.0.7
+  graalvm 22.3.2
+  Maven 3.6.3
+  nacos 2.2.3
+  Redis 6.0
+  Mysql 8.0
+  Springboot 3.0.6
+  SpringCloud Alibaba 2022.0.0.0
+  mybatis-plus 3.5.3
+  Seata 1.7.0
+  2. 模块总览 todo&amp;hellip;
+2.1 模块简介 todo&amp;hellip;
+3. 部署事项 3.1 部署命令：   建议每个模块都在idea中添加两个启动配置项
+ Native-cloud-xxx-debug：用于本地idea调试功能使用 Native-cloud-xxx-preCompile：用于Native打包镜像，需要添加VM参数命令：  -agentlib:native-image-agent=config-output-dir=/你的idea workspace目录/native-cloud-system/native-cloud-xxx-system/src/main/resources/META-INF/native-image/native-cloud-xxx-system 添加VM参数启动后，随机通过调试请求工具（如postman）访问该模块子系统几个功能（也可以不做这一步，只是为了确保native-image打包时所有代码组件均能够被链接），然后停止该模块，会在该模块的src/main/resources/META-INF/native-image/native-cloud-xxx-system目录下生成打包所需的json配置文件，这些文件中指定了源代码中通过反射、代理等途径创建的对象，只有成功生成这些配置文件，native-image打包成本地镜像才不会报错。   native-image执行打包命令：  mvn -e -Pnative -DskipTests=true native:compile      建议在部署模块之前，先通过mvn clean install将本地所有模块的改动都打入本地maven repo中去。</description>
+            <content type="html"><![CDATA[<h3 id="1-依赖和中间件">1. 依赖和中间件</h3>
+<ul>
+<li>
+<p>open-jdk 17.0.7</p>
+</li>
+<li>
+<p>graalvm 22.3.2</p>
+</li>
+<li>
+<p>Maven 3.6.3</p>
+</li>
+<li>
+<p>nacos 2.2.3</p>
+</li>
+<li>
+<p>Redis 6.0</p>
+</li>
+<li>
+<p>Mysql 8.0</p>
+</li>
+<li>
+<p>Springboot 3.0.6</p>
+</li>
+<li>
+<p>SpringCloud Alibaba 2022.0.0.0</p>
+</li>
+<li>
+<p>mybatis-plus 3.5.3</p>
+</li>
+<li>
+<p>Seata 1.7.0</p>
+</li>
+</ul>
+<h3 id="2-模块总览">2. 模块总览</h3>
+<p>todo&hellip;</p>
+<h4 id="21-模块简介">2.1 模块简介</h4>
+<p>todo&hellip;</p>
+<h3 id="3-部署事项">3. 部署事项</h3>
+<h4 id="31-部署命令">3.1 部署命令：</h4>
+<ul>
+<li>
+<p>建议每个模块都在idea中添加两个启动配置项</p>
+<ul>
+<li>Native-cloud-xxx-debug：用于本地idea调试功能使用</li>
+<li>Native-cloud-xxx-preCompile：用于Native打包镜像，需要添加VM参数命令：
+<ul>
+<li>-agentlib:native-image-agent=config-output-dir=/你的idea workspace目录/native-cloud-system/native-cloud-xxx-system/src/main/resources/META-INF/native-image/native-cloud-xxx-system</li>
+<li>添加VM参数启动后，随机通过调试请求工具（如postman）访问该模块子系统几个功能（也可以不做这一步，只是为了确保native-image打包时所有代码组件均能够被链接），然后停止该模块，会在该模块的src/main/resources/META-INF/native-image/native-cloud-xxx-system目录下生成打包所需的json配置文件，这些文件中指定了源代码中通过反射、代理等途径创建的对象，只有成功生成这些配置文件，native-image打包成本地镜像才不会报错。</li>
+</ul>
+</li>
+<li>native-image执行打包命令：
+<ul>
+<li>mvn -e -Pnative -DskipTests=true native:compile</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>建议在部署模块之前，先通过mvn clean install将本地所有模块的改动都打入本地maven repo中去。</p>
+</li>
+</ul>
+<h3 id="4-部署常见问题">4. 部署常见问题</h3>
+<ul>
+<li>
+<p>镜像打包成功，但Mybatis相关类报错：ClassNotFound</p>
+<ul>
+<li>检查该模块启动类上是否有注解@EnableNativeHints，只有引入了该注解，才能让mybatis-plus在打包成本地镜像后正常工作。</li>
+</ul>
+</li>
+<li>
+<p>镜像打包成功，但Jwt相关类报错：DefaultJwtParser：ClassNotFound</p>
+<ul>
+<li>检查该模块对应打包配置目录下的proxy-config.json文件中有没有指定DefaultJwtParser，若没有指定则说明该类和其相关的模块均未被链接，需要使用对应模块的preCompile启动项启动该类，调用一次流程中使用了DefaultJwtParser的功能，再停止该模块，能够使proxy-config文件写入该类，再重新执行打包命令即可。</li>
+</ul>
+</li>
+<li>
+<p>执行native-image打包命令过程中报错：nosuchmethoderror</p>
+<ul>
+<li>如果是在一个之前能够正常工作的class中添加了新方法，那么需要让maven重新生成该类的安装包，执行mvn clean install即可。</li>
+<li>如果是javabean中不存在getXXX或setXXX方法，检查是否使用lombok的@data、@AllArgsConstructor等注解，另外，不建议在项目中使用lombok。</li>
+</ul>
+</li>
+<li>
+<p>gateway无法转发请求到正确的子模块：</p>
+<ul>
+<li>检查gateway下的配置文件routes节点中是否已添加子模块的路由。</li>
+<li>如果是新加的模块，由于AOT提前编译的局限性，需要在gateway目录下增加一个对应模块的OpenFeignClient，这样才能确保OpenFeign相关的配置类提前被链接。</li>
+</ul>
+</li>
+<li>
+<p>mybatis-plus使用lambda查询方式报错：</p>
+</li>
+<li>
+<p>目前mybatis官方暂未出补丁修复AOT模式下lambda查询失效的问题，虽然github上issue已经存在，建议避开wrapper查询，自行在mapper中增加查询方法进行业务上的适配。</p>
+</li>
+<li>
+<p>打包成native-image执行时，插入到mysql的中文字段乱码：</p>
+<ul>
+<li>show full columns from <schema>.<tablename>，确保数据库表字段的字符集是UTF8编码。</li>
+<li>检查配置文件中jdbc-url配置，由于使用了hikariCP作为数据源，characterEncoding=uft8才能起到使用UTF8中文字符集的作用。</li>
+</ul>
+</li>
+<li>
+<p>native镜像RPC报错： java.lang.IllegalArgumentException: Object of class [org.springframework.context.support.GenericApplicationContext] must be an instance of interface org.springframework.context.annotation.AnnotationConfigRegistry] with root cause</p>
+<ul>
+<li>
+<p>在对应的调用方模块配置文件中加入openfeign相关AOT配置，以qms-system调用user-system为例，需在qms-system模块的配置文件中加入如下内容：</p>
+<ul>
+<li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">spring</span>:
+  <span style="color:#f92672">cloud</span>:
+    <span style="color:#f92672">refresh</span>:
+      <span style="color:#f92672">enabled</span>: <span style="color:#66d9ef">false</span>
+    <span style="color:#f92672">openfeign</span>:
+      <span style="color:#75715e"># 支持AOT编译openfeign调用配置项 begin</span>
+      <span style="color:#f92672">client</span>:
+        <span style="color:#f92672">refresh-enabled</span>: <span style="color:#66d9ef">false</span>
+        <span style="color:#f92672">config</span>:
+          <span style="color:#f92672">user-system</span>:
+            <span style="color:#f92672">urls</span>: <span style="color:#ae81ff">http://127.0.0.1:8880</span>
+      <span style="color:#f92672">lazy-attributes-resolution</span>: <span style="color:#66d9ef">false</span>
+    <span style="color:#f92672">loadbalancer</span>:
+      <span style="color:#f92672">ribbon</span>:
+        <span style="color:#f92672">enabled</span>: <span style="color:#66d9ef">false</span>
+      <span style="color:#f92672">nacos</span>:
+        <span style="color:#f92672">enabled</span>: <span style="color:#66d9ef">true</span>
+      <span style="color:#f92672">eager-load</span>:
+        <span style="color:#f92672">clients</span>:
+          - <span style="color:#ae81ff">user-system</span>
+      <span style="color:#f92672">cache</span>:
+        <span style="color:#f92672">enabled</span>: <span style="color:#66d9ef">true</span>
+      <span style="color:#75715e"># 支持AOT编译openfeign调用配置项 end</span>
+</code></pre></div></li>
+<li>
+<p>如果下游服务（上述例子user-system）为集群部署，由于AOT需要提前加载指定订阅服务的列表，所以user-system.urls中需要配置集群中所有节点的ip:port。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>全局错误处理失败，报错：No acceptable representation</p>
+<ul>
+<li>检查返回的result实现类是否有成员变量的get\set方法。</li>
+</ul>
+</li>
+<li>
+<p>集成seata之后，使用nacos作为配置中心，控制台报错，nacos-server端登录错误，完整错误如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">2023<span style="color:#f92672">-</span>12<span style="color:#f92672">-</span>09T13<span style="color:#f92672">:</span>14<span style="color:#f92672">:</span>38<span style="color:#f92672">.</span><span style="color:#a6e22e">423</span><span style="color:#f92672">+</span>08<span style="color:#f92672">:</span>00 ERROR 2971 <span style="color:#f92672">---</span> <span style="color:#f92672">[</span>s<span style="color:#f92672">.</span><span style="color:#a6e22e">client</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Worker</span><span style="color:#f92672">]</span> c<span style="color:#f92672">.</span><span style="color:#a6e22e">a</span><span style="color:#f92672">.</span><span style="color:#a6e22e">n</span><span style="color:#f92672">.</span><span style="color:#a6e22e">c</span><span style="color:#f92672">.</span><span style="color:#a6e22e">a</span><span style="color:#f92672">.</span><span style="color:#a6e22e">i</span><span style="color:#f92672">.</span><span style="color:#a6e22e">process</span><span style="color:#f92672">.</span><span style="color:#a6e22e">HttpLoginProcessor</span>   <span style="color:#f92672">:</span> login failed<span style="color:#f92672">:</span> <span style="color:#f92672">{</span><span style="color:#e6db74">&#34;code&#34;</span><span style="color:#f92672">:</span>500<span style="color:#f92672">,</span><span style="color:#e6db74">&#34;message&#34;</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#34;caused: Cannot invoke \&#34;com.alibaba.nacos.plugin.auth.impl.jwt.NacosJwtParser.getExpireTimeInSeconds(String)\&#34; because \&#34;this.jwtParser\&#34; is null;&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;header&#34;</span><span style="color:#f92672">:{</span><span style="color:#e6db74">&#34;header&#34;</span><span style="color:#f92672">:{</span><span style="color:#e6db74">&#34;Accept-Charset&#34;</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#34;UTF-8&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;Authorization&#34;</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#34;Bearer&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;Connection&#34;</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#34;close&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;Content-Length&#34;</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#34;142&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;Content-Security-Policy&#34;</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#34;script-src &#39;self&#39;&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;Content-Type&#34;</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#34;text/html;charset=UTF-8&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;Date&#34;</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#34;Sat, 09 Dec 2023 05:14:38 GMT&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;Vary&#34;</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#34;Access-Control-Request-Headers&#34;</span><span style="color:#f92672">},</span><span style="color:#e6db74">&#34;originalResponseHeader&#34;</span><span style="color:#f92672">:{</span><span style="color:#e6db74">&#34;Authorization&#34;</span><span style="color:#f92672">:[</span><span style="color:#e6db74">&#34;Bearer&#34;</span><span style="color:#f92672">],</span><span style="color:#e6db74">&#34;Connection&#34;</span><span style="color:#f92672">:[</span><span style="color:#e6db74">&#34;close&#34;</span><span style="color:#f92672">],</span><span style="color:#e6db74">&#34;Content-Length&#34;</span><span style="color:#f92672">:[</span><span style="color:#e6db74">&#34;142&#34;</span><span style="color:#f92672">],</span><span style="color:#e6db74">&#34;Content-Security-Policy&#34;</span><span style="color:#f92672">:[</span><span style="color:#e6db74">&#34;script-src &#39;self&#39;&#34;</span><span style="color:#f92672">],</span><span style="color:#e6db74">&#34;Content-Type&#34;</span><span style="color:#f92672">:[</span><span style="color:#e6db74">&#34;text/html;charset=UTF-8&#34;</span><span style="color:#f92672">],</span><span style="color:#e6db74">&#34;Date&#34;</span><span style="color:#f92672">:[</span><span style="color:#e6db74">&#34;Sat, 09 Dec 2023 05:14:38 GMT&#34;</span><span style="color:#f92672">],</span><span style="color:#e6db74">&#34;Vary&#34;</span><span style="color:#f92672">:[</span><span style="color:#e6db74">&#34;Access-Control-Request-Headers&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;Access-Control-Request-Method&#34;</span><span style="color:#f92672">,</span><span style="color:#e6db74">&#34;Origin&#34;</span><span style="color:#f92672">]},</span><span style="color:#e6db74">&#34;charset&#34;</span><span style="color:#f92672">:</span><span style="color:#e6db74">&#34;UTF-8&#34;</span><span style="color:#f92672">}}</span>
+
+</code></pre></div><ul>
+<li>原因是nacos使用的2.2.3版本默认取消了登录验证，所以注释掉工程对应的配置文件中的username和password配置项，需要注意的是seata.config.nacos和seata.config.registry均需要注释用户名和密码。</li>
+</ul>
+</li>
+<li>
+<p>集成seata，使用nacos做配置中心，控制台报错：service.vgroupMapping.native-cloud-system-group配置为空：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">io<span style="color:#f92672">.</span><span style="color:#a6e22e">seata</span><span style="color:#f92672">.</span><span style="color:#a6e22e">config</span><span style="color:#f92672">.</span><span style="color:#a6e22e">exception</span><span style="color:#f92672">.</span><span style="color:#a6e22e">ConfigNotFoundException</span><span style="color:#f92672">:</span> service<span style="color:#f92672">.</span><span style="color:#a6e22e">vgroupMapping</span><span style="color:#f92672">.</span><span style="color:#a6e22e">native</span><span style="color:#f92672">-</span>cloud<span style="color:#f92672">-</span>system<span style="color:#f92672">-</span>group configuration item is required
+</code></pre></div><ul>
+<li>
+<p>先检查工程模块下seata.config.nacos.group的值，发现配置项中定义去group为SEATA_GROUP的组中去获取配置：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">seata</span>:
+  <span style="color:#f92672">tx-service-group</span>: <span style="color:#ae81ff">native-cloud-system-group</span>
+  <span style="color:#f92672">service</span>:
+    <span style="color:#f92672">tx-service-group</span>: <span style="color:#ae81ff">native-cloud-system-group</span>
+    <span style="color:#f92672">vgroup-mapping</span>:
+      <span style="color:#f92672">native-cloud-system-group</span>: <span style="color:#ae81ff">native</span>
+  <span style="color:#f92672">config</span>:
+    <span style="color:#f92672">type</span>: <span style="color:#ae81ff">nacos</span>
+    <span style="color:#f92672">nacos</span>:
+      <span style="color:#f92672">server-addr</span>: <span style="color:#ae81ff">127.0.0.1</span>:<span style="color:#ae81ff">8848</span>
+      <span style="color:#f92672">group</span>: <span style="color:#ae81ff">SEATA_GROUP</span>
+</code></pre></div></li>
+<li>
+<p>再检查nacos dashboard中，namespace为public下(因为seata.config.nacos.namespace未配置，所以采用默认命名空间)是否添加了DataId为service.vgroupMapping.native-cloud-system-group且group为SEATA_GROUP的配置，如果没有，按照上述的条件添加一条配置，配置的值为：SEATA_GROUP。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>集成seata，集群订阅报错：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">[</span>timeoutChecker_1_1<span style="color:#f92672">]</span> ERROR i<span style="color:#f92672">.</span><span style="color:#a6e22e">s</span><span style="color:#f92672">.</span><span style="color:#a6e22e">c</span><span style="color:#f92672">.</span><span style="color:#a6e22e">r</span><span style="color:#f92672">.</span><span style="color:#a6e22e">n</span><span style="color:#f92672">.</span><span style="color:#a6e22e">NettyClientChannelManager</span><span style="color:#f92672">:</span>188 <span style="color:#f92672">--&gt;</span> no available service found in cluster <span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#66d9ef">default</span><span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">,</span> please make sure registry config correct and keep your seata server running
+</code></pre></div><ul>
+<li>确认seata-server端配置文件中seata.registry.nacos.cluster的值，和客户端从nacos拉取的配置文件中dataID为<strong>service.vgroupMapping.native-cloud-system-group</strong>中的值相等。</li>
+</ul>
+</li>
+<li>
+<p>@GlobalTransactional，TCC模式只执行一阶段try的逻辑，不执行二阶段提交：</p>
+<ul>
+<li>
+<p>断点打入GlobalTransactionalInterceptor中invoke方法，重点调试GlobalTransactional注解获取的过程：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">final</span> GlobalTransactional globalTransactionalAnnotation <span style="color:#f92672">=</span> getAnnotation<span style="color:#f92672">(</span>method<span style="color:#f92672">,</span> targetClass<span style="color:#f92672">,</span> GlobalTransactional<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+</code></pre></div><p>查看method变量的方法名是否和业务代码中GlobalTransactional注解标记的方法名一致。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>集成seata，客户端启动后报错：RM can not reconnect server</p>
+<ul>
+<li>
+<p>用下面的命令指定ip和端口重启seata-server:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">./seata-server.sh -h 127.0.0.1 -p <span style="color:#ae81ff">8091</span>
+</code></pre></div></li>
+</ul>
+</li>
+<li>
+<p>OpenFeign报错feign.RetryableException: too many bytes written executing</p>
+<ul>
+<li>
+<p>RPC传对象的时候造成请求体序列化后的字节数过多，需要取消openFeign拦截器中从前端请求带来的content-length限制，在项目下找到FeignBasicAuthRequestInterceptor并在遍历请求header循环中加入如下代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>name<span style="color:#f92672">.</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;content-length&#34;</span><span style="color:#f92672">)){</span>
+  	<span style="color:#66d9ef">continue</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div></li>
+</ul>
+</li>
+<li>
+<p>jdk17 使用annotation processor处理编译期注解，mvn install 注解处理器模块报错：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">服务配置文件不正确<span style="color:#f92672">,</span> 或构造处理程序对象javax<span style="color:#f92672">.</span><span style="color:#a6e22e">annotation</span><span style="color:#f92672">.</span><span style="color:#a6e22e">processing</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Processor</span><span style="color:#f92672">:</span> Provider com<span style="color:#f92672">.</span><span style="color:#a6e22e">huang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">ast</span><span style="color:#f92672">.</span><span style="color:#a6e22e">processor</span><span style="color:#f92672">.</span><span style="color:#a6e22e">LemonCompileProcessor</span> not found时抛出异常错误
+
+</code></pre></div><ul>
+<li>
+<p>确保处理器模块maven的配置文件中加入如下配置项</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml">		<span style="color:#f92672">&lt;build&gt;</span>
+        <span style="color:#f92672">&lt;plugins&gt;</span>
+            <span style="color:#f92672">&lt;plugin&gt;</span>
+                <span style="color:#f92672">&lt;groupId&gt;</span>org.apache.maven.plugins<span style="color:#f92672">&lt;/groupId&gt;</span>
+                <span style="color:#f92672">&lt;artifactId&gt;</span>maven-compiler-plugin<span style="color:#f92672">&lt;/artifactId&gt;</span>
+                <span style="color:#f92672">&lt;configuration&gt;</span>
+                  	<span style="color:#75715e">&lt;!-- 此项必须 --&gt;</span>
+                    <span style="color:#f92672">&lt;proc&gt;</span>none<span style="color:#f92672">&lt;/proc&gt;</span>
+                    <span style="color:#f92672">&lt;compilerArgs&gt;</span>
+                      	<span style="color:#75715e">&lt;!-- 下面四项arg也建议加上，这样执行mvn compile命令会加上下面的参数，确保字节码增强所依赖的javac模块不会无法访问--&gt;</span>
+                        <span style="color:#f92672">&lt;arg&gt;</span>--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED<span style="color:#f92672">&lt;/arg&gt;</span>
+                        <span style="color:#f92672">&lt;arg&gt;</span>--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED<span style="color:#f92672">&lt;/arg&gt;</span>
+                        <span style="color:#f92672">&lt;arg&gt;</span>--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED<span style="color:#f92672">&lt;/arg&gt;</span>
+                        <span style="color:#f92672">&lt;arg&gt;</span>--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED<span style="color:#f92672">&lt;/arg&gt;</span>
+                    <span style="color:#f92672">&lt;/compilerArgs&gt;</span>
+                <span style="color:#f92672">&lt;/configuration&gt;</span>
+            <span style="color:#f92672">&lt;/plugin&gt;</span>
+        <span style="color:#f92672">&lt;/plugins&gt;</span>
+    <span style="color:#f92672">&lt;/build&gt;</span>
+</code></pre></div></li>
+</ul>
+</li>
+<li>
+<p>jdk17 使用annotation processor处理编译期注解，mvn install 注解处理器模块时代码构建不通过，报如下错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">api不可见</span>
+com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">processing不可见</span>
+com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tree不可见</span>
+com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">util不可见</span>
+</code></pre></div><ul>
+<li>
+<p>由于jdk9 引入了jigsaw特性，原本javac所在的tools.jar被模块化，需要在idea设置中找到 Build,Execution,Deployment &ndash;&gt; Compiler &ndash;&gt; Java Complier &ndash;&gt; override complier parameters  per module，确保处理器模块export如下jdk自带模块：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">-</span>parameters
+<span style="color:#f92672">--</span>add<span style="color:#f92672">-</span>exports<span style="color:#f92672">=</span>jdk<span style="color:#f92672">.</span><span style="color:#a6e22e">compiler</span><span style="color:#f92672">/</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">processing</span><span style="color:#f92672">=</span>ALL<span style="color:#f92672">-</span>UNNAMED
+<span style="color:#f92672">--</span>add<span style="color:#f92672">-</span>exports<span style="color:#f92672">=</span>jdk<span style="color:#f92672">.</span><span style="color:#a6e22e">compiler</span><span style="color:#f92672">/</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">api</span><span style="color:#f92672">=</span>ALL<span style="color:#f92672">-</span>UNNAMED
+<span style="color:#f92672">--</span>add<span style="color:#f92672">-</span>exports<span style="color:#f92672">=</span>jdk<span style="color:#f92672">.</span><span style="color:#a6e22e">compiler</span><span style="color:#f92672">/</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tree</span><span style="color:#f92672">=</span>ALL<span style="color:#f92672">-</span>UNNAMED
+<span style="color:#f92672">--</span>add<span style="color:#f92672">-</span>exports<span style="color:#f92672">=</span>jdk<span style="color:#f92672">.</span><span style="color:#a6e22e">compiler</span><span style="color:#f92672">/</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">util</span><span style="color:#f92672">=</span>ALL<span style="color:#f92672">-</span>UNNAMED
+</code></pre></div></li>
+</ul>
+</li>
+<li>
+<p>使用注解处理器的业务模块 执行mvn compile/install 报错：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">com</span><span style="color:#f92672">.</span><span style="color:#a6e22e">huang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">ast</span><span style="color:#f92672">.</span><span style="color:#a6e22e">processor</span><span style="color:#f92672">.</span><span style="color:#a6e22e">LemonCompileProcessor</span> <span style="color:#f92672">(</span>in unnamed module <span style="color:#a6e22e">@0x3ac3f6f</span><span style="color:#f92672">)</span> cannot access <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">com</span><span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">processing</span><span style="color:#f92672">.</span><span style="color:#a6e22e">JavacProcessingEnvironment</span> <span style="color:#f92672">(</span>in module jdk<span style="color:#f92672">.</span><span style="color:#a6e22e">compiler</span><span style="color:#f92672">)</span> because module jdk<span style="color:#f92672">.</span><span style="color:#a6e22e">compiler</span> does not export com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">processing</span> to unnamed module <span style="color:#a6e22e">@0x3ac3f6f</span>
+
+</code></pre></div><ul>
+<li>
+<p>使用了idea自带的maven进行打包，所以不会读取配置在pom文件中的compilerArgs，需要手动为idea自带的maven指定解析时可访问的模块，打开settings &ndash;&gt;  Build,Execution,Deployment &ndash;&gt; build tools&ndash;&gt; maven &ndash;&gt; runner，设置maven运行时的vm option：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-tex" data-lang="tex">--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
+--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED
+</code></pre></div></li>
+<li>
+<p>同时，建议在业务模块pom文件中加上如下配置，使得命令行打包时能够读取配置项，使得编译期注解处理器能够正常被依赖：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml">		<span style="color:#f92672">&lt;build&gt;</span>
+        <span style="color:#f92672">&lt;plugins&gt;</span>
+            <span style="color:#f92672">&lt;plugin&gt;</span>
+                <span style="color:#f92672">&lt;groupId&gt;</span>org.apache.maven.plugins<span style="color:#f92672">&lt;/groupId&gt;</span>
+                <span style="color:#f92672">&lt;artifactId&gt;</span>maven-compiler-plugin<span style="color:#f92672">&lt;/artifactId&gt;</span>
+                <span style="color:#f92672">&lt;configuration&gt;</span>
+                    <span style="color:#f92672">&lt;target&gt;</span>17<span style="color:#f92672">&lt;/target&gt;</span>
+                    <span style="color:#f92672">&lt;source&gt;</span>17<span style="color:#f92672">&lt;/source&gt;</span>
+                    <span style="color:#f92672">&lt;annotationProcessors&gt;</span>
+                        <span style="color:#f92672">&lt;annotationProcessor&gt;</span>com.huang.ast.processor.LemonCompileProcessor<span style="color:#f92672">&lt;/annotationProcessor&gt;</span>
+                    <span style="color:#f92672">&lt;/annotationProcessors&gt;</span>
+                <span style="color:#f92672">&lt;/configuration&gt;</span>
+            <span style="color:#f92672">&lt;/plugin&gt;</span>
+        <span style="color:#f92672">&lt;/plugins&gt;</span>
+    <span style="color:#f92672">&lt;/build&gt;</span>
+</code></pre></div></li>
+</ul>
+</li>
+<li>
+<p>build modules或者执行mvn clean compile报如下错误：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">AssertionError</span>
+	at jdk<span style="color:#f92672">.</span><span style="color:#a6e22e">compiler</span><span style="color:#f92672">/</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">util</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Assert</span><span style="color:#f92672">.</span><span style="color:#a6e22e">error</span><span style="color:#f92672">(</span>Assert<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>155<span style="color:#f92672">)</span>
+	at jdk<span style="color:#f92672">.</span><span style="color:#a6e22e">compiler</span><span style="color:#f92672">/</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">util</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Assert</span><span style="color:#f92672">.</span><span style="color:#a6e22e">check</span><span style="color:#f92672">(</span>Assert<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>46<span style="color:#f92672">)</span>
+	at jdk<span style="color:#f92672">.</span><span style="color:#a6e22e">compiler</span><span style="color:#f92672">/</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">util</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Bits</span><span style="color:#f92672">.</span><span style="color:#a6e22e">incl</span><span style="color:#f92672">(</span>Bits<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>186<span style="color:#f92672">)</span>
+	at jdk<span style="color:#f92672">.</span><span style="color:#a6e22e">compiler</span><span style="color:#f92672">/</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">comp</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Flow$AssignAnalyzer</span><span style="color:#f92672">.</span><span style="color:#a6e22e">initParam</span><span style="color:#f92672">(</span>Flow<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>2232<span style="color:#f92672">)</span>
+	at jdk<span style="color:#f92672">.</span><span style="color:#a6e22e">compiler</span><span style="color:#f92672">/</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">comp</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Flow$AssignAnalyzer</span><span style="color:#f92672">.</span><span style="color:#a6e22e">visitMethodDef</span><span style="color:#f92672">(</span>Flow<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>2156<span style="color:#f92672">)</span>
+	at jdk<span style="color:#f92672">.</span><span style="color:#a6e22e">compiler</span><span style="color:#f92672">/</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tree</span><span style="color:#f92672">.</span><span style="color:#a6e22e">JCTree$JCMethodDecl</span><span style="color:#f92672">.</span><span style="color:#a6e22e">accept</span><span style="color:#f92672">(</span>JCTree<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>921<span style="color:#f92672">)</span>
+	at jdk<span style="color:#f92672">.</span><span style="color:#a6e22e">compiler</span><span style="color:#f92672">/</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tree</span><span style="color:#f92672">.</span><span style="color:#a6e22e">TreeScanner</span><span style="color:#f92672">.</span><span style="color:#a6e22e">scan</span><span style="color:#f92672">(</span>TreeScanner<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>49<span style="color:#f92672">)</span>
+	at jdk<span style="color:#f92672">.</span><span style="color:#a6e22e">compiler</span><span style="color:#f92672">/</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">comp</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Flow$BaseAnalyzer</span><span style="color:#f92672">.</span><span style="color:#a6e22e">scan</span><span style="color:#f92672">(</span>Flow<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>444<span style="color:#f92672">)</span>
+	at jdk<span style="color:#f92672">.</span><span style="color:#a6e22e">compiler</span><span style="color:#f92672">/</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">comp</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Flow$AssignAnalyzer</span><span style="color:#f92672">.</span><span style="color:#a6e22e">scan</span><span style="color:#f92672">(</span>Flow<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>1724<span style="color:#f92672">)</span>
+	at jdk<span style="color:#f92672">.</span><span style="color:#a6e22e">compiler</span><span style="color:#f92672">/</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">comp</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Flow$AssignAnalyzer</span><span style="color:#f92672">.</span><span style="color:#a6e22e">visitClassDef</span><span style="color:#f92672">(</span>Flow<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>2098<span style="color:#f92672">)</span>
+	at jdk<span style="color:#f92672">.</span><span style="color:#a6e22e">compiler</span><span style="color:#f92672">/</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tree</span><span style="color:#f92672">.</span><span style="color:#a6e22e">JCTree$JCClassDecl</span><span style="color:#f92672">.</span><span style="color:#a6e22e">accept</span><span style="color:#f92672">(</span>JCTree<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>819<span style="color:#f92672">)</span>
+	at jdk<span style="color:#f92672">.</span><span style="color:#a6e22e">compiler</span><span style="color:#f92672">/</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">sun</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tools</span><span style="color:#f92672">.</span><span style="color:#a6e22e">javac</span><span style="color:#f92672">.</span><span style="color:#a6e22e">tree</span><span style="color:#f92672">.</span><span style="color:#a6e22e">TreeScanner</span><span style="color:#f92672">.</span><span style="color:#a6e22e">scan</span><span style="color:#f92672">(</span>TreeScanner<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>49<span style="color:#f92672">)</span>
+</code></pre></div><ul>
+<li>
+<p>需要将treeMaker的节点指针定位至当前元素对应语法树的节点指针，在获取当前元素的语法树之后加入如下代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">JCTree jcTree <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">trees</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getTree</span><span style="color:#f92672">(</span>element<span style="color:#f92672">);</span>
+treeMaker<span style="color:#f92672">.</span><span style="color:#a6e22e">pos</span> <span style="color:#f92672">=</span> jcTree<span style="color:#f92672">.</span><span style="color:#a6e22e">pos</span><span style="color:#f92672">;</span>
+</code></pre></div></li>
+</ul>
+</li>
+</ul>
+<h3 id="5开发日志">5.开发日志</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">日期</th>
+<th style="text-align:center">内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">2023.07.08</td>
+<td style="text-align:center">项目基本依赖引入，完成框架搭建。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.07.15</td>
+<td style="text-align:center">账户系统完成基础功能：账户查询、营业部树查询。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.07.18</td>
+<td style="text-align:center">账户系统权限系统表结构建立完成，基于RBAC模型。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.07.20</td>
+<td style="text-align:center">账户系统权限体系编码完成，自测完成，实现用户粒度角色权限筛选与聚合。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.07.24</td>
+<td style="text-align:center">jwt+security依赖引入，登录+鉴权系统组合完成，实现登录赋权和api粒度权限校验。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.07.25</td>
+<td style="text-align:center">部分查询调整为mybatis-plus提供的lambda查询模式，减少代码中sql出现的频次。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.07.26</td>
+<td style="text-align:center">引入nacos，账户子系统具备服务注册功能，同时引入open-feign，提供基于http协议的RPC。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.07.31</td>
+<td style="text-align:center">native-image引入，改造部分类的加载方式，兼容native镜像打包。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.08.03</td>
+<td style="text-align:center">Graal-sdk依赖升级为22.3.2，解决native-image在AOT阶段的报错问题。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.08.09</td>
+<td style="text-align:center">添加账户子系统AOT脚本，确保所有模块能够在编译时期准确链接。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.08.10</td>
+<td style="text-align:center">新增common模块，用于放置公共配置类和工具类。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.08.12</td>
+<td style="text-align:center">抽取账户配置引导类（security、mybatis-plus、swagger-api&hellip;）至common模块下，启动、打包成功。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.08.15</td>
+<td style="text-align:center">新增common-api模块，移动公用entity至该模块路径，供后续子系统间基于公用entity传输数据。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.08.18</td>
+<td style="text-align:center">新增额度子系统，完成框架搭建和数据流通、子系统间通信测试。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.08.23</td>
+<td style="text-align:center">额度子系统完成头寸体系建设，提供头寸划转资金、证券功能，编码完成，自测完成。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.08.29</td>
+<td style="text-align:center">新增自定义注解openApi，配合鉴权体系实现白名单配置机制。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.08.31</td>
+<td style="text-align:center">子系统全部增加domain域，所有服务不再直接访问dao层查询，统一由domain域提供数据访问和操作的途径。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.09.10</td>
+<td style="text-align:center">新增gateway模块，实现统一网关分发路由。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.09.16</td>
+<td style="text-align:center">调整open-feign相关AOT配置，解决gateway和open-feign兼容问题导致的native程序请求分发失败。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.09.20</td>
+<td style="text-align:center">gateway模块增加open-feign子系统代理类，能够使代理类被正确链接，解决AOT报错。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.09.24</td>
+<td style="text-align:center">新增common-util模块，放置常量类和工具类。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.09.29</td>
+<td style="text-align:center">新增common-result模块，提供子系统对外统一结果封装。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.09.31</td>
+<td style="text-align:center">异常体系建设完成，可自定义异常种类、异常处理类，具备统一捕捉业务异常的能力。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.10.07</td>
+<td style="text-align:center">业务检查模板体系设计完成、编码完成，提供高度抽象的模板检查策略，易于扩展。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.10.15</td>
+<td style="text-align:center">账户子系统、额度子系统业务完成业务检查模板改造，各类业务适配业务模板，编码完成、自测完成。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.10.20</td>
+<td style="text-align:center">提供接口api文档配置化注解，实现可插拔。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.10.26</td>
+<td style="text-align:center">新增大量枚举，优化业务检查代码，使用枚举代替所有魔法值。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.10.30</td>
+<td style="text-align:center">新建信用交易子系统，完成框架搭建。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.11.03</td>
+<td style="text-align:center">交易时间体系建设完成，具备不同业务交易时间检查能力。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.11.11</td>
+<td style="text-align:center">融资买入参数检查编码完成、自测完成。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.11.13</td>
+<td style="text-align:center">竞价业务证券代码检查体系建设完成，统一提供基础证券检查功能，并允许子类自行扩展。</td>
+</tr>
+<tr>
+<td style="text-align:center">2023.11.23</td>
+<td style="text-align:center">融资买入委托数据检查编码完成，自测完成。</td>
+</tr>
+<tr>
+<td style="text-align:center">2024.02.26</td>
+<td style="text-align:center">完成RPC调用融资日间实时合约生成逻辑，并基于TCC实现分布式事务补偿机制，自测完成。</td>
+</tr>
+<tr>
+<td style="text-align:center">2024.02.27</td>
+<td style="text-align:center">取消信用委托表order_id索引唯一属性，使分布式事务补偿后出现同一订单流水号能够存在多条废单委托，且仅存在一条有效委托，自测完成。</td>
+</tr>
+<tr>
+<td style="text-align:center">2024.02.29</td>
+<td style="text-align:center">补全合约系统日间实时合约流水和合约汇总流水记录逻辑，结合融资买入业务自测通过。</td>
+</tr>
+<tr>
+<td style="text-align:center">2024.03.01</td>
+<td style="text-align:center">引入javac-annotation processor编译期注解处理器，并解决JDK17模块化引起的maven compile以及idea build module报错，编译期处理器组件框架搭建完成，待实现具体注解处理器。</td>
+</tr>
+<tr>
+<td style="text-align:center">2024.03.02</td>
+<td style="text-align:center">调整日间合约汇总表索引，增加init_date字段并取消流水表索引unique属性，分布式事务代码配套修改。</td>
+</tr>
+<tr>
+<td style="text-align:center">2024.03.03</td>
+<td style="text-align:center">编译期注解框架完成get和set方法生成，值拷贝语句生成编码进度50%。</td>
+</tr>
+<tr>
+<td style="text-align:center">2024.03.04</td>
+<td style="text-align:center">值拷贝语句编码完成，自测通过，待结合业务逻辑进行测试。</td>
+</tr>
+<tr>
+<td style="text-align:center">2024.03.06</td>
+<td style="text-align:center">搭建环形队列模块，引入ringbuffer，并结合netty实现高性能收取报文处理数据。</td>
+</tr>
+<tr>
+<td style="text-align:center">2024.03.07</td>
+<td style="text-align:center">自定义简要二进制通信协议，编码50%。</td>
+</tr>
+<tr>
+<td style="text-align:center">2024.03.08</td>
+<td style="text-align:center">自定义简要二进制通信协议，编码完成，待业务核心模块引入该组件测试报文接收效果。</td>
+</tr>
+<tr>
+<td style="text-align:center">2024.03.10</td>
+<td style="text-align:center">ringbuffer模块，netty接收二进制数据根据报文规则解析字节代码修改，测试完成。</td>
+</tr>
+<tr>
+<td style="text-align:center">2024.03.12</td>
+<td style="text-align:center">ringbuffer模块引入disruptor，编写通用api，自测完成，压测结果支持16400 QPS。</td>
+</tr>
+<tr>
+<td style="text-align:center">2024.08.30-2024.08.31</td>
+<td style="text-align:center">设计信用交易后台费用表结构，完成费用预算业务组件编写，自测完成，待业务模块引入使用。</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+        </item>
         
         <item>
             <title>在泉州</title>
