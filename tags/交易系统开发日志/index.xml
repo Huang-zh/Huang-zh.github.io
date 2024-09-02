@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>交易系统开发日志 on 此间的少年</title>
+    <link>https://Huang-zh.github.io/tags/%E4%BA%A4%E6%98%93%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E6%97%A5%E5%BF%97/</link>
+    <description>Recent content in 交易系统开发日志 on 此间的少年</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 02 Sep 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://Huang-zh.github.io/tags/%E4%BA%A4%E6%98%93%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E6%97%A5%E5%BF%97/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>云交易系统开发手册</title>
+      <link>https://Huang-zh.github.io/posts/native-trade-system-devlop-log/</link>
+      <pubDate>Mon, 02 Sep 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://Huang-zh.github.io/posts/native-trade-system-devlop-log/</guid>
+      <description>1. 依赖和中间件   open-jdk 17.0.7
+  graalvm 22.3.2
+  Maven 3.6.3
+  nacos 2.2.3
+  Redis 6.0
+  Mysql 8.0
+  Springboot 3.0.6
+  SpringCloud Alibaba 2022.0.0.0
+  mybatis-plus 3.5.3
+  Seata 1.7.0
+  2. 模块总览 todo&amp;hellip;
+2.1 模块简介 todo&amp;hellip;
+3. 部署事项 3.1 部署命令：   建议每个模块都在idea中添加两个启动配置项
+ Native-cloud-xxx-debug：用于本地idea调试功能使用 Native-cloud-xxx-preCompile：用于Native打包镜像，需要添加VM参数命令：  -agentlib:native-image-agent=config-output-dir=/你的idea workspace目录/native-cloud-system/native-cloud-xxx-system/src/main/resources/META-INF/native-image/native-cloud-xxx-system 添加VM参数启动后，随机通过调试请求工具（如postman）访问该模块子系统几个功能（也可以不做这一步，只是为了确保native-image打包时所有代码组件均能够被链接），然后停止该模块，会在该模块的src/main/resources/META-INF/native-image/native-cloud-xxx-system目录下生成打包所需的json配置文件，这些文件中指定了源代码中通过反射、代理等途径创建的对象，只有成功生成这些配置文件，native-image打包成本地镜像才不会报错。   native-image执行打包命令：  mvn -e -Pnative -DskipTests=true native:compile      建议在部署模块之前，先通过mvn clean install将本地所有模块的改动都打入本地maven repo中去。</description>
+    </item>
+    
+  </channel>
+</rss>
