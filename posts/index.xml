@@ -533,6 +533,10 @@ treeMaker<span style="color:#f92672">.</span><span style="color:#a6e22e">pos</sp
 <td style="text-align:center">2024.08.30-2024.08.31</td>
 <td style="text-align:center">设计信用交易后台费用表结构，完成费用预算业务组件编写，自测完成，待业务模块引入使用。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.09.03</td>
+<td style="text-align:center">委托表扩充费用和金额字段，在委托过程中增加费用和发生金额赋值，待自测。</td>
+</tr>
 </tbody>
 </table>
 ]]></content>
