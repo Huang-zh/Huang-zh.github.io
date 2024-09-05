@@ -38,7 +38,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着native-cloud-system的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-01-31T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-01-31T00:00:00+00:00" />
-<meta itemprop="wordCount" content="504"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="wordCount" content="517"><meta itemprop="image" content="https://Huang-zh.github.io"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://Huang-zh.github.io"/>
@@ -210,6 +210,31 @@
 </li>
 <li>
 <p>建议在部署模块之前，先通过mvn clean install将本地所有模块的改动都打入本地maven repo中去。</p>
+</li>
+<li>
+<p>nacos本地启动命令：</p>
+<ul>
+<li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo sh ./startup.sh -m standalone
+</code></pre></div></li>
+</ul>
+</li>
+<li>
+<p>seata本地启动命令：</p>
+<ul>
+<li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sh ./seata-server.sh
+</code></pre></div></li>
+<li>
+<p>同时注意，seata的端口配置默认为7091，如果要更改默认启动端口，要在seata/conf/application.yml中打开如下配置：</p>
+<ul>
+<li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">server:
+  port: <span style="color:#ae81ff">8091</span>
+</code></pre></div></li>
+</ul>
+</li>
+</ul>
 </li>
 </ul>
 <h3 id="4-部署常见问题">4. 部署常见问题</h3>
@@ -698,7 +723,7 @@ treeMaker<span style="color:#f92672">.</span><span style="color:#a6e22e">pos</sp
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        504字
+        517字
       </p>
 
       <p>

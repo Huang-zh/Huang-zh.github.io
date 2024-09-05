@@ -400,6 +400,31 @@ PS:一席蓝色的长裙，蓬松的大波浪，把我也迷的不要不要的�
 <li>
 <p>建议在部署模块之前，先通过mvn clean install将本地所有模块的改动都打入本地maven repo中去。</p>
 </li>
+<li>
+<p>nacos本地启动命令：</p>
+<ul>
+<li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo sh ./startup.sh -m standalone
+</code></pre></div></li>
+</ul>
+</li>
+<li>
+<p>seata本地启动命令：</p>
+<ul>
+<li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sh ./seata-server.sh
+</code></pre></div></li>
+<li>
+<p>同时注意，seata的端口配置默认为7091，如果要更改默认启动端口，要在seata/conf/application.yml中打开如下配置：</p>
+<ul>
+<li>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">server:
+  port: <span style="color:#ae81ff">8091</span>
+</code></pre></div></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <h3 id="4-部署常见问题">4. 部署常见问题</h3>
 <ul>
