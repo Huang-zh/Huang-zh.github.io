@@ -900,7 +900,7 @@ treeMaker<span style="color:#f92672">.</span><span style="color:#a6e22e">pos</sp
 </tr>
 <tr>
 <td style="text-align:center">2024.09.09</td>
-<td style="text-align:center">新建专项业务头寸账户表，支持融资买入检查客户专项头寸账户，待自测。</td>
+<td style="text-align:center">新建专项业务头寸账户表和专项业务资金表，支持融资买入检查客户专项头寸账户和专项头寸可用资金，待自测。</td>
 </tr>
 </tbody>
 </table>
