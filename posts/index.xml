@@ -916,6 +916,10 @@ treeMaker<span style="color:#f92672">.</span><span style="color:#a6e22e">pos</sp
 <td style="text-align:center">2024.09.10</td>
 <td style="text-align:center">支持融资买入更新专项头寸可用资金，待自测。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.09.11</td>
+<td style="text-align:center">普通业务头寸资金流水表扩充发生标志和交易日期字段，并在融资买入委托支持更新，待自测。</td>
+</tr>
 </tbody>
 </table>
 ]]></content>
