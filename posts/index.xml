@@ -591,6 +591,26 @@ PS:一席蓝色的长裙，蓬松的大波浪，把我也迷的不要不要的�
 </ul>
 </li>
 <li>
+<p>集成seata后，分布式事务执行过程中报错：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">java<span style="color:#f92672">.</span><span style="color:#a6e22e">sql</span><span style="color:#f92672">.</span><span style="color:#a6e22e">SQLSyntaxErrorException</span><span style="color:#f92672">:</span> Table <span style="color:#960050;background-color:#1e0010">&#39;</span>credit<span style="color:#f92672">.</span><span style="color:#a6e22e">undo_log</span><span style="color:#960050;background-color:#1e0010">&#39;</span> doesn<span style="color:#960050;background-color:#1e0010">&#39;</span>t exist
+</code></pre></div><ul>
+<li>
+<p>发生在向数据库表进行insert记录的动作中，检查执行sql insert操作的方法是否已实现本地TccService，由于使用了seata代理了Datasource，不实现TccService情况下则会在插入时使用mysql默认的undolog表记录日志，而代理后的数据源无法获取mysql自带undolog，将执行insert语句的方法实现TccService即可，可参考下面委托表对应的TccService：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@LocalTCC</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CreditEntrustTccService</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#a6e22e">@TwoPhaseBusinessAction</span><span style="color:#f92672">(</span>name <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;generateCreditEntrust&#34;</span><span style="color:#f92672">,</span> commitMethod <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;generateCreditEntrustCommit&#34;</span><span style="color:#f92672">,</span> rollbackMethod <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;generateCreditEntrustRollback&#34;</span><span style="color:#f92672">)</span>
+    Long <span style="color:#a6e22e">generateCreditEntrust</span><span style="color:#f92672">(</span><span style="color:#a6e22e">@BusinessActionContextParameter</span><span style="color:#f92672">(</span>paramName <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;creditEntrust&#34;</span><span style="color:#f92672">)</span> CreditEntrust creditEntrust<span style="color:#f92672">,</span>
+                             <span style="color:#a6e22e">@BusinessActionContextParameter</span><span style="color:#f92672">(</span>paramName <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;entrustProperty&#34;</span><span style="color:#f92672">)</span> EntrustProperty entrustProperty<span style="color:#f92672">);</span>
+
+    Boolean <span style="color:#a6e22e">generateCreditEntrustCommit</span><span style="color:#f92672">(</span>BusinessActionContext businessActionContext<span style="color:#f92672">);</span>
+
+    Boolean <span style="color:#a6e22e">generateCreditEntrustRollback</span><span style="color:#f92672">(</span>BusinessActionContext businessActionContext<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div></li>
+</ul>
+</li>
+<li>
 <p>OpenFeign报错feign.RetryableException: too many bytes written executing</p>
 <ul>
 <li>
@@ -919,6 +939,10 @@ treeMaker<span style="color:#f92672">.</span><span style="color:#a6e22e">pos</sp
 <tr>
 <td style="text-align:center">2024.09.11</td>
 <td style="text-align:center">普通业务头寸资金流水表扩充发生标志和交易日期字段，并在融资买入委托支持更新，待自测。</td>
+</tr>
+<tr>
+<td style="text-align:center">2024.09.12</td>
+<td style="text-align:center">自测过程中发现专项头寸更新未实现TccService，需要实现TccService以便支持分布式事务。</td>
 </tr>
 </tbody>
 </table>
