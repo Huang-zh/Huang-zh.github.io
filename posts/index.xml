@@ -747,6 +747,76 @@ Feign Client<span style="color:#f92672">:</span>
 </code></pre></div></li>
 </ul>
 </li>
+<li>
+<p>集成native-cloud-common-auth，通过@EnableSecurityAuthorization开启全局用户鉴权后，在进入controller方法之前，模块应该实现spring-security要求的userServiceImpl，否则请求该子系统任意接口（标记了openApi的白名单接口除外）都会返回403Forbidden错误，可参考交易模块已实现的UserServiceImpl：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * @description: 信用交易系统用户权限认证实现
+</span><span style="color:#75715e"> * @author: huang.zh
+</span><span style="color:#75715e"> * @create: 2024-09-15 08:09
+</span><span style="color:#75715e"> **/</span>
+<span style="color:#a6e22e">@Service</span>
+<span style="color:#a6e22e">@Slf4j</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserDetailServiceImpl</span> <span style="color:#66d9ef">implements</span> UserDetailsService <span style="color:#f92672">{</span>
+
+
+    <span style="color:#66d9ef">private</span> UserClient userClient<span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">UserDetailServiceImpl</span><span style="color:#f92672">(</span><span style="color:#a6e22e">@Autowired</span> UserClient userClient<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">userClient</span> <span style="color:#f92672">=</span> userClient<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> UserDetails <span style="color:#a6e22e">loadUserByUsername</span><span style="color:#f92672">(</span>String username<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> UsernameNotFoundException <span style="color:#f92672">{</span>
+        <span style="color:#75715e">// 注意此时传入的username为jwtAuthUtil解析的userId
+</span><span style="color:#75715e"></span>      	<span style="color:#75715e">// 发起RPC至账户子系统，请求用户的权限等运行时数据
+</span><span style="color:#75715e"></span>        UserMetadata userMetadata <span style="color:#f92672">=</span> userClient<span style="color:#f92672">.</span><span style="color:#a6e22e">getUserDetail</span><span style="color:#f92672">(</span>username<span style="color:#f92672">);</span>
+        String userId <span style="color:#f92672">=</span> userMetadata<span style="color:#f92672">.</span><span style="color:#a6e22e">getUserId</span><span style="color:#f92672">();</span>
+      	<span style="color:#75715e">// 当前系统需要鉴权，将UserMetadata转换为符合Spring-security权限校验体系的实体类User
+</span><span style="color:#75715e"></span>        List<span style="color:#f92672">&lt;</span>SimpleGrantedAuthority<span style="color:#f92672">&gt;</span> authorities <span style="color:#f92672">=</span> userMetadata<span style="color:#f92672">.</span><span style="color:#a6e22e">getPermissions</span><span style="color:#f92672">().</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>SimpleGrantedAuthority<span style="color:#f92672">::</span><span style="color:#66d9ef">new</span><span style="color:#f92672">).</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">());</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> User<span style="color:#f92672">(</span>userId<span style="color:#f92672">,</span>userId<span style="color:#f92672">,</span>authorities<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><ul>
+<li>
+<p>注意，通过OpenFeign发起RPC请求，至账户子系统请求用户元数据，要求下游账户系统不能直接返回spring security的UserDetails接口及其任意一个实现类，是因为这些实现类没有默认无参构造函数，而OpenFeign解析response时使用jackson进行反序列化，要求响应类实体要有无参构造函数，这里可以使用native-cloud-common-auth模块下的UserMetadata，各上游系统获取到用户元数据后如果需要鉴权，可参考信用交易子系统将UserMetadata转换为符合Spring-security权限校验体系的实体类User：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * @description: 用户元数据运行时包装类，维护从账户系统获取的用户数据（userId，permissions...）
+</span><span style="color:#75715e"> * @author: huang.zh
+</span><span style="color:#75715e"> * @create: 2024-09-15 20:47
+</span><span style="color:#75715e"> **/</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserMetadata</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">private</span> String userId<span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">private</span> List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> permissions<span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">UserMetadata</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">UserMetadata</span><span style="color:#f92672">(</span>String userId<span style="color:#f92672">,</span> List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> permissions<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">userId</span> <span style="color:#f92672">=</span> userId<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">permissions</span> <span style="color:#f92672">=</span> permissions<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getUserId</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> userId<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setUserId</span><span style="color:#f92672">(</span>String userId<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">userId</span> <span style="color:#f92672">=</span> userId<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getPermissions</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> permissions<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setPermissions</span><span style="color:#f92672">(</span>List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> permissions<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">permissions</span> <span style="color:#f92672">=</span> permissions<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div></li>
+</ul>
+</li>
 </ul>
 <h3 id="5开发日志">5.开发日志</h3>
 <table>
@@ -779,7 +849,7 @@ Feign Client<span style="color:#f92672">:</span>
 </tr>
 <tr>
 <td style="text-align:center">2023.07.25</td>
-<td style="text-align:center">部分查询调整为mybatis-plus提供的lambda查询模式，减少代码中sql出现的频次。</td>
+<td style="text-align:center">部分查询调整为mybatis-plus提供的lambda查询模式，减少代码中sql出现的频次。</td>
 </tr>
 <tr>
 <td style="text-align:center">2023.07.26</td>
@@ -975,7 +1045,7 @@ Feign Client<span style="color:#f92672">:</span>
 </tr>
 <tr>
 <td style="text-align:center">2024.09.15</td>
-<td style="text-align:center">信用交易系统接入全局账户认证模块，待自测</td>
+<td style="text-align:center">信用交易系统接入全局账户鉴权功能，结合融资买入业务自测完成，完成Api粒度鉴权</td>
 </tr>
 </tbody>
 </table>
