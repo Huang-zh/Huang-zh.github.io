@@ -948,6 +948,10 @@ treeMaker<span style="color:#f92672">.</span><span style="color:#a6e22e">pos</sp
 <td style="text-align:center">2024.09.13</td>
 <td style="text-align:center">实现专项头寸分布式事务TccService，代替原有的专项头寸domain进行头寸资金更新，头寸资金更新模块自测完成。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.09.15</td>
+<td style="text-align:center">信用交易系统接入全局账户认证模块，待自测</td>
+</tr>
 </tbody>
 </table>
 ]]></content>
