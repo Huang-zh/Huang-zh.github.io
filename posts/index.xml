@@ -358,10 +358,7 @@ PS:一席蓝色的长裙，蓬松的大波浪，把我也迷的不要不要的�
   SpringCloud Alibaba 2022.0.0.0
   mybatis-plus 3.5.3
   Seata 1.7.0
-  2. 模块总览 todo&amp;hellip;
-2.1 模块简介 todo&amp;hellip;
-3. 部署事项 3.1 部署命令：   建议每个模块都在idea中添加两个启动配置项
- Native-cloud-xxx-debug：用于本地idea调试功能使用 Native-cloud-xxx-preCompile：用于Native打包镜像，需要添加VM参数命令：  -agentlib:native-image-agent=config-output-dir=/你的idea workspace目录/native-cloud-system/native-cloud-xxx-system/src/main/resources/META-INF/native-image/native-cloud-xxx-system 添加VM参数启动后，随机通过调试请求工具（如postman）访问该模块子系统几个功能（也可以不做这一步，只是为了确保native-image打包时所有代码组件均能够被链接），然后停止该模块，会在该模块的src/main/resources/META-INF/native-image/native-cloud-xxx-system目录下生成打包所需的json配置文件，这些文件中指定了源代码中通过反射、代理等途径创建的对象，只有成功生成这些配置文件，native-image打包成本地镜像才不会报错。   native-image执行打包命令：  mvn -e -Pnative -DskipTests=true native:compile      建议在部署模块之前，先通过mvn clean install将本地所有模块的改动都打入本地maven repo中去。</description>
+  2. 模块总览    模块名 中文名 备注     native-cloud-user-system 交易账户系统 用于维护证券交易账户数据，负责客户开户、适当性、风险评估等常规运营操作。   native-cloud-qms-system 交易额度系统 用于维护日间交易信用业务头寸、申报流水号区间等交易关键辅助信息。   native-cloud-compact 信用合约系统 用于维护日间信用交易产生的合约信息，提供对合约进行清算、展期、结息罚息等操作。   native-cloud-credit-trade 信用交易系统 提供日间融资融券业务入口，供信用客户进行融资融券日间交易。   native-cloud-gateway 交易网关 所有日间交易、运营业务的入口，后续将建设包含根据具体账户定位至具体交易核心的功能，实现多分片定位。   native-cloud-system-api 交易交互组件 包含各交易子系统相互调用的api、数据载体。   native-cloud-common 交易通用组件 包含交易子系统公用工具类、配置类等关键可插拔功能的启动项。    2.</description>
             <content type="html"><![CDATA[<h3 id="1-依赖和中间件">1. 依赖和中间件</h3>
 <ul>
 <li>
@@ -396,7 +393,52 @@ PS:一席蓝色的长裙，蓬松的大波浪，把我也迷的不要不要的�
 </li>
 </ul>
 <h3 id="2-模块总览">2. 模块总览</h3>
-<p>todo&hellip;</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">模块名</th>
+<th style="text-align:center">中文名</th>
+<th style="text-align:center">备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">native-cloud-user-system</td>
+<td style="text-align:center">交易账户系统</td>
+<td style="text-align:center">用于维护证券交易账户数据，负责客户开户、适当性、风险评估等常规运营操作。</td>
+</tr>
+<tr>
+<td style="text-align:center">native-cloud-qms-system</td>
+<td style="text-align:center">交易额度系统</td>
+<td style="text-align:center">用于维护日间交易信用业务头寸、申报流水号区间等交易关键辅助信息。</td>
+</tr>
+<tr>
+<td style="text-align:center">native-cloud-compact</td>
+<td style="text-align:center">信用合约系统</td>
+<td style="text-align:center">用于维护日间信用交易产生的合约信息，提供对合约进行清算、展期、结息罚息等操作。</td>
+</tr>
+<tr>
+<td style="text-align:center">native-cloud-credit-trade</td>
+<td style="text-align:center">信用交易系统</td>
+<td style="text-align:center">提供日间融资融券业务入口，供信用客户进行融资融券日间交易。</td>
+</tr>
+<tr>
+<td style="text-align:center">native-cloud-gateway</td>
+<td style="text-align:center">交易网关</td>
+<td style="text-align:center">所有日间交易、运营业务的入口，后续将建设包含根据具体账户定位至具体交易核心的功能，实现多分片定位。</td>
+</tr>
+<tr>
+<td style="text-align:center">native-cloud-system-api</td>
+<td style="text-align:center">交易交互组件</td>
+<td style="text-align:center">包含各交易子系统相互调用的api、数据载体。</td>
+</tr>
+<tr>
+<td style="text-align:center">native-cloud-common</td>
+<td style="text-align:center">交易通用组件</td>
+<td style="text-align:center">包含交易子系统公用工具类、配置类等关键可插拔功能的启动项。</td>
+</tr>
+</tbody>
+</table>
 <h4 id="21-模块简介">2.1 模块简介</h4>
 <p>todo&hellip;</p>
 <h3 id="3-部署事项">3. 部署事项</h3>
