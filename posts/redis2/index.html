@@ -5,9 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="[huangzh]">
-<meta name="description" content="6. key删除策略 redis中，对于过期key的淘汰机制，可以分为以下两种：
- 定期删除：一种主动删除策略，定期去轮询存储了key的过期时间的字典。 惰性删除：在寻找/写入dictEntry的时候判断是否过期，属于被动删除策略。  6.1 惰性删除 惰性删除的代码，入口在db.c中的expireIfNeeded，该方法由执行查找命令或写入命令的方法调用，在执行真正的命令之前，做key的删除判断以及删除操作：
-int expireIfNeeded(redisDb *db, robj *key) { //设定了过期时间且未过期的key会在这一步直接返回  if (!keyIsExpired(db,key)) return 0; //当前redis节点过期了，但是存在master节点。  //意味着当前属于slave节点，返回1，由master执行删除后同步至slave  if (server.masterhost != NULL) return 1; //过期key的数量&#43;1  server.stat_expiredkeys&#43;&#43;; //把过期的key的消息传播到slave，同时将该key的删除命令写入到aof文件  propagateExpire(db,key,server.lazyfree_lazy_expire); //通知监听了该key的客户端，通知key的过期事件  notifyKeyspaceEvent(NOTIFY_EXPIRED, &amp;#34;expired&amp;#34;,key,db-&amp;gt;id); //根据设定的删除方式，决定采用同步删除还是异步删除  return server.lazyfree_lazy_expire ? dbAsyncDelete(db,key) : dbSyncDelete(db,key); } int keyIsExpired(redisDb *db, robj *key) { //获得设定的过期时间戳  mstime_t when = getExpire(db,key); mstime_t now; //如果时间戳小于0，说明没有设置过期时间  if (when &amp;lt; 0) return 0; //loading状态下不允许进行过期判断  if (server." />
+<meta name="description" content="6. key删除策略 redis中，对于过期key的淘汰机制，可以分为以下两种： 定期删除：一种主动删除策略，定期去轮询存储了key的过期时间的字典" />
 <meta name="keywords" content=", redis" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="" />
@@ -38,26 +36,20 @@ int expireIfNeeded(redisDb *db, robj *key) { //设定了过期时间且未过期
 
 
 <meta itemprop="name" content="Redis存储原理剖析&lt;二&gt;：key的惰性删除--同步删除策略">
-<meta itemprop="description" content="6. key删除策略 redis中，对于过期key的淘汰机制，可以分为以下两种：
- 定期删除：一种主动删除策略，定期去轮询存储了key的过期时间的字典。 惰性删除：在寻找/写入dictEntry的时候判断是否过期，属于被动删除策略。  6.1 惰性删除 惰性删除的代码，入口在db.c中的expireIfNeeded，该方法由执行查找命令或写入命令的方法调用，在执行真正的命令之前，做key的删除判断以及删除操作：
-int expireIfNeeded(redisDb *db, robj *key) { //设定了过期时间且未过期的key会在这一步直接返回  if (!keyIsExpired(db,key)) return 0; //当前redis节点过期了，但是存在master节点。  //意味着当前属于slave节点，返回1，由master执行删除后同步至slave  if (server.masterhost != NULL) return 1; //过期key的数量&#43;1  server.stat_expiredkeys&#43;&#43;; //把过期的key的消息传播到slave，同时将该key的删除命令写入到aof文件  propagateExpire(db,key,server.lazyfree_lazy_expire); //通知监听了该key的客户端，通知key的过期事件  notifyKeyspaceEvent(NOTIFY_EXPIRED, &#34;expired&#34;,key,db-&gt;id); //根据设定的删除方式，决定采用同步删除还是异步删除  return server.lazyfree_lazy_expire ? dbAsyncDelete(db,key) : dbSyncDelete(db,key); } int keyIsExpired(redisDb *db, robj *key) { //获得设定的过期时间戳  mstime_t when = getExpire(db,key); mstime_t now; //如果时间戳小于0，说明没有设置过期时间  if (when &lt; 0) return 0; //loading状态下不允许进行过期判断  if (server."><meta itemprop="datePublished" content="2023-08-29T19:10:44+08:00" />
+<meta itemprop="description" content="6. key删除策略 redis中，对于过期key的淘汰机制，可以分为以下两种： 定期删除：一种主动删除策略，定期去轮询存储了key的过期时间的字典"><meta itemprop="datePublished" content="2023-08-29T19:10:44+08:00" />
 <meta itemprop="dateModified" content="2023-08-29T19:10:44+08:00" />
-<meta itemprop="wordCount" content="498"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="wordCount" content="2117"><meta itemprop="image" content="https://Huang-zh.github.io"/>
 <meta itemprop="keywords" content="redis," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://Huang-zh.github.io"/>
 
 <meta name="twitter:title" content="Redis存储原理剖析&lt;二&gt;：key的惰性删除--同步删除策略"/>
-<meta name="twitter:description" content="6. key删除策略 redis中，对于过期key的淘汰机制，可以分为以下两种：
- 定期删除：一种主动删除策略，定期去轮询存储了key的过期时间的字典。 惰性删除：在寻找/写入dictEntry的时候判断是否过期，属于被动删除策略。  6.1 惰性删除 惰性删除的代码，入口在db.c中的expireIfNeeded，该方法由执行查找命令或写入命令的方法调用，在执行真正的命令之前，做key的删除判断以及删除操作：
-int expireIfNeeded(redisDb *db, robj *key) { //设定了过期时间且未过期的key会在这一步直接返回  if (!keyIsExpired(db,key)) return 0; //当前redis节点过期了，但是存在master节点。  //意味着当前属于slave节点，返回1，由master执行删除后同步至slave  if (server.masterhost != NULL) return 1; //过期key的数量&#43;1  server.stat_expiredkeys&#43;&#43;; //把过期的key的消息传播到slave，同时将该key的删除命令写入到aof文件  propagateExpire(db,key,server.lazyfree_lazy_expire); //通知监听了该key的客户端，通知key的过期事件  notifyKeyspaceEvent(NOTIFY_EXPIRED, &#34;expired&#34;,key,db-&gt;id); //根据设定的删除方式，决定采用同步删除还是异步删除  return server.lazyfree_lazy_expire ? dbAsyncDelete(db,key) : dbSyncDelete(db,key); } int keyIsExpired(redisDb *db, robj *key) { //获得设定的过期时间戳  mstime_t when = getExpire(db,key); mstime_t now; //如果时间戳小于0，说明没有设置过期时间  if (when &lt; 0) return 0; //loading状态下不允许进行过期判断  if (server."/>
+<meta name="twitter:description" content="6. key删除策略 redis中，对于过期key的淘汰机制，可以分为以下两种： 定期删除：一种主动删除策略，定期去轮询存储了key的过期时间的字典"/>
 
 
 
     <meta property="og:title" content="Redis存储原理剖析&lt;二&gt;：key的惰性删除--同步删除策略" />
-<meta property="og:description" content="6. key删除策略 redis中，对于过期key的淘汰机制，可以分为以下两种：
- 定期删除：一种主动删除策略，定期去轮询存储了key的过期时间的字典。 惰性删除：在寻找/写入dictEntry的时候判断是否过期，属于被动删除策略。  6.1 惰性删除 惰性删除的代码，入口在db.c中的expireIfNeeded，该方法由执行查找命令或写入命令的方法调用，在执行真正的命令之前，做key的删除判断以及删除操作：
-int expireIfNeeded(redisDb *db, robj *key) { //设定了过期时间且未过期的key会在这一步直接返回  if (!keyIsExpired(db,key)) return 0; //当前redis节点过期了，但是存在master节点。  //意味着当前属于slave节点，返回1，由master执行删除后同步至slave  if (server.masterhost != NULL) return 1; //过期key的数量&#43;1  server.stat_expiredkeys&#43;&#43;; //把过期的key的消息传播到slave，同时将该key的删除命令写入到aof文件  propagateExpire(db,key,server.lazyfree_lazy_expire); //通知监听了该key的客户端，通知key的过期事件  notifyKeyspaceEvent(NOTIFY_EXPIRED, &#34;expired&#34;,key,db-&gt;id); //根据设定的删除方式，决定采用同步删除还是异步删除  return server.lazyfree_lazy_expire ? dbAsyncDelete(db,key) : dbSyncDelete(db,key); } int keyIsExpired(redisDb *db, robj *key) { //获得设定的过期时间戳  mstime_t when = getExpire(db,key); mstime_t now; //如果时间戳小于0，说明没有设置过期时间  if (when &lt; 0) return 0; //loading状态下不允许进行过期判断  if (server." />
+<meta property="og:description" content="6. key删除策略 redis中，对于过期key的淘汰机制，可以分为以下两种： 定期删除：一种主动删除策略，定期去轮询存储了key的过期时间的字典" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://Huang-zh.github.io/posts/redis2/" /><meta property="og:image" content="https://Huang-zh.github.io"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2023-08-29T19:10:44+08:00" />
@@ -139,7 +131,7 @@ int expireIfNeeded(redisDb *db, robj *key) { //设定了过期时间且未过期
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        3分钟
+        5分钟
 
         
       </p>
@@ -425,7 +417,7 @@ define dictFreeVal(d, entry)
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        498字
+        2117字
       </p>
 
       <p>

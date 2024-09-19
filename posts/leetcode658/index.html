@@ -5,18 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="[huangzh]">
-<meta name="description" content="给定一个排序好的数组 arr ，两个整数 k 和 x ，从数组中找到最靠近 x（两数之差最小）的 k 个数。返回的结果必须要是按升序排好的。
-整数 a 比整数 b 更接近 x 需要满足：
-  |a - x| &amp;lt; |b - x| 或者
-  |a - x| == |b - x| 且 a &amp;lt; b
-  示例 1：
-输入：arr = [1,2,3,4,5], k = 4, x = 3
-输出：[1,2,3,4]
-示例 2：
-输入：arr = [1,2,3,4,5], k = 4, x = -1
-输出：[1,2,3,4]
-提示：
-1 &amp;lt;= k &amp;lt;= arr." />
+<meta name="description" content="给定一个排序好的数组 arr ，两个整数 k 和 x ，从数组中找到最靠近 x（两数之差最小）的 k 个数。返回的结果必须要是按升序排好的。 整数 a 比整数 b 更接近 x" />
 <meta name="keywords" content=", 算法" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="" />
@@ -47,53 +36,20 @@
 
 
 <meta itemprop="name" content="LeetCode算法手记：658.找到 K 个最接近的元素">
-<meta itemprop="description" content="给定一个排序好的数组 arr ，两个整数 k 和 x ，从数组中找到最靠近 x（两数之差最小）的 k 个数。返回的结果必须要是按升序排好的。
-整数 a 比整数 b 更接近 x 需要满足：
-  |a - x| &lt; |b - x| 或者
-  |a - x| == |b - x| 且 a &lt; b
-  示例 1：
-输入：arr = [1,2,3,4,5], k = 4, x = 3
-输出：[1,2,3,4]
-示例 2：
-输入：arr = [1,2,3,4,5], k = 4, x = -1
-输出：[1,2,3,4]
-提示：
-1 &lt;= k &lt;= arr."><meta itemprop="datePublished" content="2023-09-05T21:16:44+08:00" />
+<meta itemprop="description" content="给定一个排序好的数组 arr ，两个整数 k 和 x ，从数组中找到最靠近 x（两数之差最小）的 k 个数。返回的结果必须要是按升序排好的。 整数 a 比整数 b 更接近 x"><meta itemprop="datePublished" content="2023-09-05T21:16:44+08:00" />
 <meta itemprop="dateModified" content="2023-09-05T21:16:44+08:00" />
-<meta itemprop="wordCount" content="291"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="wordCount" content="1402"><meta itemprop="image" content="https://Huang-zh.github.io"/>
 <meta itemprop="keywords" content="算法," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://Huang-zh.github.io"/>
 
 <meta name="twitter:title" content="LeetCode算法手记：658.找到 K 个最接近的元素"/>
-<meta name="twitter:description" content="给定一个排序好的数组 arr ，两个整数 k 和 x ，从数组中找到最靠近 x（两数之差最小）的 k 个数。返回的结果必须要是按升序排好的。
-整数 a 比整数 b 更接近 x 需要满足：
-  |a - x| &lt; |b - x| 或者
-  |a - x| == |b - x| 且 a &lt; b
-  示例 1：
-输入：arr = [1,2,3,4,5], k = 4, x = 3
-输出：[1,2,3,4]
-示例 2：
-输入：arr = [1,2,3,4,5], k = 4, x = -1
-输出：[1,2,3,4]
-提示：
-1 &lt;= k &lt;= arr."/>
+<meta name="twitter:description" content="给定一个排序好的数组 arr ，两个整数 k 和 x ，从数组中找到最靠近 x（两数之差最小）的 k 个数。返回的结果必须要是按升序排好的。 整数 a 比整数 b 更接近 x"/>
 
 
 
     <meta property="og:title" content="LeetCode算法手记：658.找到 K 个最接近的元素" />
-<meta property="og:description" content="给定一个排序好的数组 arr ，两个整数 k 和 x ，从数组中找到最靠近 x（两数之差最小）的 k 个数。返回的结果必须要是按升序排好的。
-整数 a 比整数 b 更接近 x 需要满足：
-  |a - x| &lt; |b - x| 或者
-  |a - x| == |b - x| 且 a &lt; b
-  示例 1：
-输入：arr = [1,2,3,4,5], k = 4, x = 3
-输出：[1,2,3,4]
-示例 2：
-输入：arr = [1,2,3,4,5], k = 4, x = -1
-输出：[1,2,3,4]
-提示：
-1 &lt;= k &lt;= arr." />
+<meta property="og:description" content="给定一个排序好的数组 arr ，两个整数 k 和 x ，从数组中找到最靠近 x（两数之差最小）的 k 个数。返回的结果必须要是按升序排好的。 整数 a 比整数 b 更接近 x" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://Huang-zh.github.io/posts/leetcode658/" /><meta property="og:image" content="https://Huang-zh.github.io"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2023-09-05T21:16:44+08:00" />
@@ -175,7 +131,7 @@
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        2分钟
+        3分钟
 
         
       </p>
@@ -325,7 +281,7 @@
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        291字
+        1402字
       </p>
 
       <p>

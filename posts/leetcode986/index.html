@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="[huangzh]">
-<meta name="description" content="给定两个由一些闭区间组成的列表，firstList 和 secondList ，其中 firstList[i] = [start i, end i] 而 secondList[j] = [start j, end j] 。 每个区间列表都是成对不相交的，并且已经排序 。返回这两个区间列表的交集 。 形式上，闭区间 [a, b]（其中 a &amp;lt;= b）表示实数 x 的集合，而 a &amp;lt;= x &amp;lt;= b 。 两个闭区间的交集是一组实数，要么为空集，要么为闭区间。例如，[1, 3] 和 [2, 4] 的交集为 [2, 3] 。 示例 1： 输入：firstList = [[0,2],[5,10],[13,23],[24,25]], secondList = [[1,5],[8,12],[15,24],[25,26]] 输出：[[1,2],[5,5],[8,10],[15,23],[24,24],[25,25]] 示例 2： 输入：firstList = [[1,3],[5,9]], secondList = [ ] 输出：[ ] 示例 3： 输入：firstList = [], secondList = [[4,8],[10,12]] 输出：[ ] 示例 4： 输入：firstList = [[1,7]], secondList = [[3,10]] 输出：[[3,7]] 提示： 0 &amp;lt;= firstList." />
+<meta name="description" content="给定两个由一些闭区间组成的列表，firstList 和 secondList ，其中 firstList[i] = [start i, end i] 而 secondList[j] = [start j, end j] 。 每个区间列表都是成对不相交的，并且已经排序 。返回这两" />
 <meta name="keywords" content=", 算法" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="" />
@@ -36,20 +36,20 @@
 
 
 <meta itemprop="name" content="LeetCode算法手记：986.区间列表的交集">
-<meta itemprop="description" content="给定两个由一些闭区间组成的列表，firstList 和 secondList ，其中 firstList[i] = [start i, end i] 而 secondList[j] = [start j, end j] 。 每个区间列表都是成对不相交的，并且已经排序 。返回这两个区间列表的交集 。 形式上，闭区间 [a, b]（其中 a &lt;= b）表示实数 x 的集合，而 a &lt;= x &lt;= b 。 两个闭区间的交集是一组实数，要么为空集，要么为闭区间。例如，[1, 3] 和 [2, 4] 的交集为 [2, 3] 。 示例 1： 输入：firstList = [[0,2],[5,10],[13,23],[24,25]], secondList = [[1,5],[8,12],[15,24],[25,26]] 输出：[[1,2],[5,5],[8,10],[15,23],[24,24],[25,25]] 示例 2： 输入：firstList = [[1,3],[5,9]], secondList = [ ] 输出：[ ] 示例 3： 输入：firstList = [], secondList = [[4,8],[10,12]] 输出：[ ] 示例 4： 输入：firstList = [[1,7]], secondList = [[3,10]] 输出：[[3,7]] 提示： 0 &lt;= firstList."><meta itemprop="datePublished" content="2023-09-17T12:10:26+08:00" />
+<meta itemprop="description" content="给定两个由一些闭区间组成的列表，firstList 和 secondList ，其中 firstList[i] = [start i, end i] 而 secondList[j] = [start j, end j] 。 每个区间列表都是成对不相交的，并且已经排序 。返回这两"><meta itemprop="datePublished" content="2023-09-17T12:10:26+08:00" />
 <meta itemprop="dateModified" content="2023-09-17T12:10:26+08:00" />
-<meta itemprop="wordCount" content="317"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="wordCount" content="2337"><meta itemprop="image" content="https://Huang-zh.github.io"/>
 <meta itemprop="keywords" content="算法," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://Huang-zh.github.io"/>
 
 <meta name="twitter:title" content="LeetCode算法手记：986.区间列表的交集"/>
-<meta name="twitter:description" content="给定两个由一些闭区间组成的列表，firstList 和 secondList ，其中 firstList[i] = [start i, end i] 而 secondList[j] = [start j, end j] 。 每个区间列表都是成对不相交的，并且已经排序 。返回这两个区间列表的交集 。 形式上，闭区间 [a, b]（其中 a &lt;= b）表示实数 x 的集合，而 a &lt;= x &lt;= b 。 两个闭区间的交集是一组实数，要么为空集，要么为闭区间。例如，[1, 3] 和 [2, 4] 的交集为 [2, 3] 。 示例 1： 输入：firstList = [[0,2],[5,10],[13,23],[24,25]], secondList = [[1,5],[8,12],[15,24],[25,26]] 输出：[[1,2],[5,5],[8,10],[15,23],[24,24],[25,25]] 示例 2： 输入：firstList = [[1,3],[5,9]], secondList = [ ] 输出：[ ] 示例 3： 输入：firstList = [], secondList = [[4,8],[10,12]] 输出：[ ] 示例 4： 输入：firstList = [[1,7]], secondList = [[3,10]] 输出：[[3,7]] 提示： 0 &lt;= firstList."/>
+<meta name="twitter:description" content="给定两个由一些闭区间组成的列表，firstList 和 secondList ，其中 firstList[i] = [start i, end i] 而 secondList[j] = [start j, end j] 。 每个区间列表都是成对不相交的，并且已经排序 。返回这两"/>
 
 
 
     <meta property="og:title" content="LeetCode算法手记：986.区间列表的交集" />
-<meta property="og:description" content="给定两个由一些闭区间组成的列表，firstList 和 secondList ，其中 firstList[i] = [start i, end i] 而 secondList[j] = [start j, end j] 。 每个区间列表都是成对不相交的，并且已经排序 。返回这两个区间列表的交集 。 形式上，闭区间 [a, b]（其中 a &lt;= b）表示实数 x 的集合，而 a &lt;= x &lt;= b 。 两个闭区间的交集是一组实数，要么为空集，要么为闭区间。例如，[1, 3] 和 [2, 4] 的交集为 [2, 3] 。 示例 1： 输入：firstList = [[0,2],[5,10],[13,23],[24,25]], secondList = [[1,5],[8,12],[15,24],[25,26]] 输出：[[1,2],[5,5],[8,10],[15,23],[24,24],[25,25]] 示例 2： 输入：firstList = [[1,3],[5,9]], secondList = [ ] 输出：[ ] 示例 3： 输入：firstList = [], secondList = [[4,8],[10,12]] 输出：[ ] 示例 4： 输入：firstList = [[1,7]], secondList = [[3,10]] 输出：[[3,7]] 提示： 0 &lt;= firstList." />
+<meta property="og:description" content="给定两个由一些闭区间组成的列表，firstList 和 secondList ，其中 firstList[i] = [start i, end i] 而 secondList[j] = [start j, end j] 。 每个区间列表都是成对不相交的，并且已经排序 。返回这两" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://Huang-zh.github.io/posts/leetcode986/" /><meta property="og:image" content="https://Huang-zh.github.io"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2023-09-17T12:10:26+08:00" />
@@ -131,7 +131,7 @@
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        2分钟
+        5分钟
 
         
       </p>
@@ -292,7 +292,7 @@ end j &lt; start j+1
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        317字
+        2337字
       </p>
 
       <p>

@@ -5,8 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="[huangzh]">
-<meta name="description" content="给定字符串 s 和字符串数组 words, 返回 words[i] 中是 s 的子序列的单词个数。 字符串的子序列是从原始字符串中生成的新字符串，可以从中删去一些字符(可以是 none)，而不改变其余字符的相对顺序。 例如， “ace” 是 “abcde” 的子序列。 示例 1： 输入: s = “abcde”, words = [“a”,“bb”,“acd”,“ace”] 输出: 3 解释: 有三个是 s 的子序列的单词: “a”, “acd”, “ace”。 示例 2： 输入: s = “dsahjpjauf”, words = [“ahjpjau”,“ja”,“ahbwzgqnuk”,“tnmlanowax”] 输出: 2 提示： 1 &amp;lt;= s.length &amp;lt;= 5 * 104 1 &amp;lt;= words.length &amp;lt;= 5000 1 &amp;lt;= words[i].length &amp;lt;= 50 words[i]和 s 都只由小写字母组成。 思路 对于字符串s和字符串t，若s为t的子序列，则需要满足以下几点：
- s中的所有字符的相对顺序，必须和这些字符在t中出现的相对顺序保持一致，例如s为ace，t为abcde，则s为t的子序列，此时a、c、e三个字符在两个字符串中出现的相对顺序保持一致，t可以通过删除b和d两个字符来得到s。 若s由一个或多个相同字符组成，那么该字符在s中出现的次数必然小于等于t中该字符出现的次数，例如字符串a、aa、aaa均为字符串aabade的子序列，但aaaa不是字符串aabade的子序列。  那么，维护一个数组，记录下原字符串t中每一个字符t[i]出现的位置i，然后对于要判断子序列的样本s，遍历s的每个字符，判断以下几点：" />
+<meta name="description" content="给定字符串 s 和字符串数组 words, 返回 words[i] 中是 s 的子序列的单词个数。 字符串的子序列是从原始字符串中生成的新字符串，可以从中删去一些字符(可以是 none" />
 <meta name="keywords" content=", 算法" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="" />
@@ -37,23 +36,20 @@
 
 
 <meta itemprop="name" content="LeetCode算法手记：792.匹配子序列的单词数">
-<meta itemprop="description" content="给定字符串 s 和字符串数组 words, 返回 words[i] 中是 s 的子序列的单词个数。 字符串的子序列是从原始字符串中生成的新字符串，可以从中删去一些字符(可以是 none)，而不改变其余字符的相对顺序。 例如， “ace” 是 “abcde” 的子序列。 示例 1： 输入: s = “abcde”, words = [“a”,“bb”,“acd”,“ace”] 输出: 3 解释: 有三个是 s 的子序列的单词: “a”, “acd”, “ace”。 示例 2： 输入: s = “dsahjpjauf”, words = [“ahjpjau”,“ja”,“ahbwzgqnuk”,“tnmlanowax”] 输出: 2 提示： 1 &lt;= s.length &lt;= 5 * 104 1 &lt;= words.length &lt;= 5000 1 &lt;= words[i].length &lt;= 50 words[i]和 s 都只由小写字母组成。 思路 对于字符串s和字符串t，若s为t的子序列，则需要满足以下几点：
- s中的所有字符的相对顺序，必须和这些字符在t中出现的相对顺序保持一致，例如s为ace，t为abcde，则s为t的子序列，此时a、c、e三个字符在两个字符串中出现的相对顺序保持一致，t可以通过删除b和d两个字符来得到s。 若s由一个或多个相同字符组成，那么该字符在s中出现的次数必然小于等于t中该字符出现的次数，例如字符串a、aa、aaa均为字符串aabade的子序列，但aaaa不是字符串aabade的子序列。  那么，维护一个数组，记录下原字符串t中每一个字符t[i]出现的位置i，然后对于要判断子序列的样本s，遍历s的每个字符，判断以下几点："><meta itemprop="datePublished" content="2023-09-09T21:02:25+08:00" />
+<meta itemprop="description" content="给定字符串 s 和字符串数组 words, 返回 words[i] 中是 s 的子序列的单词个数。 字符串的子序列是从原始字符串中生成的新字符串，可以从中删去一些字符(可以是 none"><meta itemprop="datePublished" content="2023-09-09T21:02:25+08:00" />
 <meta itemprop="dateModified" content="2023-09-09T21:02:25+08:00" />
-<meta itemprop="wordCount" content="330"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="wordCount" content="1530"><meta itemprop="image" content="https://Huang-zh.github.io"/>
 <meta itemprop="keywords" content="算法," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://Huang-zh.github.io"/>
 
 <meta name="twitter:title" content="LeetCode算法手记：792.匹配子序列的单词数"/>
-<meta name="twitter:description" content="给定字符串 s 和字符串数组 words, 返回 words[i] 中是 s 的子序列的单词个数。 字符串的子序列是从原始字符串中生成的新字符串，可以从中删去一些字符(可以是 none)，而不改变其余字符的相对顺序。 例如， “ace” 是 “abcde” 的子序列。 示例 1： 输入: s = “abcde”, words = [“a”,“bb”,“acd”,“ace”] 输出: 3 解释: 有三个是 s 的子序列的单词: “a”, “acd”, “ace”。 示例 2： 输入: s = “dsahjpjauf”, words = [“ahjpjau”,“ja”,“ahbwzgqnuk”,“tnmlanowax”] 输出: 2 提示： 1 &lt;= s.length &lt;= 5 * 104 1 &lt;= words.length &lt;= 5000 1 &lt;= words[i].length &lt;= 50 words[i]和 s 都只由小写字母组成。 思路 对于字符串s和字符串t，若s为t的子序列，则需要满足以下几点：
- s中的所有字符的相对顺序，必须和这些字符在t中出现的相对顺序保持一致，例如s为ace，t为abcde，则s为t的子序列，此时a、c、e三个字符在两个字符串中出现的相对顺序保持一致，t可以通过删除b和d两个字符来得到s。 若s由一个或多个相同字符组成，那么该字符在s中出现的次数必然小于等于t中该字符出现的次数，例如字符串a、aa、aaa均为字符串aabade的子序列，但aaaa不是字符串aabade的子序列。  那么，维护一个数组，记录下原字符串t中每一个字符t[i]出现的位置i，然后对于要判断子序列的样本s，遍历s的每个字符，判断以下几点："/>
+<meta name="twitter:description" content="给定字符串 s 和字符串数组 words, 返回 words[i] 中是 s 的子序列的单词个数。 字符串的子序列是从原始字符串中生成的新字符串，可以从中删去一些字符(可以是 none"/>
 
 
 
     <meta property="og:title" content="LeetCode算法手记：792.匹配子序列的单词数" />
-<meta property="og:description" content="给定字符串 s 和字符串数组 words, 返回 words[i] 中是 s 的子序列的单词个数。 字符串的子序列是从原始字符串中生成的新字符串，可以从中删去一些字符(可以是 none)，而不改变其余字符的相对顺序。 例如， “ace” 是 “abcde” 的子序列。 示例 1： 输入: s = “abcde”, words = [“a”,“bb”,“acd”,“ace”] 输出: 3 解释: 有三个是 s 的子序列的单词: “a”, “acd”, “ace”。 示例 2： 输入: s = “dsahjpjauf”, words = [“ahjpjau”,“ja”,“ahbwzgqnuk”,“tnmlanowax”] 输出: 2 提示： 1 &lt;= s.length &lt;= 5 * 104 1 &lt;= words.length &lt;= 5000 1 &lt;= words[i].length &lt;= 50 words[i]和 s 都只由小写字母组成。 思路 对于字符串s和字符串t，若s为t的子序列，则需要满足以下几点：
- s中的所有字符的相对顺序，必须和这些字符在t中出现的相对顺序保持一致，例如s为ace，t为abcde，则s为t的子序列，此时a、c、e三个字符在两个字符串中出现的相对顺序保持一致，t可以通过删除b和d两个字符来得到s。 若s由一个或多个相同字符组成，那么该字符在s中出现的次数必然小于等于t中该字符出现的次数，例如字符串a、aa、aaa均为字符串aabade的子序列，但aaaa不是字符串aabade的子序列。  那么，维护一个数组，记录下原字符串t中每一个字符t[i]出现的位置i，然后对于要判断子序列的样本s，遍历s的每个字符，判断以下几点：" />
+<meta property="og:description" content="给定字符串 s 和字符串数组 words, 返回 words[i] 中是 s 的子序列的单词个数。 字符串的子序列是从原始字符串中生成的新字符串，可以从中删去一些字符(可以是 none" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://Huang-zh.github.io/posts/leetcode792/" /><meta property="og:image" content="https://Huang-zh.github.io"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2023-09-09T21:02:25+08:00" />
@@ -135,7 +131,7 @@
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        2分钟
+        4分钟
 
         
       </p>
@@ -306,7 +302,7 @@ words[i]和 s 都只由小写字母组成。
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        330字
+        1530字
       </p>
 
       <p>

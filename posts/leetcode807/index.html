@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="[huangzh]">
-<meta name="description" content="有时候人们会用重复写一些字母来表示额外的感受，比如 “hello” -&amp;gt; “heeellooo”, “hi” -&amp;gt; “hiii”。我们将相邻字母都相同的一串字符定义为相同字母组，例如：“h”, “eee”, “ll”, “ooo” 对于一个给定的字符串 S ，如果另一个单词能够通过将一些字母组扩张从而使其和 S 相同，我们将这个单词定义为可扩张的（stretchy）。扩张操作定义如下：选择一个字母组（包含字母 c ），然后往其中添加相同的字母 c 使其长度达到 3 或以上 例如，以 “hello” 为例，我们可以对字母组 “o” 扩张得到 “hellooo”，但是无法以同样的方法得到 “helloo” 因为字母组 “oo” 长度小于 3。此外，我们可以进行另一种扩张 “ll” -&amp;gt; “lllll” 以获得 “helllllooo”。如果 S = “helllllooo”，那么查询词 “hello” 是可扩张的，因为可以对它执行这两种扩张操作使得 query = “hello” -&amp;gt; “hellooo” -&amp;gt; “helllllooo” = 输入一组查询单词，输出其中可扩张的单词数量 示例 输入 S = “heeellooo” words = [“hello”, “hi”, “helo”] 输出： 解释 我们能通过扩张 “hello” 的 “e” 和 “o” 来得到 “heeellooo” 我们不能通过扩张 “helo” 来得到 “heeellooo” 因为 “ll” 的长度小于 3 提示 0 &amp;lt;= len(S) &amp;lt;= 100 0 &amp;lt;= len(words) &amp;lt;= 100 0 &amp;lt;= len(words[i]) &amp;lt;= 100 S 和所有在 words 中的单词都只由小写字母组成 思路 如果s能由word扩展而来，则遵守以下的判断原则：" />
+<meta name="description" content="有时候人们会用重复写一些字母来表示额外的感受，比如 “hello” -&amp;gt; “heeellooo”, “hi” -&amp;gt; “hiii”。我们将相邻字母都相同的一串" />
 <meta name="keywords" content=", 算法" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="" />
@@ -36,20 +36,20 @@
 
 
 <meta itemprop="name" content="LeetCode算法手记：807.情感丰富的文字">
-<meta itemprop="description" content="有时候人们会用重复写一些字母来表示额外的感受，比如 “hello” -&gt; “heeellooo”, “hi” -&gt; “hiii”。我们将相邻字母都相同的一串字符定义为相同字母组，例如：“h”, “eee”, “ll”, “ooo” 对于一个给定的字符串 S ，如果另一个单词能够通过将一些字母组扩张从而使其和 S 相同，我们将这个单词定义为可扩张的（stretchy）。扩张操作定义如下：选择一个字母组（包含字母 c ），然后往其中添加相同的字母 c 使其长度达到 3 或以上 例如，以 “hello” 为例，我们可以对字母组 “o” 扩张得到 “hellooo”，但是无法以同样的方法得到 “helloo” 因为字母组 “oo” 长度小于 3。此外，我们可以进行另一种扩张 “ll” -&gt; “lllll” 以获得 “helllllooo”。如果 S = “helllllooo”，那么查询词 “hello” 是可扩张的，因为可以对它执行这两种扩张操作使得 query = “hello” -&gt; “hellooo” -&gt; “helllllooo” = 输入一组查询单词，输出其中可扩张的单词数量 示例 输入 S = “heeellooo” words = [“hello”, “hi”, “helo”] 输出： 解释 我们能通过扩张 “hello” 的 “e” 和 “o” 来得到 “heeellooo” 我们不能通过扩张 “helo” 来得到 “heeellooo” 因为 “ll” 的长度小于 3 提示 0 &lt;= len(S) &lt;= 100 0 &lt;= len(words) &lt;= 100 0 &lt;= len(words[i]) &lt;= 100 S 和所有在 words 中的单词都只由小写字母组成 思路 如果s能由word扩展而来，则遵守以下的判断原则："><meta itemprop="datePublished" content="2023-09-11T22:12:46+08:00" />
+<meta itemprop="description" content="有时候人们会用重复写一些字母来表示额外的感受，比如 “hello” -&gt; “heeellooo”, “hi” -&gt; “hiii”。我们将相邻字母都相同的一串"><meta itemprop="datePublished" content="2023-09-11T22:12:46+08:00" />
 <meta itemprop="dateModified" content="2023-09-11T22:12:46+08:00" />
-<meta itemprop="wordCount" content="414"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="wordCount" content="3320"><meta itemprop="image" content="https://Huang-zh.github.io"/>
 <meta itemprop="keywords" content="算法," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://Huang-zh.github.io"/>
 
 <meta name="twitter:title" content="LeetCode算法手记：807.情感丰富的文字"/>
-<meta name="twitter:description" content="有时候人们会用重复写一些字母来表示额外的感受，比如 “hello” -&gt; “heeellooo”, “hi” -&gt; “hiii”。我们将相邻字母都相同的一串字符定义为相同字母组，例如：“h”, “eee”, “ll”, “ooo” 对于一个给定的字符串 S ，如果另一个单词能够通过将一些字母组扩张从而使其和 S 相同，我们将这个单词定义为可扩张的（stretchy）。扩张操作定义如下：选择一个字母组（包含字母 c ），然后往其中添加相同的字母 c 使其长度达到 3 或以上 例如，以 “hello” 为例，我们可以对字母组 “o” 扩张得到 “hellooo”，但是无法以同样的方法得到 “helloo” 因为字母组 “oo” 长度小于 3。此外，我们可以进行另一种扩张 “ll” -&gt; “lllll” 以获得 “helllllooo”。如果 S = “helllllooo”，那么查询词 “hello” 是可扩张的，因为可以对它执行这两种扩张操作使得 query = “hello” -&gt; “hellooo” -&gt; “helllllooo” = 输入一组查询单词，输出其中可扩张的单词数量 示例 输入 S = “heeellooo” words = [“hello”, “hi”, “helo”] 输出： 解释 我们能通过扩张 “hello” 的 “e” 和 “o” 来得到 “heeellooo” 我们不能通过扩张 “helo” 来得到 “heeellooo” 因为 “ll” 的长度小于 3 提示 0 &lt;= len(S) &lt;= 100 0 &lt;= len(words) &lt;= 100 0 &lt;= len(words[i]) &lt;= 100 S 和所有在 words 中的单词都只由小写字母组成 思路 如果s能由word扩展而来，则遵守以下的判断原则："/>
+<meta name="twitter:description" content="有时候人们会用重复写一些字母来表示额外的感受，比如 “hello” -&gt; “heeellooo”, “hi” -&gt; “hiii”。我们将相邻字母都相同的一串"/>
 
 
 
     <meta property="og:title" content="LeetCode算法手记：807.情感丰富的文字" />
-<meta property="og:description" content="有时候人们会用重复写一些字母来表示额外的感受，比如 “hello” -&gt; “heeellooo”, “hi” -&gt; “hiii”。我们将相邻字母都相同的一串字符定义为相同字母组，例如：“h”, “eee”, “ll”, “ooo” 对于一个给定的字符串 S ，如果另一个单词能够通过将一些字母组扩张从而使其和 S 相同，我们将这个单词定义为可扩张的（stretchy）。扩张操作定义如下：选择一个字母组（包含字母 c ），然后往其中添加相同的字母 c 使其长度达到 3 或以上 例如，以 “hello” 为例，我们可以对字母组 “o” 扩张得到 “hellooo”，但是无法以同样的方法得到 “helloo” 因为字母组 “oo” 长度小于 3。此外，我们可以进行另一种扩张 “ll” -&gt; “lllll” 以获得 “helllllooo”。如果 S = “helllllooo”，那么查询词 “hello” 是可扩张的，因为可以对它执行这两种扩张操作使得 query = “hello” -&gt; “hellooo” -&gt; “helllllooo” = 输入一组查询单词，输出其中可扩张的单词数量 示例 输入 S = “heeellooo” words = [“hello”, “hi”, “helo”] 输出： 解释 我们能通过扩张 “hello” 的 “e” 和 “o” 来得到 “heeellooo” 我们不能通过扩张 “helo” 来得到 “heeellooo” 因为 “ll” 的长度小于 3 提示 0 &lt;= len(S) &lt;= 100 0 &lt;= len(words) &lt;= 100 0 &lt;= len(words[i]) &lt;= 100 S 和所有在 words 中的单词都只由小写字母组成 思路 如果s能由word扩展而来，则遵守以下的判断原则：" />
+<meta property="og:description" content="有时候人们会用重复写一些字母来表示额外的感受，比如 “hello” -&gt; “heeellooo”, “hi” -&gt; “hiii”。我们将相邻字母都相同的一串" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://Huang-zh.github.io/posts/leetcode807/" /><meta property="og:image" content="https://Huang-zh.github.io"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2023-09-11T22:12:46+08:00" />
@@ -131,7 +131,7 @@
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        2分钟
+        7分钟
 
         
       </p>
@@ -321,7 +321,7 @@ S 和所有在 words 中的单词都只由小写字母组成
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        414字
+        3320字
       </p>
 
       <p>
