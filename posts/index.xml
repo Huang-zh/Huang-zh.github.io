@@ -5,8 +5,152 @@
         <description>Recent content in Posts on 此间的少年</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en</language>
-        <lastBuildDate>Mon, 02 Sep 2024 00:00:00 +0000</lastBuildDate>
+        <lastBuildDate>Fri, 20 Sep 2024 00:00:00 +0000</lastBuildDate>
         <atom:link href="https://Huang-zh.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>分布式事务流水序列号处理</title>
+            <link>https://Huang-zh.github.io/posts/native-trade-system-serial-no/</link>
+            <pubDate>Fri, 20 Sep 2024 00:00:00 +0000</pubDate>
+            
+            <guid>https://Huang-zh.github.io/posts/native-trade-system-serial-no/</guid>
+            <description>概念 在交易系统中，通常存在流水号的概念，在生成交易订单时，会通过分片+流水号的形式记录一个全局唯一的委托号。 对于流水号的获取，通常有如下要求</description>
+            <content type="html"><![CDATA[<h3 id="概念">概念</h3>
+<p>在交易系统中，通常存在流水号的概念，在生成交易订单时，会通过分片+流水号的形式记录一个全局唯一的委托号。</p>
+<p>对于流水号的获取，通常有如下要求：</p>
+<ul>
+<li>流水号本身需要以数字形式进行递增
+<ul>
+<li>防止作为主键或者索引造成页分裂，同时在排查问题时，在使用数字流水号的场景里追溯问题通常易于使用其他流水号，如UUID、雪花算法等。</li>
+</ul>
+</li>
+<li>流水号由计数器统一分配
+<ul>
+<li>流水号通常从一个地方获取，即交易系统通常会实现提供统一流水号的计数器，确保流水号的全局唯一，同时获取流水号的出口也唯一，易于维护。</li>
+</ul>
+</li>
+<li>流水号的设计需要按业务维度划分
+<ul>
+<li>日间交易存在多类业务，但每一类业务的频率往往不同，比如日间普通交易、信用交易的业务非常频繁，而大宗交易等综合业务往往发生频次非常低（比如一个交易日内发生几十次），这就使得不同业务流水号的增长速率不同，如果都使用同一类计数器进行维护，那么流水号的资源很快就会被频繁发生交易业务耗尽。</li>
+</ul>
+</li>
+<li>获取流水号需要尽可能的做到开销小
+<ul>
+<li>即流水号需要以最直接简单的方式获取，来确保交易功能的高性能要求。</li>
+</ul>
+</li>
+</ul>
+<h3 id="交易系统中的分布式事务">交易系统中的分布式事务</h3>
+<p>通常采用TCC（try-confirm-cancel）的模式实现跨数据库事务调度，拿生成委托的过程来举个例子，一个普通委托记录生成的流程通常如下：</p>
+<ul>
+<li>try阶段（一阶段）
+<ul>
+<li>获取当前业务全局唯一序列号</li>
+<li>生成当前业务委托订单（此时委托订单的状态字段可能为未生效，即视作预委托）</li>
+<li>&hellip;</li>
+</ul>
+</li>
+<li>confirm阶段（二阶段提交），一阶段所有操作正确按照预期执行后，执行二阶段的操作并进行事务提交
+<ul>
+<li>更新委托状态为正常状态</li>
+<li>&hellip;</li>
+</ul>
+</li>
+<li>cancel阶段（二阶段回滚），一阶段某一操作未按照预期执行且抛出异常，执行二阶段的操作并进行事务回滚
+<ul>
+<li>更新委托状态为作废状态</li>
+<li>&hellip;</li>
+</ul>
+</li>
+</ul>
+<p>前面说到，获取流水号需要尽可能的做到开销小，所以在日间交易时，通常会批量一次性申请一个号段（比如一次性申请100000-110000，一共一万个序列号），然后在交易系统中缓存这一批次的序列号，每当一个委托请求下达至交易系统，则从缓存中获取当前最新的序列号，同时更新缓存中的最新序列号为<strong>下一个可用序列号</strong>。</p>
+<p>引入了缓存，必然需要对缓存的数据进行维护，防止系统挂掉之后缓存中的序列号丢失，那么，通常需要针对维护的序列号设计一个存储最新可用的缓存序列号表。那么，引入了缓存序列号表，那么获取流水号之后就存在双写的义务：<strong style="color:red">即需要保证缓存和数据库表的数据一致性（二者维护的最新可用序列号必须一致。）</strong></p>
+<p>金融交易系统中，通常采用<strong style="color:red">先写数据库表，再写缓存的形式保证数据一致性。这通常会牺牲掉一些性能，原因是并发情况下更新同一行需要获取行级锁。保证数据一致性是交易系统的first rule，一旦缓存和数据库的数据不一致，那将引发巨大的问题。</strong></p>
+<p>最终，在分布式事务中获取序列号的步骤大体如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> Long <span style="color:#a6e22e">getSerialCounterNoForUpdate</span><span style="color:#f92672">(</span>Integer serialCounterNo<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        log<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;额度流水号生成阶段：一阶段RPC，对应业务种类：{}。&#34;</span><span style="color:#f92672">,</span>serialCounterNo<span style="color:#f92672">);</span>
+        Long serialNo<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">int</span> count<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>serialNoCacheManager<span style="color:#f92672">.</span><span style="color:#a6e22e">containsValue</span><span style="color:#f92672">(</span>serialCounterNo<span style="color:#f92672">,</span>currentStartSerialNo<span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span>
+                serialNoCacheManager<span style="color:#f92672">.</span><span style="color:#a6e22e">getCache</span><span style="color:#f92672">(</span>serialCounterNo<span style="color:#f92672">,</span>currentStartSerialNo<span style="color:#f92672">)</span> <span style="color:#f92672">&lt;</span> currentStartSerialNo <span style="color:#f92672">+</span> COUNTER_NUMBER <span style="color:#f92672">){</span>
+            <span style="color:#75715e">//当前序列号缓存命中
+</span><span style="color:#75715e"></span>            serialNo <span style="color:#f92672">=</span> serialNoCacheManager<span style="color:#f92672">.</span><span style="color:#a6e22e">getCache</span><span style="color:#f92672">(</span>serialCounterNo<span style="color:#f92672">,</span> currentStartSerialNo<span style="color:#f92672">);</span>
+            <span style="color:#75715e">// 取得的流水号放入事务上下文，供后续使用
+</span><span style="color:#75715e"></span>            BusinessActionContextUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">addContext</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;serialNo&#34;</span><span style="color:#f92672">,</span>serialNo<span style="color:#f92672">);</span>
+            <span style="color:#75715e">//更新信用流水计数器记录表
+</span><span style="color:#75715e"></span>            count <span style="color:#f92672">=</span> creditSerialCounterRecordDomain<span style="color:#f92672">.</span><span style="color:#a6e22e">updateCreditSerialCounterRecord</span><span style="color:#f92672">(</span>serialCounterNo<span style="color:#f92672">,</span>currentStartSerialNo<span style="color:#f92672">,</span>
+                    currentStartSerialNo <span style="color:#f92672">+</span> COUNTER_NUMBER <span style="color:#f92672">-</span> 1L<span style="color:#f92672">,</span>serialNo<span style="color:#f92672">,</span>serialNo<span style="color:#f92672">-</span>1<span style="color:#f92672">,</span>CommonConstant<span style="color:#f92672">.</span><span style="color:#a6e22e">INTEGER_ONE</span><span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+            serialNo <span style="color:#f92672">=</span> quotaClient<span style="color:#f92672">.</span><span style="color:#a6e22e">getSerialNo</span><span style="color:#f92672">(</span>serialCounterNo<span style="color:#f92672">);</span>
+            <span style="color:#75715e">// 取得的流水号放入事务上下文，供后续使用
+</span><span style="color:#75715e"></span>            BusinessActionContextUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">addContext</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;serialNo&#34;</span><span style="color:#f92672">,</span>serialNo<span style="color:#f92672">);</span>
+            <span style="color:#75715e">//当前可用序列号号段起始值
+</span><span style="color:#75715e"></span>            BusinessActionContextUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">addContext</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;currentStartSerialNo&#34;</span><span style="color:#f92672">,</span>serialNo<span style="color:#f92672">);</span>
+            <span style="color:#75715e">// 写入信用流水计数器记录表
+</span><span style="color:#75715e"></span>            count <span style="color:#f92672">=</span> creditSerialCounterRecordDomain<span style="color:#f92672">.</span><span style="color:#a6e22e">insertCreditSerialCounterRecord</span><span style="color:#f92672">(</span>serialNo<span style="color:#f92672">,</span>serialNo<span style="color:#f92672">+</span>COUNTER_NUMBER<span style="color:#f92672">-</span>1<span style="color:#f92672">,</span>
+                    serialNo<span style="color:#f92672">,</span>CommonConstant<span style="color:#f92672">.</span><span style="color:#a6e22e">INTEGER_ONE</span><span style="color:#f92672">,</span>serialCounterNo<span style="color:#f92672">);</span>
+
+        <span style="color:#f92672">}</span>
+        <span style="color:#75715e">// 必须更新成功，否则直接抛出异常，当做委托失败处理，进行分布式事务回滚
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>count <span style="color:#f92672">!=</span> CommonConstant<span style="color:#f92672">.</span><span style="color:#a6e22e">INTEGER_ONE</span><span style="color:#f92672">.</span><span style="color:#a6e22e">intValue</span><span style="color:#f92672">()){</span>
+            Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span>Object<span style="color:#f92672">&gt;</span> parameters <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> HashMap<span style="color:#f92672">&lt;&gt;();</span>
+            parameters<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>CommonConstant<span style="color:#f92672">.</span><span style="color:#a6e22e">SERIAL_COUNTER_NO_KEY</span><span style="color:#f92672">,</span>serialCounterNo<span style="color:#f92672">);</span>
+            parameters<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>CommonConstant<span style="color:#f92672">.</span><span style="color:#a6e22e">SERIAL_NO_KEY</span><span style="color:#f92672">,</span>serialNo<span style="color:#f92672">);</span>
+            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> BusinessExecuteException<span style="color:#f92672">(</span>ExceptionEnum<span style="color:#f92672">.</span><span style="color:#a6e22e">ENTRUST_FAILED</span><span style="color:#f92672">,</span>parameters<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> serialNo<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> Boolean <span style="color:#a6e22e">generateSerialCounterNo</span><span style="color:#f92672">(</span>BusinessActionContext businessActionContext<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Integer serialCounterNo <span style="color:#f92672">=</span> businessActionContext<span style="color:#f92672">.</span><span style="color:#a6e22e">getActionContext</span><span style="color:#f92672">(</span>CommonConstant<span style="color:#f92672">.</span><span style="color:#a6e22e">SERIAL_COUNTER_NO_KEY</span><span style="color:#f92672">,</span> Integer<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+        Long serialNo <span style="color:#f92672">=</span> businessActionContext<span style="color:#f92672">.</span><span style="color:#a6e22e">getActionContext</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;serialNo&#34;</span><span style="color:#f92672">,</span> Long<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+        Long currentStartSerialNo <span style="color:#f92672">=</span> businessActionContext<span style="color:#f92672">.</span><span style="color:#a6e22e">getActionContext</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;currentStartSerialNo&#34;</span><span style="color:#f92672">,</span> Long<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">currentStartSerialNo</span> <span style="color:#f92672">=</span> Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">ofNullable</span><span style="color:#f92672">(</span>currentStartSerialNo<span style="color:#f92672">).</span><span style="color:#a6e22e">orElse</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">currentStartSerialNo</span><span style="color:#f92672">);</span>
+        <span style="color:#75715e">// 二阶段提交时，写入缓存
+</span><span style="color:#75715e"></span>        serialNoCacheManager<span style="color:#f92672">.</span><span style="color:#a6e22e">createCache</span><span style="color:#f92672">(</span>serialCounterNo<span style="color:#f92672">,</span><span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">currentStartSerialNo</span><span style="color:#f92672">,</span>serialNo<span style="color:#f92672">+</span>1<span style="color:#f92672">);</span>
+        log<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;额度流水号生成阶段：二阶段提交，取得的流水订单号：{}，对应业务种类{}。&#34;</span><span style="color:#f92672">,</span>serialNo<span style="color:#f92672">,</span>serialCounterNo<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span> Boolean<span style="color:#f92672">.</span><span style="color:#a6e22e">TRUE</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> Boolean <span style="color:#a6e22e">redoSerialCounterNo</span><span style="color:#f92672">(</span>BusinessActionContext businessActionContext<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Integer serialCounterNo <span style="color:#f92672">=</span> businessActionContext<span style="color:#f92672">.</span><span style="color:#a6e22e">getActionContext</span><span style="color:#f92672">(</span>CommonConstant<span style="color:#f92672">.</span><span style="color:#a6e22e">SERIAL_COUNTER_NO_KEY</span><span style="color:#f92672">,</span> Integer<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+        log<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;额度流水号生成阶段：二阶段回滚，对应业务种类{}。&#34;</span><span style="color:#f92672">,</span>serialCounterNo<span style="color:#f92672">);</span>
+        Long currentStartSerialNo <span style="color:#f92672">=</span> businessActionContext<span style="color:#f92672">.</span><span style="color:#a6e22e">getActionContext</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;currentStartSerialNo&#34;</span><span style="color:#f92672">,</span> Long<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+        Long serialNo <span style="color:#f92672">=</span> businessActionContext<span style="color:#f92672">.</span><span style="color:#a6e22e">getActionContext</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;serialNo&#34;</span><span style="color:#f92672">,</span> Long<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>currentStartSerialNo <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">){</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>serialNo <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">){</span>
+                <span style="color:#75715e">// 未发起RPC申请序列号段，说明当前线程上下文中的序列号未被使用，更新缓存将计数器重置为serialNo即可
+</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">return</span> serialNoCacheManager<span style="color:#f92672">.</span><span style="color:#a6e22e">createCache</span><span style="color:#f92672">(</span>serialCounterNo<span style="color:#f92672">,</span><span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">currentStartSerialNo</span><span style="color:#f92672">,</span>serialNo<span style="color:#f92672">)</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">return</span> Boolean<span style="color:#f92672">.</span><span style="color:#a6e22e">TRUE</span><span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+            <span style="color:#75715e">// 发起RPC申请了新号段，则需要回冲已申请的号段
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// 1. 发起RPC回冲额度管理系统的序列号段申请记录
+</span><span style="color:#75715e"></span>            <span style="color:#75715e">// 2. 本地序列号段表删除新申请的记录
+</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">return</span> quotaClient<span style="color:#f92672">.</span><span style="color:#a6e22e">redoSerialCounterNo</span><span style="color:#f92672">(</span>serialCounterNo<span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span>
+                    creditSerialCounterRecordDomain<span style="color:#f92672">.</span><span style="color:#a6e22e">deleteCreditSerialCounterRecord</span><span style="color:#f92672">(</span>serialCounterNo<span style="color:#f92672">,</span>currentStartSerialNo<span style="color:#f92672">,</span>currentStartSerialNo <span style="color:#f92672">+</span> COUNTER_NUMBER<span style="color:#f92672">-</span>1<span style="color:#f92672">,</span>serialNo<span style="color:#f92672">,</span>CommonConstant<span style="color:#f92672">.</span><span style="color:#a6e22e">INTEGER_ONE</span><span style="color:#f92672">)</span> <span style="color:#f92672">==</span> CommonConstant<span style="color:#f92672">.</span><span style="color:#a6e22e">INTEGER_ONE</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div><p>大致分为如下步骤：</p>
+<p>1、一阶段中，先查询缓存中是否维护最新可用序列号</p>
+<ul>
+<li>如果不存在，则发起RPC至计数器功能获取一批次的可用序列号段。
+*  获取新的一批序列号后，马上插入表记录，然后更新缓存，确保数据一致性。</li>
+<li>如果存在，则直接获取当前可用序列号。
+*  获取新的序列号后，马上更新表记录中可用的最新序列号为当前取得的序列号+1。</li>
+<li>上述两种情况，任意一次写表失败，说明存在并发，直接抛出异常来实现快速失败机制，确保性能。</li>
+</ul>
+<p>2、使用获取的序列号成功后（可能存在RPC新申请和已维护缓存中直接获取两种情况），需要在二阶段提交时将缓存中的可用序列号更新为本次获取的序列号+1，以确保下一次委托命中缓存时可取出直接使用的最新序列号（<strong style="color:red">此时，由于一阶段对于两种情况均已经写表，所以取出的序列号天然递增</strong>）。</p>
+<p>3、使用获取的序列号失败，即一阶段发生任意报错，则针对两种情况进行回滚：</p>
+<ul>
+<li>一阶段缓存中已命中，直接取出序列号的，由于序列号缓存中递增操作在二阶段提交才会去执行，所以一阶段获取的序列号仍能使用，这里缓存可更新可不更新，因为实际上缓存中维护的最新可用序列号并无变化。</li>
+<li>一阶段缓存未命中，发起RPC申请新的流水号段，则需要发起一次回冲RPC，将申请的流水号段在计数器功能中进行回冲，避免造成流水号段资源的浪费。</li>
+</ul>
+]]></content>
+        </item>
         
         <item>
             <title>在千岛湖</title>
