@@ -38,7 +38,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-01-31T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-01-31T00:00:00+00:00" />
-<meta itemprop="wordCount" content="8350"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="wordCount" content="8499"><meta itemprop="image" content="https://Huang-zh.github.io"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://Huang-zh.github.io"/>
@@ -917,7 +917,42 @@ Feign Client<span style="color:#f92672">:</span>
 
 <span style="color:#75715e">-- 重置专项头寸业务资金流水表的计数器号段长度
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">update</span> quota.serial_no_counter <span style="color:#66d9ef">set</span> step <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">where</span> serial_counter_no <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;
-</code></pre></div>
+</code></pre></div><h3 id="7字段释义">7.字段释义</h3>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>mysql类型</th>
+<th>java类型</th>
+<th>备注</th>
+<th>枚举</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>realAction</td>
+<td>tinyint</td>
+<td>int</td>
+<td>发生动作，常用在记录资金流水、股份流水时，表明是成交回报流程或是委托流程发生的资金、股份变更</td>
+<td>0，委托过程中记录流水<br/>1，回报过程中记录流水</td>
+</tr>
+<tr>
+<td>entrustStatus</td>
+<td>tinyint</td>
+<td>int</td>
+<td>委托状态，表明一笔委托当前在业务系统中的流转状态</td>
+<td>0：未报，1：待报，2：已报，6：已撤，8：已成</td>
+</tr>
+<tr>
+<td>&hellip;</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
       </div>
     </article>
 
@@ -949,7 +984,7 @@ Feign Client<span style="color:#f92672">:</span>
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        8350字
+        8499字
       </p>
 
       <p>
