@@ -1140,7 +1140,7 @@ Feign Client<span style="color:#f92672">:</span>
 </tr>
 <tr>
 <td style="text-align:center">2024.09.24</td>
-<td style="text-align:center">流水计数器分布式事务实现类支持缓存号段数据上下场的能力，避免发生故障停机后无法恢复缓存数据，造成号段资源浪费。待自测。</td>
+<td style="text-align:center">流水计数器分布式事务实现类支持缓存号段数据上下场的能力，避免发生故障停机后无法恢复缓存数据，造成号段资源浪费。自测完成。</td>
 </tr>
 </tbody>
 </table>
@@ -1277,6 +1277,11 @@ Feign Client<span style="color:#f92672">:</span>
 </tr>
 </tbody>
 </table>
+<h3 id="8-todo-list">8. todo list</h3>
+<ul>
+<li>流水计数器中的缓存功能，需要维护每一种计数器种类的号段起始值，否则存在多种计数器种类缓存无法击中的风险。</li>
+<li>&hellip;</li>
+</ul>
 ]]></content>
         </item>
         

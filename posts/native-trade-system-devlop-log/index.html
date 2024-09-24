@@ -38,7 +38,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-01-31T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-01-31T00:00:00+00:00" />
-<meta itemprop="wordCount" content="8904"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="wordCount" content="8961"><meta itemprop="image" content="https://Huang-zh.github.io"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://Huang-zh.github.io"/>
@@ -889,7 +889,7 @@ Feign Client<span style="color:#f92672">:</span>
 </tr>
 <tr>
 <td style="text-align:center">2024.09.24</td>
-<td style="text-align:center">流水计数器分布式事务实现类支持缓存号段数据上下场的能力，避免发生故障停机后无法恢复缓存数据，造成号段资源浪费。待自测。</td>
+<td style="text-align:center">流水计数器分布式事务实现类支持缓存号段数据上下场的能力，避免发生故障停机后无法恢复缓存数据，造成号段资源浪费。自测完成。</td>
 </tr>
 </tbody>
 </table>
@@ -1026,6 +1026,11 @@ Feign Client<span style="color:#f92672">:</span>
 </tr>
 </tbody>
 </table>
+<h3 id="8-todo-list">8. todo list</h3>
+<ul>
+<li>流水计数器中的缓存功能，需要维护每一种计数器种类的号段起始值，否则存在多种计数器种类缓存无法击中的风险。</li>
+<li>&hellip;</li>
+</ul>
 
       </div>
     </article>
@@ -1058,7 +1063,7 @@ Feign Client<span style="color:#f92672">:</span>
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        8904字
+        8961字
       </p>
 
       <p>
