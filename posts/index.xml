@@ -1138,6 +1138,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2024.09.23</td>
 <td style="text-align:center">修复bug，当前缓存号段无序列号可用时，更新该号段数据库表中可用状态为不可用。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.09.24</td>
+<td style="text-align:center">流水计数器分布式事务实现类支持缓存号段数据上下场的能力，避免发生故障停机后无法恢复缓存数据，造成号段资源浪费。待自测。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>

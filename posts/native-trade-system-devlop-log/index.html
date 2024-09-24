@@ -38,7 +38,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-01-31T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-01-31T00:00:00+00:00" />
-<meta itemprop="wordCount" content="8811"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="wordCount" content="8871"><meta itemprop="image" content="https://Huang-zh.github.io"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://Huang-zh.github.io"/>
@@ -887,6 +887,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2024.09.23</td>
 <td style="text-align:center">修复bug，当前缓存号段无序列号可用时，更新该号段数据库表中可用状态为不可用。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.09.24</td>
+<td style="text-align:center">流水计数器分布式事务实现类支持缓存号段数据上下场的能力，避免发生故障停机后无法恢复缓存数据，造成号段资源浪费。待自测。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
@@ -1051,7 +1055,7 @@ Feign Client<span style="color:#f92672">:</span>
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        8811字
+        8871字
       </p>
 
       <p>
