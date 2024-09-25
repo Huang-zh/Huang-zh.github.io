@@ -38,7 +38,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-01-31T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-01-31T00:00:00+00:00" />
-<meta itemprop="wordCount" content="8961"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="wordCount" content="9060"><meta itemprop="image" content="https://Huang-zh.github.io"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://Huang-zh.github.io"/>
@@ -131,7 +131,7 @@
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        18分钟
+        19分钟
 
         
       </p>
@@ -941,6 +941,48 @@ Feign Client<span style="color:#f92672">:</span>
 </thead>
 <tbody>
 <tr>
+<td>userId</td>
+<td>varchar(64)</td>
+<td>String</td>
+<td>用户id（客户层id）</td>
+<td>不涉及</td>
+</tr>
+<tr>
+<td>fundAccount</td>
+<td>bigint</td>
+<td>long</td>
+<td>资产账号</td>
+<td>不涉及</td>
+</tr>
+<tr>
+<td>stockAccount</td>
+<td>varchar(64)</td>
+<td>String</td>
+<td>股东账号</td>
+<td>不涉及</td>
+</tr>
+<tr>
+<td>cashGroupAccount</td>
+<td>bigint</td>
+<td>Long</td>
+<td>头寸账号</td>
+<td>不涉及</td>
+</tr>
+<tr>
+<td>branchNo</td>
+<td>int</td>
+<td>int</td>
+<td>营业部编号</td>
+<td>不涉及</td>
+</tr>
+<tr>
+<td>accountStatus</td>
+<td>int</td>
+<td>int</td>
+<td>账号状态</td>
+<td>不涉及</td>
+</tr>
+<tr>
 <td>realAction</td>
 <td>tinyint</td>
 <td>int</td>
@@ -1024,6 +1066,27 @@ Feign Client<span style="color:#f92672">:</span>
 <td>证券类型</td>
 <td>0：股票<br/>4：新股<br/>G：新债</td>
 </tr>
+<tr>
+<td>entrust_price</td>
+<td>decimal(20,2)</td>
+<td>BigDecimal</td>
+<td>委托价格</td>
+<td>不涉及</td>
+</tr>
+<tr>
+<td>entrust_amount</td>
+<td>int</td>
+<td>int</td>
+<td>委托数量</td>
+<td>不涉及</td>
+</tr>
+<tr>
+<td>entrust_balance</td>
+<td>decimal(20,2)</td>
+<td>BigDecimal</td>
+<td>委托总金额</td>
+<td>不涉及</td>
+</tr>
 </tbody>
 </table>
 <h3 id="8-todo-list">8. todo list</h3>
@@ -1063,7 +1126,7 @@ Feign Client<span style="color:#f92672">:</span>
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        8961字
+        9060字
       </p>
 
       <p>
