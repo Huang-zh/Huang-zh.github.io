@@ -1144,7 +1144,11 @@ Feign Client<span style="color:#f92672">:</span>
 </tr>
 <tr>
 <td style="text-align:center">2024.09.26</td>
-<td style="text-align:center">流水计数器获取类改造，可缓存多种计数器种类的号段数据，并具备计数器号段数据上场能力，待自测。</td>
+<td style="text-align:center">流水计数器获取类改造，可缓存多种计数器种类的号段数据，并具备计数器号段数据上场能力，自测完成。</td>
+</tr>
+<tr>
+<td style="text-align:center">2024.09.27</td>
+<td style="text-align:center">流水计数器获取类改造，使同一种计数器号段能够连续申请。</td>
 </tr>
 </tbody>
 </table>
