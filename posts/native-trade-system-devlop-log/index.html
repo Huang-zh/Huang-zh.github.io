@@ -38,7 +38,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-01-31T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-01-31T00:00:00+00:00" />
-<meta itemprop="wordCount" content="9170"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="wordCount" content="9256"><meta itemprop="image" content="https://Huang-zh.github.io"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://Huang-zh.github.io"/>
@@ -897,7 +897,11 @@ Feign Client<span style="color:#f92672">:</span>
 </tr>
 <tr>
 <td style="text-align:center">2024.09.27</td>
-<td style="text-align:center">流水计数器获取类改造，使同一种计数器号段能够连续申请。</td>
+<td style="text-align:center">流水计数器获取类改造，使同一种计数器号段能够连续申请，自测完成。</td>
+</tr>
+<tr>
+<td style="text-align:center">2024.09.28</td>
+<td style="text-align:center">信用交易专项头寸资金流水表，生成序列号改造：使用带缓存功能的统一流水计数器工具类，自测完成。</td>
 </tr>
 </tbody>
 </table>
@@ -932,10 +936,10 @@ Feign Client<span style="color:#f92672">:</span>
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">update</span> quota.serial_no_counter <span style="color:#66d9ef">set</span> step <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">where</span> serial_counter_no <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
 
 <span style="color:#75715e">-- 重置信用交易委托表的计数器号段长度
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">update</span> quota.serial_no_counter <span style="color:#66d9ef">set</span> step <span style="color:#f92672">=</span> <span style="color:#ae81ff">10000</span> <span style="color:#66d9ef">where</span> serial_counter_no <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">update</span> quota.serial_no_counter <span style="color:#66d9ef">set</span> step <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span> <span style="color:#66d9ef">where</span> serial_counter_no <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
 
 <span style="color:#75715e">-- 重置专项头寸业务资金流水表的计数器号段长度
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">update</span> quota.serial_no_counter <span style="color:#66d9ef">set</span> step <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">where</span> serial_counter_no <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">update</span> quota.serial_no_counter <span style="color:#66d9ef">set</span> step <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span> <span style="color:#66d9ef">where</span> serial_counter_no <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>;
 </code></pre></div><h3 id="7字段释义">7.字段释义</h3>
 <table>
 <thead>
@@ -1100,6 +1104,7 @@ Feign Client<span style="color:#f92672">:</span>
 <h3 id="8-todo-list">8. todo list</h3>
 <ul>
 <li>✅<s>流水计数器中的缓存功能，需要维护每一种计数器种类的号段起始值，否则存在多种计数器种类缓存无法击中的风险。</s></li>
+<li>✅<s>专项头寸资金发生变化，流水序列号使用带缓存的统一流水计数器工具类。</s></li>
 <li>流水计数器缓存，需要判断新申请号段的情况下才更新缓存中号段的起始值。</li>
 </ul>
 
@@ -1134,7 +1139,7 @@ Feign Client<span style="color:#f92672">:</span>
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        9170字
+        9256字
       </p>
 
       <p>
