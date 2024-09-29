@@ -38,7 +38,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-01-31T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-01-31T00:00:00+00:00" />
-<meta itemprop="wordCount" content="9256"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="wordCount" content="9327"><meta itemprop="image" content="https://Huang-zh.github.io"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://Huang-zh.github.io"/>
@@ -1079,24 +1079,38 @@ Feign Client<span style="color:#f92672">:</span>
 <td>0：股票<br/>4：新股<br/>G：新债</td>
 </tr>
 <tr>
-<td>entrust_price</td>
+<td>entrustPrice</td>
 <td>decimal(20,2)</td>
 <td>BigDecimal</td>
 <td>委托价格</td>
 <td>不涉及</td>
 </tr>
 <tr>
-<td>entrust_amount</td>
+<td>entrustAmount</td>
 <td>int</td>
 <td>int</td>
 <td>委托数量</td>
 <td>不涉及</td>
 </tr>
 <tr>
-<td>entrust_balance</td>
+<td>entrustBalance</td>
 <td>decimal(20,2)</td>
 <td>BigDecimal</td>
-<td>委托总金额</td>
+<td>委托总金额，不包含前后台费用</td>
+<td>不涉及</td>
+</tr>
+<tr>
+<td>prevBalance</td>
+<td>decimal(20,2)</td>
+<td>BigDecimal</td>
+<td>委托发生金额，委托下单时落表，包含前后台费用</td>
+<td>不涉及</td>
+</tr>
+<tr>
+<td>clearBalance</td>
+<td>decimal(20,2)</td>
+<td>BigDecimal</td>
+<td>清算金额，回报时更新，包含当前成交数量对应的前后台费用</td>
 <td>不涉及</td>
 </tr>
 </tbody>
@@ -1105,7 +1119,7 @@ Feign Client<span style="color:#f92672">:</span>
 <ul>
 <li>✅<s>流水计数器中的缓存功能，需要维护每一种计数器种类的号段起始值，否则存在多种计数器种类缓存无法击中的风险。</s></li>
 <li>✅<s>专项头寸资金发生变化，流水序列号使用带缓存的统一流水计数器工具类。</s></li>
-<li>流水计数器缓存，需要判断新申请号段的情况下才更新缓存中号段的起始值。</li>
+<li>🔴流水计数器缓存，需要判断新申请号段的情况下才更新缓存中号段的起始值。</li>
 </ul>
 
       </div>
@@ -1139,7 +1153,7 @@ Feign Client<span style="color:#f92672">:</span>
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        9256字
+        9327字
       </p>
 
       <p>
