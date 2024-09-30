@@ -1154,6 +1154,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2024.09.28</td>
 <td style="text-align:center">信用交易专项头寸资金流水表，生成序列号改造：使用带缓存功能的统一流水计数器工具类，自测完成。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.09.30</td>
+<td style="text-align:center">统一流水计数器缓存扩展申请号段标志，只在申请号段时才更新当前计数器种类的号段起始值缓存，自测完成。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
@@ -1370,7 +1374,7 @@ Feign Client<span style="color:#f92672">:</span>
 <ul>
 <li>✅<s>流水计数器中的缓存功能，需要维护每一种计数器种类的号段起始值，否则存在多种计数器种类缓存无法击中的风险。</s></li>
 <li>✅<s>专项头寸资金发生变化，流水序列号使用带缓存的统一流水计数器工具类。</s></li>
-<li>🔴流水计数器缓存，需要判断新申请号段的情况下才更新缓存中号段的起始值。</li>
+<li>✅<s>流水计数器缓存，需要判断新申请号段的情况下才更新缓存中号段的起始值。</s></li>
 </ul>
 ]]></content>
         </item>
