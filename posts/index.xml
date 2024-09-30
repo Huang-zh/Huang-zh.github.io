@@ -1158,6 +1158,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2024.09.30</td>
 <td style="text-align:center">统一流水计数器缓存扩展申请号段标志，只在申请号段时才更新当前计数器种类的号段起始值缓存，自测完成。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.10.01</td>
+<td style="text-align:center">构造回报报文，并解析成功，成功反序列化成MessageMetaData，供业务流程使用，自测完成。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
