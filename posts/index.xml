@@ -1162,6 +1162,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2024.10.01</td>
 <td style="text-align:center">构造回报报文，并解析成功，成功反序列化成MessageMetaData，供业务流程使用，自测完成。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.10.02</td>
+<td style="text-align:center">编写生成字节报文工具，ByteTypeUtil.<em>generateBytes</em>，支持根据传入任意 map 生成字节报文，自测完成。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
