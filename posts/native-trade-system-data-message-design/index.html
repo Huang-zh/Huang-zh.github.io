@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="[huangzh]">
+<meta name="description" content="低延时要求场景下，json 不再满足传输效率，需要一种更简洁、更紧凑的数据交互格式来保证高吞吐量和低延时性能。" />
+<meta name="keywords" content=", 交易系统开发日志" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="https://Huang-zh.github.io/posts/native-trade-system-data-message-design/" />
+
+
+    <title>
+        
+             交易系统系统间数据交互格式设计 :: 此间的少年 
+        
+    </title>
+
+
+
+
+
+<link rel="stylesheet" href="/main.b78c3be9451dc4ca61ca377f3dc2cf2e6345a44c2bae46216a322ef366daa399.css" integrity="sha256-t4w76UUdxMphyjd/PcLPLmNFpEwrrkYhajIu82bao5k=">
+
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="msapplication-TileColor" content="">
+
+
+<meta itemprop="name" content=" 交易系统系统间数据交互格式设计">
+<meta itemprop="description" content="低延时要求场景下，json 不再满足传输效率，需要一种更简洁、更紧凑的数据交互格式来保证高吞吐量和低延时性能。"><meta itemprop="datePublished" content="2024-01-31T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2024-01-31T00:00:00+00:00" />
+<meta itemprop="wordCount" content="1804"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="keywords" content="交易系统开发日志," />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://Huang-zh.github.io"/>
+
+<meta name="twitter:title" content=" 交易系统系统间数据交互格式设计"/>
+<meta name="twitter:description" content="低延时要求场景下，json 不再满足传输效率，需要一种更简洁、更紧凑的数据交互格式来保证高吞吐量和低延时性能。"/>
+
+
+
+    <meta property="og:title" content=" 交易系统系统间数据交互格式设计" />
+<meta property="og:description" content="低延时要求场景下，json 不再满足传输效率，需要一种更简洁、更紧凑的数据交互格式来保证高吞吐量和低延时性能。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://Huang-zh.github.io/posts/native-trade-system-data-message-design/" /><meta property="og:image" content="https://Huang-zh.github.io"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2024-01-31T00:00:00+00:00" />
+<meta property="article:modified_time" content="2024-01-31T00:00:00+00:00" /><meta property="og:site_name" content="此间的少年" />
+
+
+
+
+
+
+    <meta property="article:section" content="交易系统开发日志" />
+
+
+
+    <meta property="article:published_time" content="2024-01-31 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    
+        <body>
+    
+    
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text ">
+                huan.g</span>
+            <span class="logo__cursor" style=
+                  "
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+            
+                <nav class="menu">
+    <ul class="menu__inner"><li><a href="/posts/">文章</a></li><li><a href="/categories/">分类</a></li><li><a href="/about/">关于</a></li>
+    </ul>
+</nav>
+
+                <span class="menu-trigger">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </span>
+            
+        </span>
+    </span>
+</header>
+
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        4分钟
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="https://Huang-zh.github.io/posts/native-trade-system-data-message-design/">交易系统系统间数据交互格式设计</a>
+      </h1>
+
+      
+        <div class="post-excerpt">低延时要求场景下，json 不再满足传输效率，需要一种更简洁、更紧凑的数据交互格式来保证高吞吐量和低延时性能。</div>
+      
+
+      
+
+      
+
+      <div class="post-content">
+        <h4 id="背景">背景</h4>
+<p>交易系统的特点，除了高吞吐量、高并发之外，往往对延迟有着非常敏感的要求，业界话术：<strong style="color:red">高抖动敏感。</strong></p>
+<p>但是时延并不是针对所有业务，比如交易系统涉及的大宗交易、综合业务、盘后定价等业务，由于发生频次非常的低，一般一个交易日才几十笔，所以这类业务并没有很敏感的时延需求。</p>
+<p>时延需求仅仅存在于日间竞价撮合场景，比如普通交易、融资融券等发生频次非常频繁的业务。</p>
+<p>时延的一个重要影响因素，就是系统间的数据交互，一般称之为 RPC，一笔交易委托的下达，往往伴随着生成订单、申报至交易所、交易所撮合后进行回报等操作。</p>
+<p>而在委托下达的过程中，往往又会涉及多个子系统的交互，比如融资融券业务，需要在委托前 RPC 至合约系统生成一笔新的合约，然后需要 RPC 至额度系统扣减券商授权额度等一系列操作，如何用简洁的消息体去传达一笔委托中的所有跨系统指令，是一个低时延交易系统需要考虑的一个必要大前提。</p>
+<h4 id="消息体的设计">消息体的设计</h4>
+<p>传统的 json 格式，显然不满足这种低时延的要求，原因是 json 的序列化和反序列化操作存在较高的耗时，同时 json 格式虽然可读性很高，但排列不够紧凑，本身占据的空间往往较大，在低延时的场景会产生较大的带宽占用，一旦因为带宽不足（虽然可能性很小）而发生网络抖动，那对于日间交易将是灾难性的影响，会导致系统时延增大、处理速度过慢导致订单积压，系统tps 上不去。</p>
+<p>因此，需要用一种更简洁、更紧凑的方式去设计交易系统敏感场景的数据传输格式。</p>
+<p>一般采用直接拼接字节的方式进行传输，这种方式对消息体设计人员的要求较高，但好处就是能够保证高效的系统间传输，但坏处也存在，<strong style="color:red">那就是必须严格约定每一个字节代表的意义，并且上下游各系统必须严格遵守这个约定。</strong>某种意义上，牺牲了 json 带来的可读性和便捷性，保证了系统的时延和高吞吐量。</p>
+<p>一般用域的概念来表示字节组成的消息的各个子部分，可参考如下设计：</p>
+<ul>
+<li>
+<p>1 号域，只有一个字节，代表了本次传输消息的所有参数个数，由于是一个字节，所以一次 RPC 最多支持 256 个参数。</p>
+</li>
+<li>
+<p>2 号域，如果 1 号域得出消息中一共有 n 个参数，0&lt; n &lt;=256，那么 2 号域的下标范围为：1 至 n ，也就是从第二个字节开始，往后的 n 个字节（n 由 1 号域得出）的范围里，每一个字节代表了一种第 n 个参数的类型，注意，必须严格约定每种类型代表的字节值，比如下面的表格，就可以作为约定基本数据类型对应的字节值的规范：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">字节值</th>
+<th style="text-align:center">基本类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">98</td>
+<td style="text-align:center">byte</td>
+</tr>
+<tr>
+<td style="text-align:center">115</td>
+<td style="text-align:center">short</td>
+</tr>
+<tr>
+<td style="text-align:center">99</td>
+<td style="text-align:center">char</td>
+</tr>
+<tr>
+<td style="text-align:center">102</td>
+<td style="text-align:center">float</td>
+</tr>
+<tr>
+<td style="text-align:center">100</td>
+<td style="text-align:center">double</td>
+</tr>
+<tr>
+<td style="text-align:center">105</td>
+<td style="text-align:center">int</td>
+</tr>
+<tr>
+<td style="text-align:center">108</td>
+<td style="text-align:center">long</td>
+</tr>
+<tr>
+<td style="text-align:center">66</td>
+<td style="text-align:center">boolean</td>
+</tr>
+<tr>
+<td style="text-align:center">83</td>
+<td style="text-align:center">string</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>3 号域，如果 1 号域得出消息中一共有 n 个参数，那么 3 号域的范围为 n+1 至 n+1+2*n - 1，从 n+1个字节处往后，每 2 个字节代表了第 n 个参数所占用的字节个数，之所以设计了两个字节来表示字节个数，是为了考虑字符串的长度是可变的，它不像基本类型（比如 int 固定用 4 个字节即可表示）。从 3 号域可以获得每一个参数的占用字节数，为 4 号域获取值做准备。</p>
+</li>
+<li>
+<p>4 号域，如果 1 号域得出消息中一共有 n 个参数，从 3 号域推断出每个参数的字节数（假设 n 个参数总共占用m 个字节），那么 4 号域的范围为 n+1+2*n 至  n+1+2*n+m，需要维护一个 valueIndex 下标，当第 n 个参数对应的 3 号域中占用字节数为 k 时，valueIndex 至 valueIndex + k -1 范围内的字节即当前参数对应的值。</p>
+</li>
+<li>
+<p>5 号域，组成较为简单，通过参数名字符串直接拼接|字符构成，比如：orderId|businessAmount|reportDate，可直接一次性读取完毕后通过|字符分割，获取 n 个参数对应的参数名。</p>
+</li>
+</ul>
+<h4 id="代码示例">代码示例</h4>
+<p>可以指定传入一个 map，来序列化成字节消息：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">		<span style="color:#75715e">/**
+</span><span style="color:#75715e">     * @Author huang.zh
+</span><span style="color:#75715e">     * @Description 将入参的个数填充成字节数组
+</span><span style="color:#75715e">     * @Date 7:30 PM 2024/10/2
+</span><span style="color:#75715e">     * @Param [bytes, parameters]
+</span><span style="color:#75715e">     * @return
+</span><span style="color:#75715e">     **/</span>
+		<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> <span style="color:#a6e22e">generateParameterLength</span><span style="color:#f92672">(</span>Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span>Object<span style="color:#f92672">&gt;</span> parameters<span style="color:#f92672">){</span>
+        <span style="color:#75715e">// 计算长度
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">// 参数个数 1 个字节：parameterNumber
+</span><span style="color:#75715e"></span>        <span style="color:#75715e">// 参数类型 parameterNumber 个字节
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">int</span> parameterNumber <span style="color:#f92672">=</span> parameters<span style="color:#f92672">.</span><span style="color:#a6e22e">size</span><span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">int</span> length <span style="color:#f92672">=</span> 1 <span style="color:#f92672">+</span> parameterNumber <span style="color:#f92672">+</span> 2 <span style="color:#f92672">*</span> parameterNumber<span style="color:#f92672">;</span>
+        Collection<span style="color:#f92672">&lt;</span>Object<span style="color:#f92672">&gt;</span> values <span style="color:#f92672">=</span> parameters<span style="color:#f92672">.</span><span style="color:#a6e22e">values</span><span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>Object value <span style="color:#f92672">:</span> values<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>value <span style="color:#66d9ef">instanceof</span> Integer <span style="color:#f92672">||</span> value <span style="color:#66d9ef">instanceof</span> Float <span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                length <span style="color:#f92672">+=</span> 4<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>value <span style="color:#66d9ef">instanceof</span> Long <span style="color:#f92672">||</span> value <span style="color:#66d9ef">instanceof</span> Double<span style="color:#f92672">){</span>
+                length <span style="color:#f92672">+=</span> 8<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>value <span style="color:#66d9ef">instanceof</span> Character <span style="color:#f92672">||</span> value <span style="color:#66d9ef">instanceof</span> Byte <span style="color:#f92672">||</span> value <span style="color:#66d9ef">instanceof</span> Boolean<span style="color:#f92672">){</span>
+                length <span style="color:#f92672">+=</span> 1<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>value <span style="color:#66d9ef">instanceof</span> Short<span style="color:#f92672">){</span>
+                length <span style="color:#f92672">+=</span> 2<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">byte</span><span style="color:#f92672">[]</span> bytes <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">byte</span><span style="color:#f92672">[</span>length<span style="color:#f92672">];</span>
+        bytes<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">byte</span><span style="color:#f92672">)</span> parameterNumber<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">int</span> typeIndex <span style="color:#f92672">=</span> 1<span style="color:#f92672">,</span>lengthIndex <span style="color:#f92672">=</span> 1 <span style="color:#f92672">+</span> parameterNumber <span style="color:#f92672">+</span> 1<span style="color:#f92672">,</span>valueIndex <span style="color:#f92672">=</span> 1 <span style="color:#f92672">+</span> parameterNumber <span style="color:#f92672">+</span> 2 <span style="color:#f92672">*</span> parameterNumber<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>Object value <span style="color:#f92672">:</span> values<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>value <span style="color:#66d9ef">instanceof</span> Integer<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                bytes<span style="color:#f92672">[</span>typeIndex<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> Type<span style="color:#f92672">.</span><span style="color:#a6e22e">INTEGER</span><span style="color:#f92672">.</span><span style="color:#a6e22e">type</span><span style="color:#f92672">();</span>
+                bytes<span style="color:#f92672">[</span>lengthIndex<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> Integer<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>4<span style="color:#f92672">).</span><span style="color:#a6e22e">byteValue</span><span style="color:#f92672">();</span>
+                lengthIndex <span style="color:#f92672">+=</span> 2<span style="color:#f92672">;</span>
+                Unpooled<span style="color:#f92672">.</span><span style="color:#a6e22e">copyInt</span><span style="color:#f92672">((</span>Integer<span style="color:#f92672">)</span> value<span style="color:#f92672">).</span><span style="color:#a6e22e">readBytes</span><span style="color:#f92672">(</span>bytes<span style="color:#f92672">,</span>valueIndex<span style="color:#f92672">,</span>4<span style="color:#f92672">);</span>
+                valueIndex <span style="color:#f92672">+=</span> 4<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>value <span style="color:#66d9ef">instanceof</span> Long<span style="color:#f92672">){</span>
+                bytes<span style="color:#f92672">[</span>typeIndex<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> Type<span style="color:#f92672">.</span><span style="color:#a6e22e">LONG</span><span style="color:#f92672">.</span><span style="color:#a6e22e">type</span><span style="color:#f92672">();</span>
+                bytes<span style="color:#f92672">[</span>lengthIndex<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> Integer<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>8<span style="color:#f92672">).</span><span style="color:#a6e22e">byteValue</span><span style="color:#f92672">();</span>
+                lengthIndex <span style="color:#f92672">+=</span> 2<span style="color:#f92672">;</span>
+                Unpooled<span style="color:#f92672">.</span><span style="color:#a6e22e">copyLong</span><span style="color:#f92672">((</span>Long<span style="color:#f92672">)</span> value<span style="color:#f92672">).</span><span style="color:#a6e22e">readBytes</span><span style="color:#f92672">(</span>bytes<span style="color:#f92672">,</span>valueIndex<span style="color:#f92672">,</span>8<span style="color:#f92672">);</span>
+                valueIndex <span style="color:#f92672">+=</span> 8<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>value <span style="color:#66d9ef">instanceof</span> Double<span style="color:#f92672">){</span>
+                bytes<span style="color:#f92672">[</span>typeIndex<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> Type<span style="color:#f92672">.</span><span style="color:#a6e22e">DOUBLE</span><span style="color:#f92672">.</span><span style="color:#a6e22e">type</span><span style="color:#f92672">();</span>
+                bytes<span style="color:#f92672">[</span>lengthIndex<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> Integer<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>8<span style="color:#f92672">).</span><span style="color:#a6e22e">byteValue</span><span style="color:#f92672">();</span>
+                lengthIndex <span style="color:#f92672">+=</span> 2<span style="color:#f92672">;</span>
+                Unpooled<span style="color:#f92672">.</span><span style="color:#a6e22e">copyDouble</span><span style="color:#f92672">((</span>Double<span style="color:#f92672">)</span> value<span style="color:#f92672">).</span><span style="color:#a6e22e">readBytes</span><span style="color:#f92672">(</span>bytes<span style="color:#f92672">,</span>valueIndex<span style="color:#f92672">,</span>8<span style="color:#f92672">);</span>
+                valueIndex <span style="color:#f92672">+=</span> 8<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>value <span style="color:#66d9ef">instanceof</span> Character<span style="color:#f92672">){</span>
+                bytes<span style="color:#f92672">[</span>typeIndex<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> Type<span style="color:#f92672">.</span><span style="color:#a6e22e">CHAR</span><span style="color:#f92672">.</span><span style="color:#a6e22e">type</span><span style="color:#f92672">();</span>
+                bytes<span style="color:#f92672">[</span>lengthIndex<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> Integer<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>1<span style="color:#f92672">).</span><span style="color:#a6e22e">byteValue</span><span style="color:#f92672">();</span>
+                lengthIndex <span style="color:#f92672">+=</span> 2<span style="color:#f92672">;</span>
+                bytes<span style="color:#f92672">[</span>valueIndex<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">byte</span><span style="color:#f92672">)</span> value<span style="color:#f92672">;</span>
+                valueIndex <span style="color:#f92672">+=</span> 1<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span><span style="color:#f92672">(</span>value <span style="color:#66d9ef">instanceof</span> Byte<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+                bytes<span style="color:#f92672">[</span>typeIndex<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> Type<span style="color:#f92672">.</span><span style="color:#a6e22e">BYTE</span><span style="color:#f92672">.</span><span style="color:#a6e22e">type</span><span style="color:#f92672">();</span>
+                bytes<span style="color:#f92672">[</span>lengthIndex<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> Integer<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>1<span style="color:#f92672">).</span><span style="color:#a6e22e">byteValue</span><span style="color:#f92672">();</span>
+                lengthIndex <span style="color:#f92672">+=</span> 2<span style="color:#f92672">;</span>
+                bytes<span style="color:#f92672">[</span>valueIndex<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">byte</span><span style="color:#f92672">)</span> value<span style="color:#f92672">;</span>
+                valueIndex <span style="color:#f92672">+=</span> 1<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>value <span style="color:#66d9ef">instanceof</span> Short<span style="color:#f92672">){</span>
+                bytes<span style="color:#f92672">[</span>typeIndex<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> Type<span style="color:#f92672">.</span><span style="color:#a6e22e">SHORT</span><span style="color:#f92672">.</span><span style="color:#a6e22e">type</span><span style="color:#f92672">();</span>
+                bytes<span style="color:#f92672">[</span>lengthIndex<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> Integer<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>2<span style="color:#f92672">).</span><span style="color:#a6e22e">byteValue</span><span style="color:#f92672">();</span>
+                lengthIndex <span style="color:#f92672">+=</span> 2<span style="color:#f92672">;</span>
+                Unpooled<span style="color:#f92672">.</span><span style="color:#a6e22e">copyShort</span><span style="color:#f92672">((</span>Short<span style="color:#f92672">)</span> value<span style="color:#f92672">).</span><span style="color:#a6e22e">readBytes</span><span style="color:#f92672">(</span>bytes<span style="color:#f92672">,</span>valueIndex<span style="color:#f92672">,</span>2<span style="color:#f92672">);</span>
+                valueIndex <span style="color:#f92672">+=</span> 2<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>value <span style="color:#66d9ef">instanceof</span> Float<span style="color:#f92672">){</span>
+                bytes<span style="color:#f92672">[</span>typeIndex<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> Type<span style="color:#f92672">.</span><span style="color:#a6e22e">FLOAT</span><span style="color:#f92672">.</span><span style="color:#a6e22e">type</span><span style="color:#f92672">();</span>
+                bytes<span style="color:#f92672">[</span>lengthIndex<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> Integer<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>4<span style="color:#f92672">).</span><span style="color:#a6e22e">byteValue</span><span style="color:#f92672">();</span>
+                lengthIndex <span style="color:#f92672">+=</span> 2<span style="color:#f92672">;</span>
+                Unpooled<span style="color:#f92672">.</span><span style="color:#a6e22e">copyFloat</span><span style="color:#f92672">((</span>Float<span style="color:#f92672">)</span> value<span style="color:#f92672">).</span><span style="color:#a6e22e">readBytes</span><span style="color:#f92672">(</span>bytes<span style="color:#f92672">,</span>valueIndex<span style="color:#f92672">,</span>4<span style="color:#f92672">);</span>
+                valueIndex <span style="color:#f92672">+=</span> 4<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>value <span style="color:#66d9ef">instanceof</span> Boolean<span style="color:#f92672">){</span>
+                bytes<span style="color:#f92672">[</span>typeIndex<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> Type<span style="color:#f92672">.</span><span style="color:#a6e22e">BOOLEAN</span><span style="color:#f92672">.</span><span style="color:#a6e22e">type</span><span style="color:#f92672">();</span>
+                bytes<span style="color:#f92672">[</span>lengthIndex<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> Integer<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>1<span style="color:#f92672">).</span><span style="color:#a6e22e">byteValue</span><span style="color:#f92672">();</span>
+                lengthIndex <span style="color:#f92672">+=</span> 2<span style="color:#f92672">;</span>
+                Unpooled<span style="color:#f92672">.</span><span style="color:#a6e22e">copyBoolean</span><span style="color:#f92672">((</span>Boolean<span style="color:#f92672">)</span> value<span style="color:#f92672">).</span><span style="color:#a6e22e">readBytes</span><span style="color:#f92672">(</span>bytes<span style="color:#f92672">,</span>valueIndex<span style="color:#f92672">,</span>1<span style="color:#f92672">);</span>
+                valueIndex <span style="color:#f92672">+=</span> 1<span style="color:#f92672">;</span>
+            <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>value <span style="color:#66d9ef">instanceof</span> String<span style="color:#f92672">){</span>
+								<span style="color:#75715e">// 隐藏 String类型参数的实现，有兴趣的同学可以自己实现一下，比较简单～
+</span><span style="color:#75715e"></span>            <span style="color:#f92672">}</span>
+            typeIndex <span style="color:#f92672">++;</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> bytes<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+</code></pre></div>
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-tag meta-icon"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7" y2="7"></line></svg>
+
+        <span class="tag"><a href="https://Huang-zh.github.io/tags/%E4%BA%A4%E6%98%93%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E6%97%A5%E5%BF%97/">交易系统开发日志</a></span>
+        
+    </p>
+
+      
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder meta-icon"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+
+        <span class="tag"><a href="https://Huang-zh.github.io/categories/%E4%BA%A4%E6%98%93%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E6%97%A5%E5%BF%97/">交易系统开发日志</a></span>
+        
+    </p>
+
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        1804字
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2024-01-31
+        
+
+        
+      </p>
+    </div>
+
+    
+
+    
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    
+
+    
+    <div>© 2023 - <span id="year"></span><br/></div>
+    <div>网站已经运行 <span id="days">0</span></div>
+    <div class="footer__inner">
+        <div class="footer__content">
+            <span><a href="http://beian.miit.gov.cn">浙ICP备19022115号-1</a></span>
+        </div>        
+        <script>
+            var s0 = '2023-06-01';
+            s1 = new Date(s0.replace(/-/g, "/"));
+            s2 = new Date();
+            var days = s2.getTime() - s1.getTime();
+
+            var date = new Date;
+            var year = date.getFullYear();
+            document.getElementById('year').innerHTML = year;
+
+            var BootDate = new Date(s0);
+            function ShowRunTime(id) {
+                var NowDate = new Date();
+                var RunDateM = parseInt(NowDate - BootDate);
+                var RunDays = Math.floor(RunDateM / (24 * 3600 * 1000));
+                var RunHours = Math.floor(RunDateM % (24 * 3600 * 1000) / (3600 * 1000));
+                var RunMinutes = Math.floor(RunDateM % (24 * 3600 * 1000) % (3600 * 1000) / (60 * 1000));
+                var RunSeconds = Math.round(RunDateM % (24 * 3600 * 1000) % (3600 * 1000) % (60 * 1000) / 1000);
+                var days = RunDays + "天" + RunHours + "时" + RunMinutes + "分" + RunSeconds + "秒";
+                document.getElementById(id).innerHTML = days;
+            }
+            ShowRunTime('days');
+            setInterval("ShowRunTime('days')", 1000);
+        </script>
+    </div>
+    
+</footer>
+
+
+
+            
+        </div>
+
+        
+
+
+
+<script type="text/javascript" src="/bundle.min.644292943ae47eef02fcd64b11757aeb8caeeaebf473a823b62099edccac808e8d82689359f285e5d95994e5ad5ae3b9c1ccc281eb1828e67d0ba6630f95b832.js" integrity="sha512-ZEKSlDrkfu8C/NZLEXV664yu6uv0c6gjtiCZ7cysgI6NgmiTWfKF5dlZlOWtWuO5wczCgesYKOZ9C6ZjD5W4Mg=="></script>
+
+
+
+    </body>
+</html>
