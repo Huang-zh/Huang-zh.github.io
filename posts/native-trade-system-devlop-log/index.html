@@ -38,7 +38,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-01-31T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-01-31T00:00:00+00:00" />
-<meta itemprop="wordCount" content="9777"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="wordCount" content="9925"><meta itemprop="image" content="https://Huang-zh.github.io"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://Huang-zh.github.io"/>
@@ -633,6 +633,18 @@ Feign Client<span style="color:#f92672">:</span>
 </code></pre></div></li>
 </ul>
 </li>
+<li>
+<p>单元测试中，将 类通过@component 注解标记，尝试托管给 spring 容器，但单元测试方法报错：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">No qualifying bean of type <span style="color:#960050;background-color:#1e0010">&#39;</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">huang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">buffer</span><span style="color:#f92672">.</span><span style="color:#a6e22e">handler</span><span style="color:#f92672">.</span><span style="color:#a6e22e">GenerateMessageDataHandler</span><span style="color:#960050;background-color:#1e0010">&#39;</span> available
+</code></pre></div><ul>
+<li>
+<p>这是因为测试类继承自 TestApplication，在 TestApplication 中增加了指定容器托管的类：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@SpringBootTest</span><span style="color:#f92672">(</span>classes <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>TestApplication<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> NettyStartListener<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> ServerProperty<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> SocketServer<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">})</span>
+</code></pre></div><p>在 SPringBootTest 的 classes 数组中补齐单元测试中需要 Spring容器托管的类即可正常托管对应的 bean：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@SpringBootTest</span><span style="color:#f92672">(</span>classes <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>TestApplication<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> NettyStartListener<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> ServerProperty<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> SocketServer<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> GenerateMessageDataHandler<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> MessageMetaDataHandler<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">})</span>
+</code></pre></div></li>
+</ul>
+</li>
 </ul>
 <h3 id="5开发日志">5.开发日志</h3>
 <table>
@@ -1205,7 +1217,7 @@ Feign Client<span style="color:#f92672">:</span>
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        9777字
+        9925字
       </p>
 
       <p>
