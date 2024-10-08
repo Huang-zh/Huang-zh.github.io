@@ -1356,6 +1356,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2024.10.05</td>
 <td style="text-align:center">LemonBuffer 模块新增消息处理器，并将模块下的处理器全部托管给 spring 容器，过滤不包含businessFlag 的消息，自测完成。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.10.08</td>
+<td style="text-align:center">LemonBuffer 模块扩展 BusinessHandler，作为所有业务消息处理子类的抽象，并托管给 Spring 容器处理。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
