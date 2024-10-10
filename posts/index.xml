@@ -1364,6 +1364,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2024.10.09</td>
 <td style="text-align:center">1、消息处理器MessageMetaDataHandler 具备发现 businessHandler 的能力，并能够根据消息中业务标志采用具体的消息业务处理器处理消息。<br/>2、完善单元测试类，各业务子系统可参考SocketServerTest 和 TestBusinessHandler 实现对应的消息处理器。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.10.10</td>
+<td style="text-align:center">考虑如何实现消息处理类绑定 LemonBuffer 实现异步处理消息。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
