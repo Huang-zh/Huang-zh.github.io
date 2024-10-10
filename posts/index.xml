@@ -1066,6 +1066,9 @@ Feign Client<span style="color:#f92672">:</span>
 </code></pre></div></li>
 </ul>
 </li>
+<li>
+<p>使用SocketChannel 连接服务端进行测试，并发写入需要控制写入速率，通过 Thread.sleep(20l)可实现安全写入。</p>
+</li>
 </ul>
 <h3 id="5开发日志">5.开发日志</h3>
 <table>
