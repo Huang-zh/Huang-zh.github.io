@@ -38,7 +38,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-01-31T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-01-31T00:00:00+00:00" />
-<meta itemprop="wordCount" content="10239"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="wordCount" content="10806"><meta itemprop="image" content="https://Huang-zh.github.io"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://Huang-zh.github.io"/>
@@ -131,7 +131,7 @@
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        21分钟
+        22分钟
 
         
       </p>
@@ -648,6 +648,76 @@ Feign Client<span style="color:#f92672">:</span>
 <li>
 <p>使用SocketChannel 连接服务端进行测试，并发写入需要控制写入速率，通过 Thread.sleep(20l)可实现安全写入。</p>
 </li>
+<li>
+<p>引入 ringbuffer 模块后，报错显示无法强制类型转换为指定的 springContext 容器：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Caused by<span style="color:#f92672">:</span> java<span style="color:#f92672">.</span><span style="color:#a6e22e">lang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">ClassCastException</span><span style="color:#f92672">:</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">org</span><span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">boot</span><span style="color:#f92672">.</span><span style="color:#a6e22e">web</span><span style="color:#f92672">.</span><span style="color:#a6e22e">servlet</span><span style="color:#f92672">.</span><span style="color:#a6e22e">context</span><span style="color:#f92672">.</span><span style="color:#a6e22e">AnnotationConfigServletWebServerApplicationContext</span> cannot be cast to <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">org</span><span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">context</span><span style="color:#f92672">.</span><span style="color:#a6e22e">annotation</span><span style="color:#f92672">.</span><span style="color:#a6e22e">AnnotationConfigApplicationContext</span> <span style="color:#f92672">(</span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">boot</span><span style="color:#f92672">.</span><span style="color:#a6e22e">web</span><span style="color:#f92672">.</span><span style="color:#a6e22e">servlet</span><span style="color:#f92672">.</span><span style="color:#a6e22e">context</span><span style="color:#f92672">.</span><span style="color:#a6e22e">AnnotationConfigServletWebServerApplicationContext</span> and org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">context</span><span style="color:#f92672">.</span><span style="color:#a6e22e">annotation</span><span style="color:#f92672">.</span><span style="color:#a6e22e">AnnotationConfigApplicationContext</span> are in unnamed module of loader <span style="color:#960050;background-color:#1e0010">&#39;</span>app<span style="color:#960050;background-color:#1e0010">&#39;</span><span style="color:#f92672">)</span>
+	at com<span style="color:#f92672">.</span><span style="color:#a6e22e">huang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">buffer</span><span style="color:#f92672">.</span><span style="color:#a6e22e">handler</span><span style="color:#f92672">.</span><span style="color:#a6e22e">MessageMetaDataHandler</span><span style="color:#f92672">.</span><span style="color:#a6e22e">setApplicationContext</span><span style="color:#f92672">(</span>MessageMetaDataHandler<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>62<span style="color:#f92672">)</span> <span style="color:#f92672">~[</span>classes<span style="color:#f92672">/:</span>na<span style="color:#f92672">]</span>
+	at org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">context</span><span style="color:#f92672">.</span><span style="color:#a6e22e">support</span><span style="color:#f92672">.</span><span style="color:#a6e22e">ApplicationContextAwareProcessor</span><span style="color:#f92672">.</span><span style="color:#a6e22e">invokeAwareInterfaces</span><span style="color:#f92672">(</span>ApplicationContextAwareProcessor<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>112<span style="color:#f92672">)</span> <span style="color:#f92672">~[</span>spring<span style="color:#f92672">-</span>context<span style="color:#f92672">-</span>6<span style="color:#f92672">.</span><span style="color:#a6e22e">0</span><span style="color:#f92672">.</span><span style="color:#a6e22e">8</span><span style="color:#f92672">.</span><span style="color:#a6e22e">jar</span><span style="color:#f92672">:</span>6<span style="color:#f92672">.</span><span style="color:#a6e22e">0</span><span style="color:#f92672">.</span><span style="color:#a6e22e">8</span><span style="color:#f92672">]</span>
+	at org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">context</span><span style="color:#f92672">.</span><span style="color:#a6e22e">support</span><span style="color:#f92672">.</span><span style="color:#a6e22e">ApplicationContextAwareProcessor</span><span style="color:#f92672">.</span><span style="color:#a6e22e">postProcessBeforeInitialization</span><span style="color:#f92672">(</span>ApplicationContextAwareProcessor<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>87<span style="color:#f92672">)</span> <span style="color:#f92672">~[</span>spring<span style="color:#f92672">-</span>context<span style="color:#f92672">-</span>6<span style="color:#f92672">.</span><span style="color:#a6e22e">0</span><span style="color:#f92672">.</span><span style="color:#a6e22e">8</span><span style="color:#f92672">.</span><span style="color:#a6e22e">jar</span><span style="color:#f92672">:</span>6<span style="color:#f92672">.</span><span style="color:#a6e22e">0</span><span style="color:#f92672">.</span><span style="color:#a6e22e">8</span><span style="color:#f92672">]</span>
+	at org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">beans</span><span style="color:#f92672">.</span><span style="color:#a6e22e">factory</span><span style="color:#f92672">.</span><span style="color:#a6e22e">support</span><span style="color:#f92672">.</span><span style="color:#a6e22e">AbstractAutowireCapableBeanFactory</span><span style="color:#f92672">.</span><span style="color:#a6e22e">applyBeanPostProcessorsBeforeInitialization</span><span style="color:#f92672">(</span>AbstractAutowireCapableBeanFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>419<span style="color:#f92672">)</span> <span style="color:#f92672">~[</span>spring<span style="color:#f92672">-</span>beans<span style="color:#f92672">-</span>6<span style="color:#f92672">.</span><span style="color:#a6e22e">0</span><span style="color:#f92672">.</span><span style="color:#a6e22e">8</span><span style="color:#f92672">.</span><span style="color:#a6e22e">jar</span><span style="color:#f92672">:</span>6<span style="color:#f92672">.</span><span style="color:#a6e22e">0</span><span style="color:#f92672">.</span><span style="color:#a6e22e">8</span><span style="color:#f92672">]</span>
+	at org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">beans</span><span style="color:#f92672">.</span><span style="color:#a6e22e">factory</span><span style="color:#f92672">.</span><span style="color:#a6e22e">support</span><span style="color:#f92672">.</span><span style="color:#a6e22e">AbstractAutowireCapableBeanFactory</span><span style="color:#f92672">.</span><span style="color:#a6e22e">initializeBean</span><span style="color:#f92672">(</span>AbstractAutowireCapableBeanFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>1762<span style="color:#f92672">)</span> <span style="color:#f92672">~[</span>spring<span style="color:#f92672">-</span>beans<span style="color:#f92672">-</span>6<span style="color:#f92672">.</span><span style="color:#a6e22e">0</span><span style="color:#f92672">.</span><span style="color:#a6e22e">8</span><span style="color:#f92672">.</span><span style="color:#a6e22e">jar</span><span style="color:#f92672">:</span>6<span style="color:#f92672">.</span><span style="color:#a6e22e">0</span><span style="color:#f92672">.</span><span style="color:#a6e22e">8</span><span style="color:#f92672">]</span>
+	at org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">beans</span><span style="color:#f92672">.</span><span style="color:#a6e22e">factory</span><span style="color:#f92672">.</span><span style="color:#a6e22e">support</span><span style="color:#f92672">.</span><span style="color:#a6e22e">AbstractAutowireCapableBeanFactory</span><span style="color:#f92672">.</span><span style="color:#a6e22e">doCreateBean</span><span style="color:#f92672">(</span>AbstractAutowireCapableBeanFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">java</span><span style="color:#f92672">:</span>598<span style="color:#f92672">)</span> <span style="color:#f92672">~[</span>spring<span style="color:#f92672">-</span>beans<span style="color:#f92672">-</span>6<span style="color:#f92672">.</span><span style="color:#a6e22e">0</span><span style="color:#f92672">.</span><span style="color:#a6e22e">8</span><span style="color:#f92672">.</span><span style="color:#a6e22e">jar</span><span style="color:#f92672">:</span>6<span style="color:#f92672">.</span><span style="color:#a6e22e">0</span><span style="color:#f92672">.</span><span style="color:#a6e22e">8</span><span style="color:#f92672">]</span>
+	<span style="color:#f92672">...</span> 15 common frames omitted
+</code></pre></div><ul>
+<li>
+<p>这是因为业务子系统使用的AnnotationConfigServletWebServerApplicationContext进行托管，将 ringbuffer 中实现了 ApplicationContextAware 接口的 bean 所包含的成员变量全部改为对应的上层抽象接口ConfigurableApplicationContext即可进行强转，可参考：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Component</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MessageMetaDataHandler</span> <span style="color:#66d9ef">extends</span> ChannelInboundHandlerAdapter <span style="color:#66d9ef">implements</span> InitializingBean<span style="color:#f92672">,</span> ApplicationContextAware <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Logger log <span style="color:#f92672">=</span> LoggerFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">getLogger</span><span style="color:#f92672">(</span>MessageMetaDataHandler<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String BUSINESS_FLAG_KEY <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;businessFlag&#34;</span><span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">private</span> ConfigurableApplicationContext applicationContext<span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> Map<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">,</span>BusinessHandler<span style="color:#f92672">&gt;</span> handlers<span style="color:#f92672">;</span>
+
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">channelRead</span><span style="color:#f92672">(</span>ChannelHandlerContext ctx<span style="color:#f92672">,</span> Object msg<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+        <span style="color:#f92672">...</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">afterPropertiesSet</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+        <span style="color:#75715e">// 从容器中获取 BusinessHandler 接口的所有实现类
+</span><span style="color:#75715e"></span>        Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> BusinessHandler<span style="color:#f92672">&gt;</span> candidateBeans <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">applicationContext</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getBeansOfType</span><span style="color:#f92672">(</span>BusinessHandler<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+        handlers <span style="color:#f92672">=</span> candidateBeans<span style="color:#f92672">.</span><span style="color:#a6e22e">values</span><span style="color:#f92672">().</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toMap</span><span style="color:#f92672">(</span>BusinessHandler<span style="color:#f92672">::</span>businessFlag<span style="color:#f92672">,</span> Function<span style="color:#f92672">.</span><span style="color:#a6e22e">identity</span><span style="color:#f92672">()));</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setApplicationContext</span><span style="color:#f92672">(</span>ApplicationContext applicationContext<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> BeansException <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">applicationContext</span> <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>ConfigurableApplicationContext<span style="color:#f92672">)</span> applicationContext<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div></li>
+</ul>
+</li>
+<li>
+<p>如果业务子系统引入 Ringbuffer 模块后，无法找到 ringbuffer 模块下要求运行时托管给 Spring 容器管理的 bean，是因为默认 Spring 只扫描启动类所在目录下的所有 component、service、controller，需要手动通过注解引入 ringbuffer 模块下的 bean，可参考信用交易子系统启动类上的注解：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * @description: 信用竞价交易子系统启动类
+</span><span style="color:#75715e"> * @author: huang.zh
+</span><span style="color:#75715e"> * @create: 2023-11-16 21:12
+</span><span style="color:#75715e"> **/</span>
+<span style="color:#a6e22e">@EnableApiDoc</span>
+<span style="color:#a6e22e">@EnableSecurityAuthorization</span>
+<span style="color:#a6e22e">@EnableGlobalExceptionHandler</span>
+<span style="color:#a6e22e">@SpringBootApplication</span>
+<span style="color:#a6e22e">@EnableNativeHints</span>
+<span style="color:#a6e22e">@EnableDiscoveryClient</span>
+<span style="color:#a6e22e">@EnableFeignClients</span>
+<span style="color:#a6e22e">@MapperScan</span><span style="color:#f92672">(</span>basePackages <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;com.huang.credit.mapper&#34;</span><span style="color:#f92672">,</span>sqlSessionTemplateRef <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;sqlSessionTemplate&#34;</span><span style="color:#f92672">)</span>
+<span style="color:#75715e">// 引入 ringbuffer 模块下的 bean
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">@Import</span><span style="color:#f92672">(</span>value <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>NettyStartListener<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> ServerProperty<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> SocketServer<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span>
+        GenerateMessageDataHandler<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> MessageMetaDataHandler<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">})</span>
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CreditTradeApplication</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        SpringApplication<span style="color:#f92672">.</span><span style="color:#a6e22e">run</span><span style="color:#f92672">(</span>CreditTradeApplication<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span>args<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div></li>
 </ul>
 <h3 id="5开发日志">5.开发日志</h3>
 <table>
@@ -950,6 +1020,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2024.10.10</td>
 <td style="text-align:center">考虑如何实现消息处理类绑定 LemonBuffer 实现异步处理消息。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.10.11</td>
+<td style="text-align:center">信用交易子系统引入 ringbuffer 模块，解决报错，成功运行。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
@@ -1197,6 +1271,7 @@ Feign Client<span style="color:#f92672">:</span>
 <li>✅<s>流水计数器缓存，需要判断新申请号段的情况下才更新缓存中号段的起始值。</s></li>
 <li>✅<s>构造成交回报报文，并解析报文。</s></li>
 <li>✅<s>统一报文反序列化处理器和消息元数据处理器托管给 Spring 容器管理生命周期，支持嵌入各业务系统。</s></li>
+<li>🔴ringbuffer 模块需要自定义一个注解来实现业务子系统集成该模块后能扫描到该模块下的 bean。</li>
 <li>🔴搭建回报模块，执行回报流程</li>
 <li>🔴统一流水计数器考虑抽象成公共组件，供各业务子系统使用。</li>
 <li>🔴普通业务头寸资金流水表，需要通过统一流水计数器获取序列号，同时考虑性能，序列号递增的写库操作考虑引入异步队列触发。</li>
@@ -1233,7 +1308,7 @@ Feign Client<span style="color:#f92672">:</span>
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        10239字
+        10806字
       </p>
 
       <p>
