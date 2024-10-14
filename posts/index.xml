@@ -1472,6 +1472,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2024.10.12</td>
 <td style="text-align:center">新增注解@EnableRingBuffer，供业务系统使用，集成环形队列模块时通过该注解引入所有需要托管给 Spring 容器的 bean。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.10.14</td>
+<td style="text-align:center">构建回报异常体系，Ringbuffer 执行回报报错时统一捕获异常。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
