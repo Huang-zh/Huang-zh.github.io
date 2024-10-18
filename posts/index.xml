@@ -1480,6 +1480,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2024.10.15</td>
 <td style="text-align:center">融资买入回报模块流程功能编码，完成委托状态计算。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.10.18</td>
+<td style="text-align:center">合约表扩展合约成交数量字段，委托回报时更新该字段。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
@@ -1728,7 +1732,7 @@ Feign Client<span style="color:#f92672">:</span>
 <li>✅<s>构造成交回报报文，并解析报文。</s></li>
 <li>✅<s>统一报文反序列化处理器和消息元数据处理器托管给 Spring 容器管理生命周期，支持嵌入各业务系统。</s></li>
 <li>✅<s>ringbuffer 模块需要自定义一个注解来实现业务子系统集成该模块后能扫描到该模块下的 bean。</s></li>
-<li>🔴搭建回报模块，执行回报流程</li>
+<li>✅<s>搭建回报模块，执行回报流程。</s></li>
 <li>🔴统一流水计数器考虑抽象成公共组件，供各业务子系统使用。</li>
 <li>🔴普通业务头寸资金流水表，需要通过统一流水计数器获取序列号，同时考虑性能，序列号递增的写库操作考虑引入异步队列触发。</li>
 </ul>
