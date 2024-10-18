@@ -1482,7 +1482,7 @@ Feign Client<span style="color:#f92672">:</span>
 </tr>
 <tr>
 <td style="text-align:center">2024.10.18</td>
-<td style="text-align:center">合约表扩展合约成交数量字段，委托回报时更新该字段。</td>
+<td style="text-align:center">1、合约表扩展合约成交数量字段，委托回报时更新该字段。<br/>2、回报流程中新增更新合约方法，支持更新合约成交数量和融资买入在途委托金额。</td>
 </tr>
 </tbody>
 </table>
