@@ -1486,7 +1486,7 @@ Feign Client<span style="color:#f92672">:</span>
 </tr>
 <tr>
 <td style="text-align:center">2024.10.19</td>
-<td style="text-align:center">1、回报扩充 isCancelOrder 字段，用于判断撤单委托和原委托，对应处理不同的流程。<br/>2、BusinessHandler 接口扩展 doRevert 方法，各实现类实现后，用于正常回报流程处理出错时触发回滚操作。</td>
+<td style="text-align:center">1、回报扩充 isCancelOrder 字段，用于判断撤单委托和原委托，对应处理不同的流程。<br/>2、BusinessHandler 接口扩展 doRevert 方法，各实现类实现后，用于正常回报流程处理出错时触发回滚操作。<br/>3、融资买入回报处理器支持废单处理流程。</td>
 </tr>
 </tbody>
 </table>
@@ -1737,6 +1737,7 @@ Feign Client<span style="color:#f92672">:</span>
 <li>✅<s>统一报文反序列化处理器和消息元数据处理器托管给 Spring 容器管理生命周期，支持嵌入各业务系统。</s></li>
 <li>✅<s>ringbuffer 模块需要自定义一个注解来实现业务子系统集成该模块后能扫描到该模块下的 bean。</s></li>
 <li>✅<s>搭建回报模块，执行回报流程。</s></li>
+<li>🔴融资买入回报业务处理器，需要实现 doRevert，并在 doHandle 中触发。</li>
 <li>🔴融资买入回报业务处理器，需要集成 RingBuffer ，实现高性能异步队列处理回报请求。</li>
 <li>🔴统一流水计数器考虑抽象成公共组件，供各业务子系统使用。</li>
 <li>🔴普通业务头寸资金流水表，需要通过统一流水计数器获取序列号，同时考虑性能，序列号递增的写库操作考虑引入异步队列触发。</li>
