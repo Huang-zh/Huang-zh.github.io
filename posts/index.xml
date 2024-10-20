@@ -568,7 +568,7 @@ PS:一席蓝色的长裙，蓬松的大波浪，把我也迷的不要不要的�
         <item>
             <title>云交易系统开发手册</title>
             <link>https://Huang-zh.github.io/posts/native-trade-system-devlop-log/</link>
-            <pubDate>Wed, 31 Jan 2024 00:00:00 +0000</pubDate>
+            <pubDate>Sat, 02 Mar 2024 00:00:00 +0000</pubDate>
             
             <guid>https://Huang-zh.github.io/posts/native-trade-system-devlop-log/</guid>
             <description>1. 依赖和中间件 open-jdk 17.0.7 graalvm 22.3.2 Maven 3.6.3 nacos 2.2.3 Redis 6.0 Mysql 8.0 Springboot 3.0.6 SpringCloud Alibaba 2022.0.0.0 mybatis-plus 3.5.3 Seata 1.7.0 Netty 4.1.99 Disruptor 4.0.0 2. 模块总览 模块名 中文名 备注 native-cloud-user-system 交易账户系统 用于维护证券交易账户数据，负责客户开</description>
@@ -1737,6 +1737,7 @@ Feign Client<span style="color:#f92672">:</span>
 <li>✅<s>统一报文反序列化处理器和消息元数据处理器托管给 Spring 容器管理生命周期，支持嵌入各业务系统。</s></li>
 <li>✅<s>ringbuffer 模块需要自定义一个注解来实现业务子系统集成该模块后能扫描到该模块下的 bean。</s></li>
 <li>✅<s>搭建回报模块，执行回报流程。</s></li>
+<li>🔴实现委托撤单。</li>
 <li>🔴融资买入回报业务处理器，需要实现 doRevert，并在 doHandle 中触发。</li>
 <li>🔴融资买入回报业务处理器，需要集成 RingBuffer ，实现高性能异步队列处理回报请求。</li>
 <li>🔴统一流水计数器考虑抽象成公共组件，供各业务子系统使用。</li>

@@ -36,9 +36,9 @@
 
 
 <meta itemprop="name" content="云交易系统开发手册">
-<meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-01-31T00:00:00+00:00" />
-<meta itemprop="dateModified" content="2024-01-31T00:00:00+00:00" />
-<meta itemprop="wordCount" content="11308"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-03-02T00:00:00+00:00" />
+<meta itemprop="dateModified" content="2024-03-02T00:00:00+00:00" />
+<meta itemprop="wordCount" content="11316"><meta itemprop="image" content="https://Huang-zh.github.io"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://Huang-zh.github.io"/>
@@ -52,8 +52,8 @@
 <meta property="og:description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://Huang-zh.github.io/posts/native-trade-system-devlop-log/" /><meta property="og:image" content="https://Huang-zh.github.io"/><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2024-01-31T00:00:00+00:00" />
-<meta property="article:modified_time" content="2024-01-31T00:00:00+00:00" /><meta property="og:site_name" content="此间的少年" />
+<meta property="article:published_time" content="2024-03-02T00:00:00+00:00" />
+<meta property="article:modified_time" content="2024-03-02T00:00:00+00:00" /><meta property="og:site_name" content="此间的少年" />
 
 
 
@@ -64,7 +64,7 @@
 
 
 
-    <meta property="article:published_time" content="2024-01-31 00:00:00 &#43;0000 UTC" />
+    <meta property="article:published_time" content="2024-03-02 00:00:00 &#43;0000 UTC" />
 
 
 
@@ -1316,6 +1316,7 @@ Feign Client<span style="color:#f92672">:</span>
 <li>✅<s>统一报文反序列化处理器和消息元数据处理器托管给 Spring 容器管理生命周期，支持嵌入各业务系统。</s></li>
 <li>✅<s>ringbuffer 模块需要自定义一个注解来实现业务子系统集成该模块后能扫描到该模块下的 bean。</s></li>
 <li>✅<s>搭建回报模块，执行回报流程。</s></li>
+<li>🔴实现委托撤单。</li>
 <li>🔴融资买入回报业务处理器，需要实现 doRevert，并在 doHandle 中触发。</li>
 <li>🔴融资买入回报业务处理器，需要集成 RingBuffer ，实现高性能异步队列处理回报请求。</li>
 <li>🔴统一流水计数器考虑抽象成公共组件，供各业务子系统使用。</li>
@@ -1353,7 +1354,7 @@ Feign Client<span style="color:#f92672">:</span>
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        11308字
+        11316字
       </p>
 
       <p>
@@ -1364,7 +1365,7 @@ Feign Client<span style="color:#f92672">:</span>
           <line x1="3" y1="10" x2="21" y2="10"></line>
         </svg>
         
-          2024-01-31
+          2024-03-02
         
 
         
