@@ -1488,6 +1488,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2024.10.19</td>
 <td style="text-align:center">1、回报扩充 isCancelOrder 字段，用于判断撤单委托和原委托，对应处理不同的流程。<br/>2、BusinessHandler 接口扩展 doRevert 方法，各实现类实现后，用于正常回报流程处理出错时触发回滚操作。<br/>3、融资买入回报处理器支持废单处理流程。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.10.22</td>
+<td style="text-align:center">新增撤单委托接口，同时新增撤单委托专用的业务检查 specification，用于撤单时间检查、原委托状态校验。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
