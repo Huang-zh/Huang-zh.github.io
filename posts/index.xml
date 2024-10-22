@@ -1490,7 +1490,7 @@ Feign Client<span style="color:#f92672">:</span>
 </tr>
 <tr>
 <td style="text-align:center">2024.10.22</td>
-<td style="text-align:center">新增撤单委托接口，同时新增撤单委托专用的业务检查 specification，用于撤单时间检查、原委托状态校验。</td>
+<td style="text-align:center">新增撤单委托接口，同时新增撤单委托专用的业务检查 specification，用于撤单时间检查、原委托状态校验。 <br/>2、新增撤单委托专用时间检查处理器。</td>
 </tr>
 </tbody>
 </table>
