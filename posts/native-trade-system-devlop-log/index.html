@@ -38,7 +38,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-03-02T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-03-02T00:00:00+00:00" />
-<meta itemprop="wordCount" content="11541"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="wordCount" content="11637"><meta itemprop="image" content="https://Huang-zh.github.io"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://Huang-zh.github.io"/>
@@ -1075,6 +1075,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2024.10.24</td>
 <td style="text-align:center">1、融资买入成交回报测试完成，修复 bug。<br/>2、废单场景回报修正合约汇总表在途金额更新错误。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.10.25</td>
+<td style="text-align:center">1、信用交易委托表扩展原委托字段，用于撤单委托时记录原委托编号，定位原委托信息。<br/>2、完成撤单委托时原委托状态检查。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
@@ -1297,6 +1301,13 @@ Feign Client<span style="color:#f92672">:</span>
 <td>不涉及</td>
 </tr>
 <tr>
+<td>origOrderId</td>
+<td>bigint</td>
+<td>Long</td>
+<td>原委托编号，撤单委托记录要撤单的委托号，普通委托记录自身的委托号</td>
+<td>不涉及</td>
+</tr>
+<tr>
 <td>businessAmount</td>
 <td>int</td>
 <td>int</td>
@@ -1398,7 +1409,7 @@ Feign Client<span style="color:#f92672">:</span>
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        11541字
+        11637字
       </p>
 
       <p>
