@@ -1512,6 +1512,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2024.10.29</td>
 <td style="text-align:center">1、支持撤单成交委托状态计算，支持原委托部分成交后撤单和整笔全部撤单。<br/>2、修复撤单委托下单后，因为委托类型不正确而引起的撤单成交回报时委托状态不能正确计算的问题。<br/>3、内部撤单支持回冲头寸资金和前后台费用。<br/>4、撤单成交回报支持回冲头寸资金（包括原委托部分成交后在途金额+后台的回冲）。<br/>5、撤单成交回报支持根据本次回报成交的金额计算后台费用，并累加至清算金额 clearBalance。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.10.30</td>
+<td style="text-align:center">1、支持撤单委托废单回报处理。<br/>2、原委托在撤单委托废单回报时修正为撤单前的状态。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
