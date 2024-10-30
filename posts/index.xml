@@ -1514,7 +1514,7 @@ Feign Client<span style="color:#f92672">:</span>
 </tr>
 <tr>
 <td style="text-align:center">2024.10.30</td>
-<td style="text-align:center">1、支持撤单委托废单回报处理。<br/>2、原委托在撤单委托废单回报时修正为撤单前的状态。</td>
+<td style="text-align:center">1、支持撤单委托废单回报处理。<br/>2、原委托在撤单委托废单回报时修正为撤单前的状态。<br/>3、修正融资买入委托成交回报时费用计算不准确，支持委托全部成交的情况时，清算金额计算考虑前台费用。</td>
 </tr>
 </tbody>
 </table>
