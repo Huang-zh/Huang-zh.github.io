@@ -38,7 +38,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-03-02T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-03-02T00:00:00+00:00" />
-<meta itemprop="wordCount" content="12250"><meta itemprop="image" content="https://Huang-zh.github.io"/>
+<meta itemprop="wordCount" content="12413"><meta itemprop="image" content="https://Huang-zh.github.io"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://Huang-zh.github.io"/>
@@ -1099,6 +1099,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2024.10.31</td>
 <td style="text-align:center">1、修复融资买入委托成交回报时，未正确计算合约汇总表成交数量的问题。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.11.01</td>
+<td style="text-align:center">新增信用客户持仓表，并支持更新或新增一条指定代码的持仓记录。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
@@ -1356,6 +1360,69 @@ Feign Client<span style="color:#f92672">:</span>
 <td>成交金额，不包含前后台费用</td>
 <td>不涉及</td>
 </tr>
+<tr>
+<td>stockCode</td>
+<td>varchar(10)</td>
+<td>String</td>
+<td>证券代码</td>
+<td>不涉及</td>
+</tr>
+<tr>
+<td>realBuyAmount</td>
+<td>bigint</td>
+<td>Long</td>
+<td>回报买入数量</td>
+<td>不涉及</td>
+</tr>
+<tr>
+<td>realBuyBalance</td>
+<td>decimal(20,2)</td>
+<td>BigDecimal</td>
+<td>回报买入金额</td>
+<td>不涉及</td>
+</tr>
+<tr>
+<td>realSellAmount</td>
+<td>bigint</td>
+<td>Long</td>
+<td>回报卖出数量</td>
+<td>不涉及</td>
+</tr>
+<tr>
+<td>realSellBalance</td>
+<td>decimal(20,2)</td>
+<td>BigDecimal</td>
+<td>回报卖出金额</td>
+<td>不涉及</td>
+</tr>
+<tr>
+<td>frozenAmount</td>
+<td>bigint</td>
+<td>Long</td>
+<td>当日买入冻结数量</td>
+<td>不涉及</td>
+</tr>
+<tr>
+<td>unfrozenAmount</td>
+<td>bigint</td>
+<td>Long</td>
+<td>当日卖出解冻数量</td>
+<td>不涉及</td>
+</tr>
+<tr>
+<td>currentAmount</td>
+<td>bigint</td>
+<td>Long</td>
+<td>当前数量（包含不可卖的证券数量）</td>
+<td>不涉及</td>
+</tr>
+<tr>
+<td>enableAmount</td>
+<td>bigint</td>
+<td>Long</td>
+<td>可用数量（可进行卖出操作的证券数量）</td>
+<td>不涉及</td>
+</tr>
 </tbody>
 </table>
 <h3 id="8-todo-list">8. todo list</h3>
@@ -1437,7 +1504,7 @@ Feign Client<span style="color:#f92672">:</span>
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        12250字
+        12413字
       </p>
 
       <p>
