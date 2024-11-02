@@ -1524,6 +1524,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2024.11.01</td>
 <td style="text-align:center">新增信用客户持仓表，并支持更新或新增一条指定代码的持仓记录。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.11.02</td>
+<td style="text-align:center">1、新增信用客户持仓流水表，支持在更新信用客户持仓流水的同时记录流水。<br/>2、全局流水序列号获取类 SerialCounterNoTccService，支持不开启分布式事务时使用，走常规RPC 获取最新序列号。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
@@ -1541,6 +1545,8 @@ Feign Client<span style="color:#f92672">:</span>
 <span style="color:#66d9ef">truncate</span> <span style="color:#66d9ef">table</span> credit.credit_trade_time;
 
 <span style="color:#66d9ef">truncate</span> <span style="color:#66d9ef">table</span> credit.credit_serial_counter_record;
+
+<span style="color:#66d9ef">truncate</span> <span style="color:#66d9ef">table</span> credit.credit_stock_real_jour;
 
 <span style="color:#66d9ef">truncate</span> <span style="color:#66d9ef">table</span> credit.special_cash_group_fund_jour;
 
@@ -1879,16 +1885,21 @@ Feign Client<span style="color:#f92672">:</span>
 <tr>
 <td>1</td>
 <td>信用交易委托表</td>
-<td>3</td>
+<td>100</td>
 </tr>
 <tr>
 <td>2</td>
 <td>客户专项头寸资金表</td>
-<td>5</td>
+<td>100</td>
 </tr>
 <tr>
 <td>3</td>
 <td>客户专项头寸资金表回滚专用</td>
+<td>1</td>
+</tr>
+<tr>
+<td>4</td>
+<td>信用客户持仓流水表</td>
 <td>1</td>
 </tr>
 </tbody>
