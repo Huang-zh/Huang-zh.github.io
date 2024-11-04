@@ -5,8 +5,27 @@
         <description>Recent content in Posts on 此间的少年</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en</language>
-        <lastBuildDate>Thu, 03 Oct 2024 00:00:00 +0000</lastBuildDate>
+        <lastBuildDate>Mon, 04 Nov 2024 00:00:00 +0000</lastBuildDate>
         <atom:link href="https://Huang-zh.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>月光 moonlight</title>
+            <link>https://Huang-zh.github.io/posts/moonlight/</link>
+            <pubDate>Mon, 04 Nov 2024 00:00:00 +0000</pubDate>
+            
+            <guid>https://Huang-zh.github.io/posts/moonlight/</guid>
+            <description>写代码时，习惯让歌单随机播放。 这一晚播放到这首月光 Moonlight feat. Mahya。 伴奏用钢琴和 blues 吉他伴以轻快的点缀，专辑封面是忧郁的深蓝。 低潮部分 Lu1 娓娓道来</description>
+            <content type="html"><![CDATA[<p>写代码时，习惯让歌单随机播放。</p>
+<p>这一晚播放到这首月光 Moonlight feat. Mahya。</p>
+<p>伴奏用钢琴和 blues 吉他伴以轻快的点缀，专辑封面是忧郁的深蓝。</p>
+<p>低潮部分 Lu1 娓娓道来的独白，高潮部分 Mahya 曼妙的吟唱，可太戳中我心窝了。</p>
+<p>原来，用说唱 ➕ Pop 的形式，也能演绎出绝美的月光🌕。</p>
+<p>原来，艺术真的不分小众与否，也从来不区分所呈现的形式。</p>
+<p>在美妙的节奏中，感受着一种之前从未细致体验过的氛围，整首歌呈现出来的，除了静谧的月色，还有背后蠢蠢欲动的莫名情愫。</p>
+<p>在这短暂而充满回味的一瞬，记录下此刻的想法。</p>
+<p>今夜月色正好，夜色令人沉醉。</p>
+]]></content>
+        </item>
         
         <item>
             <title> 交易系统系统间数据交互格式设计</title>
