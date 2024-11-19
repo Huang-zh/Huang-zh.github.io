@@ -1563,6 +1563,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2024.11.07</td>
 <td style="text-align:center">1、支持系统初始化校验，交易日期非当日的情况直接报错返回。<br/>2、新增卖券还款业务检查责任链。</td>
 </tr>
+<tr>
+<td style="text-align:center">2024.11.19</td>
+<td style="text-align:center">1、修复融资买入成交回报持仓更新不准确的bug。<br/>2、卖券还款业务检查编码进度 20%。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
