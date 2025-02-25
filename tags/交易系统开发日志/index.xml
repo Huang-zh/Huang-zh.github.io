@@ -2,35 +2,35 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>交易系统开发日志 on 此间的少年</title>
-    <link>https://Huang-zh.github.io/tags/%E4%BA%A4%E6%98%93%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E6%97%A5%E5%BF%97/</link>
+    <link>https://lemonhuang.com/tags/%E4%BA%A4%E6%98%93%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E6%97%A5%E5%BF%97/</link>
     <description>Recent content in 交易系统开发日志 on 此间的少年</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 03 Oct 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://Huang-zh.github.io/tags/%E4%BA%A4%E6%98%93%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E6%97%A5%E5%BF%97/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 03 Oct 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://lemonhuang.com/tags/%E4%BA%A4%E6%98%93%E7%B3%BB%E7%BB%9F%E5%BC%80%E5%8F%91%E6%97%A5%E5%BF%97/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title> 交易系统系统间数据交互格式设计</title>
-      <link>https://Huang-zh.github.io/posts/native-trade-system-data-message-design/</link>
+      <link>https://lemonhuang.com/posts/native-trade-system-data-message-design/</link>
       <pubDate>Thu, 03 Oct 2024 00:00:00 +0000</pubDate>
       
-      <guid>https://Huang-zh.github.io/posts/native-trade-system-data-message-design/</guid>
+      <guid>https://lemonhuang.com/posts/native-trade-system-data-message-design/</guid>
       <description>背景 交易系统的特点，除了高吞吐量、高并发之外，往往对延迟有着非常敏感的要求，业界话术：高抖动敏感。 但是时延并不是针对所有业务，比如交易系统涉</description>
     </item>
     
     <item>
       <title>分布式事务流水序列号处理</title>
-      <link>https://Huang-zh.github.io/posts/native-trade-system-serial-no/</link>
+      <link>https://lemonhuang.com/posts/native-trade-system-serial-no/</link>
       <pubDate>Fri, 20 Sep 2024 00:00:00 +0000</pubDate>
       
-      <guid>https://Huang-zh.github.io/posts/native-trade-system-serial-no/</guid>
+      <guid>https://lemonhuang.com/posts/native-trade-system-serial-no/</guid>
       <description>概念 在交易系统中，通常存在流水号的概念，在生成交易订单时，会通过分片+流水号的形式记录一个全局唯一的委托号。 对于流水号的获取，通常有如下要求</description>
     </item>
     
     <item>
       <title>云交易系统开发手册</title>
-      <link>https://Huang-zh.github.io/posts/native-trade-system-devlop-log/</link>
+      <link>https://lemonhuang.com/posts/native-trade-system-devlop-log/</link>
       <pubDate>Sat, 02 Mar 2024 00:00:00 +0000</pubDate>
       
-      <guid>https://Huang-zh.github.io/posts/native-trade-system-devlop-log/</guid>
+      <guid>https://lemonhuang.com/posts/native-trade-system-devlop-log/</guid>
       <description>1. 依赖和中间件 open-jdk 17.0.7 graalvm 22.3.2 Maven 3.6.3 nacos 2.2.3 Redis 6.0 Mysql 8.0 Springboot 3.0.6 SpringCloud Alibaba 2022.0.0.0 mybatis-plus 3.5.3 Seata 1.7.0 Netty 4.1.99 Disruptor 4.0.0 2. 模块总览 模块名 中文名 备注 native-cloud-user-system 交易账户系统 用于维护证券交易账户数据，负责客户开</description>
     </item>
     

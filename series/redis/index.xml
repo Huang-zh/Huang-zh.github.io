@@ -2,35 +2,35 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>redis on 此间的少年</title>
-    <link>https://Huang-zh.github.io/series/redis/</link>
+    <link>https://lemonhuang.com/series/redis/</link>
     <description>Recent content in redis on 此间的少年</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 01 Sep 2023 10:10:44 +0800</lastBuildDate><atom:link href="https://Huang-zh.github.io/series/redis/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 01 Sep 2023 10:10:44 +0800</lastBuildDate><atom:link href="https://lemonhuang.com/series/redis/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Redis存储原理剖析&lt;三&gt;：key的惰性删除--异步删除策略</title>
-      <link>https://Huang-zh.github.io/posts/redis3/</link>
+      <link>https://lemonhuang.com/posts/redis3/</link>
       <pubDate>Fri, 01 Sep 2023 10:10:44 +0800</pubDate>
       
-      <guid>https://Huang-zh.github.io/posts/redis3/</guid>
+      <guid>https://lemonhuang.com/posts/redis3/</guid>
       <description>前面我们介绍了key在惰性删除时同步删除过程的实现，具体可见： Redis存储原理剖析&amp;lt;二&amp;gt;：key的惰性删除&amp;ndash;同步删</description>
     </item>
     
     <item>
       <title>Redis存储原理剖析&lt;二&gt;：key的惰性删除--同步删除策略</title>
-      <link>https://Huang-zh.github.io/posts/redis2/</link>
+      <link>https://lemonhuang.com/posts/redis2/</link>
       <pubDate>Tue, 29 Aug 2023 19:10:44 +0800</pubDate>
       
-      <guid>https://Huang-zh.github.io/posts/redis2/</guid>
+      <guid>https://lemonhuang.com/posts/redis2/</guid>
       <description>6. key删除策略 redis中，对于过期key的淘汰机制，可以分为以下两种： 定期删除：一种主动删除策略，定期去轮询存储了key的过期时间的字典</description>
     </item>
     
     <item>
       <title>Redis存储原理剖析&lt;一&gt;：存储模型和基础命令解析</title>
-      <link>https://Huang-zh.github.io/posts/redis1/</link>
+      <link>https://lemonhuang.com/posts/redis1/</link>
       <pubDate>Fri, 25 Aug 2023 22:10:44 +0800</pubDate>
       
-      <guid>https://Huang-zh.github.io/posts/redis1/</guid>
+      <guid>https://lemonhuang.com/posts/redis1/</guid>
       <description>1. 前言 2022年，是充满挑战性的一年。 这一年，我选择离开了自己熟悉的信息化领域，把精力投向了互联网金融。 在22年的后半程，鉴于平台和团队所带</description>
     </item>
     

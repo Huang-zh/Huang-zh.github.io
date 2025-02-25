@@ -2,72 +2,72 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://Huang-zh.github.io/cn/categories/</loc>
+    <loc>https://lemonhuang.com/cn/categories/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://Huang-zh.github.io/categories/"
+                href="https://lemonhuang.com/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://Huang-zh.github.io/zh-cn/categories/"
+                href="https://lemonhuang.com/zh-cn/categories/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="cn"
-                href="https://Huang-zh.github.io/cn/categories/"
+                href="https://lemonhuang.com/cn/categories/"
                 />
   </url><url>
-    <loc>https://Huang-zh.github.io/cn/series/</loc>
+    <loc>https://lemonhuang.com/cn/series/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://Huang-zh.github.io/series/"
+                href="https://lemonhuang.com/series/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://Huang-zh.github.io/zh-cn/series/"
+                href="https://lemonhuang.com/zh-cn/series/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="cn"
-                href="https://Huang-zh.github.io/cn/series/"
+                href="https://lemonhuang.com/cn/series/"
                 />
   </url><url>
-    <loc>https://Huang-zh.github.io/cn/tags/</loc>
+    <loc>https://lemonhuang.com/cn/tags/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://Huang-zh.github.io/tags/"
+                href="https://lemonhuang.com/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://Huang-zh.github.io/zh-cn/tags/"
+                href="https://lemonhuang.com/zh-cn/tags/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="cn"
-                href="https://Huang-zh.github.io/cn/tags/"
+                href="https://lemonhuang.com/cn/tags/"
                 />
   </url><url>
-    <loc>https://Huang-zh.github.io/cn/</loc>
+    <loc>https://lemonhuang.com/cn/</loc>
     <xhtml:link
                 rel="alternate"
                 hreflang="en"
-                href="https://Huang-zh.github.io/"
+                href="https://lemonhuang.com/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="zh-cn"
-                href="https://Huang-zh.github.io/zh-cn/"
+                href="https://lemonhuang.com/zh-cn/"
                 />
     <xhtml:link
                 rel="alternate"
                 hreflang="cn"
-                href="https://Huang-zh.github.io/cn/"
+                href="https://lemonhuang.com/cn/"
                 />
   </url>
 </urlset>
