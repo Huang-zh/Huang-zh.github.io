@@ -1590,6 +1590,14 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2024.11.20</td>
 <td style="text-align:center">时间检查方法抽象至公共类 TradeDateTimeCheckHandler，方便各业务检查处理类复用。</td>
 </tr>
+<tr>
+<td style="text-align:center">2025.03.03</td>
+<td style="text-align:center">资产账号表新增 partition_no 字段，用于后续多分片水平扩展。</td>
+</tr>
+<tr>
+<td style="text-align:center">2025.03.04</td>
+<td style="text-align:center">gateway 配置文件中的静态路由维护多分片模式配置。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
