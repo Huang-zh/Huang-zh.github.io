@@ -1602,6 +1602,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2025.03.05</td>
 <td style="text-align:center">使用 discovery 注册分片号，在 gateway 获取serviceId 对应的分片号。</td>
 </tr>
+<tr>
+<td style="text-align:center">2025.03.07</td>
+<td style="text-align:center">新增 dynamic-routes模块，具备动态路由缓存，运行时注入容器上下文。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
