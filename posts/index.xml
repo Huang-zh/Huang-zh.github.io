@@ -1606,6 +1606,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2025.03.07</td>
 <td style="text-align:center">新增 dynamic-routes模块，具备动态路由缓存，运行时注入容器上下文。</td>
 </tr>
+<tr>
+<td style="text-align:center">2025.03.08</td>
+<td style="text-align:center">新增 updateDynamicRoutes方法，用于 DynamicRoutesCache 运行时更新动态路由缓存。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
