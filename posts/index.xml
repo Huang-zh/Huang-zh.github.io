@@ -1614,6 +1614,10 @@ Feign Client<span style="color:#f92672">:</span>
 <td style="text-align:center">2025.03.09</td>
 <td style="text-align:center">PartitionNoCheckFilter逻辑优化，支持根据路由配置中的多分片开启模式开关，来动态获取路由。若多分片模式未开启，则直接放行。</td>
 </tr>
+<tr>
+<td style="text-align:center">2025.03.10</td>
+<td style="text-align:center">PartitionNoCheckFilter逻辑优化，如果请求头不带有分片号，则从表单域中获取 fundAccount，如果获取不到则报错返回。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
