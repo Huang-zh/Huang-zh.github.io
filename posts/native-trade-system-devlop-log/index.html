@@ -43,7 +43,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-03-02T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-03-02T00:00:00+00:00" />
-<meta itemprop="wordCount" content="13300"><meta itemprop="image" content="https://lemonhuang.com"/>
+<meta itemprop="wordCount" content="13613"><meta itemprop="image" content="https://lemonhuang.com"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://lemonhuang.com"/>
@@ -136,7 +136,7 @@
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        27分钟
+        28分钟
 
         
       </p>
@@ -746,6 +746,52 @@ Feign Client<span style="color:#f92672">:</span>
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div></li>
+<li>
+<p>如果在 gateway 模块下的 globalfilter 相关实现类中，直接通过 autowired 注入OpenFeign 的请求借口 FeignClient，会引起循环依赖报错：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Description:
+
+The dependencies of some of the beans in the application context form a cycle<span style="color:#f92672">:</span>
+
+<span style="color:#960050;background-color:#1e0010">┌─────┐</span>
+<span style="color:#f92672">|</span>  partitionNoCheckFilter <span style="color:#f92672">(</span>field <span style="color:#66d9ef">private</span> com<span style="color:#f92672">.</span><span style="color:#a6e22e">huang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">UserSystemFeignClient</span> com<span style="color:#f92672">.</span><span style="color:#a6e22e">huang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">PartitionNoCheckFilter</span><span style="color:#f92672">.</span><span style="color:#a6e22e">userSystemFeignClient</span><span style="color:#f92672">)</span>
+<span style="color:#960050;background-color:#1e0010">↑</span>     <span style="color:#960050;background-color:#1e0010">↓</span>
+<span style="color:#f92672">|</span>  com<span style="color:#f92672">.</span><span style="color:#a6e22e">huang</span><span style="color:#f92672">.</span><span style="color:#a6e22e">UserSystemFeignClient</span>
+<span style="color:#960050;background-color:#1e0010">↑</span>     <span style="color:#960050;background-color:#1e0010">↓</span>
+<span style="color:#f92672">|</span>  corsGatewayFilterApplicationListener defined in <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">path</span> resource <span style="color:#f92672">[</span>org<span style="color:#f92672">/</span>springframework<span style="color:#f92672">/</span>cloud<span style="color:#f92672">/</span>gateway<span style="color:#f92672">/</span>config<span style="color:#f92672">/</span>GatewayAutoConfiguration<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">]</span>
+<span style="color:#960050;background-color:#1e0010">↑</span>     <span style="color:#960050;background-color:#1e0010">↓</span>
+<span style="color:#f92672">|</span>  routePredicateHandlerMapping defined in <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">path</span> resource <span style="color:#f92672">[</span>org<span style="color:#f92672">/</span>springframework<span style="color:#f92672">/</span>cloud<span style="color:#f92672">/</span>gateway<span style="color:#f92672">/</span>config<span style="color:#f92672">/</span>GatewayAutoConfiguration<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">]</span>
+<span style="color:#960050;background-color:#1e0010">↑</span>     <span style="color:#960050;background-color:#1e0010">↓</span>
+<span style="color:#f92672">|</span>  filteringWebHandler defined in <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">path</span> resource <span style="color:#f92672">[</span>org<span style="color:#f92672">/</span>springframework<span style="color:#f92672">/</span>cloud<span style="color:#f92672">/</span>gateway<span style="color:#f92672">/</span>config<span style="color:#f92672">/</span>GatewayAutoConfiguration<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">]</span>
+<span style="color:#960050;background-color:#1e0010">└─────┘</span>
+
+Action:
+
+Relying upon circular references is discouraged and they are prohibited by <span style="color:#66d9ef">default</span><span style="color:#f92672">.</span> Update your application to remove the dependency cycle between beans<span style="color:#f92672">.</span> As a last resort<span style="color:#f92672">,</span> it may be possible to <span style="color:#66d9ef">break</span> the cycle automatically by setting spring<span style="color:#f92672">.</span><span style="color:#a6e22e">main</span><span style="color:#f92672">.</span><span style="color:#a6e22e">allow</span><span style="color:#f92672">-</span>circular<span style="color:#f92672">-</span>references to <span style="color:#66d9ef">true</span><span style="color:#f92672">.</span>
+
+</code></pre></div><ul>
+<li>
+<p>需要考虑引入 lazy 注解，在第一次实际使用该FeignClient 时才进行初始化：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">
+<span style="color:#a6e22e">@Lazy</span>
+<span style="color:#a6e22e">@Autowired</span>
+<span style="color:#66d9ef">private</span> UserSystemFeignClient userSystemFeignClient<span style="color:#f92672">;</span>
+
+</code></pre></div></li>
+<li>
+<p>同时，需要注意 Spring Cloud Gateway中，不支持动态路由，需要将配置项中对应 serviceId 的 url 改成具体地址：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"> <span style="color:#f92672">openfeign</span>:
+  <span style="color:#f92672">client</span>:
+    <span style="color:#f92672">refresh-enabled</span>: <span style="color:#66d9ef">false</span>
+    <span style="color:#f92672">config</span>:
+      <span style="color:#f92672">user-system</span>:
+        <span style="color:#f92672">url</span>: <span style="color:#ae81ff">http://127.0.0.1:8880</span>
+      <span style="color:#f92672">quota-manager-system</span>:
+        <span style="color:#f92672">url</span>: <span style="color:#ae81ff">http://127.0.0.1:8881</span>
+      <span style="color:#f92672">credit-trade-system</span>:
+        <span style="color:#f92672">url</span>: <span style="color:#ae81ff">http://127.0.0.1:8883</span>
+</code></pre></div></li>
+</ul>
+</li>
 </ul>
 <h3 id="5开发日志">5.开发日志</h3>
 <table>
@@ -1163,6 +1209,10 @@ Feign Client<span style="color:#f92672">:</span>
 <tr>
 <td style="text-align:center">2025.03.10</td>
 <td style="text-align:center">PartitionNoCheckFilter逻辑优化，如果请求头不带有分片号，则从表单域中获取 fundAccount，如果获取不到则报错返回。</td>
+</tr>
+<tr>
+<td style="text-align:center">2025.03.12</td>
+<td style="text-align:center">解决PartitionNoCheckFilter中，注入 FeignClient 导致循环引用报错的问题。</td>
 </tr>
 </tbody>
 </table>
@@ -1594,7 +1644,7 @@ Feign Client<span style="color:#f92672">:</span>
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        13300字
+        13613字
       </p>
 
       <p>
