@@ -1672,6 +1672,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2025.03.13</td>
 <td style="text-align:center">PartitionNoCheckFilter支持通过定时触发异步线程的模式请求分片和账号的关联信息。</td>
 </tr>
+<tr>
+<td style="text-align:center">2025.03.14</td>
+<td style="text-align:center">PartitionNoCheckFilter支持通过新增 partitionNoCache 维护资产账号和分片的信息。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
