@@ -43,7 +43,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-03-02T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-03-02T00:00:00+00:00" />
-<meta itemprop="wordCount" content="13958"><meta itemprop="image" content="https://lemonhuang.com"/>
+<meta itemprop="wordCount" content="14026"><meta itemprop="image" content="https://lemonhuang.com"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://lemonhuang.com"/>
@@ -1226,6 +1226,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2025.03.15</td>
 <td style="text-align:center">DynamicRoutesCache 引入 Nacos NamingService，成功解析网关配置文件中配置的spring.cloud.gateway.routes配置项，后续将通过在初始化阶段注册配置文件中配置的所有 serviceId 的状态监听器</td>
 </tr>
+<tr>
+<td style="text-align:center">2025.03.17</td>
+<td style="text-align:center">DynamicRoutesCache 改用 NotifyCenter 的抽象类 Subscriber 监听服务分片的状态，后续需要为每一个配置了多分片模式的serviceId 实现对应的Subscriber，做到松耦合。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
@@ -1656,7 +1660,7 @@ Relying upon circular references is discouraged and they are prohibited by <span
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        13958字
+        14026字
       </p>
 
       <p>
