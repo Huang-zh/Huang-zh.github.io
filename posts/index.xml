@@ -1700,6 +1700,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2025.03.22</td>
 <td style="text-align:center">需要手动实现spring-cloud-loadbalancer 对应的负载均衡策略，否则无法转发至准确的分片。决定手动实现ReactorServiceInstanceLoadBalancer，来代替框架中的 RoundRobbinLoadBalancer，编码进度20%</td>
 </tr>
+<tr>
+<td style="text-align:center">2025.03.24</td>
+<td style="text-align:center">DynamicRoutesCache 处理路由变更监听事件时，忽略使用动态路由缓存的应用程序自身上下线事件。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
