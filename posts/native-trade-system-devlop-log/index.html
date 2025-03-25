@@ -43,7 +43,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-03-02T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-03-02T00:00:00+00:00" />
-<meta itemprop="wordCount" content="14386"><meta itemprop="image" content="https://lemonhuang.com"/>
+<meta itemprop="wordCount" content="14560"><meta itemprop="image" content="https://lemonhuang.com"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://lemonhuang.com"/>
@@ -136,7 +136,7 @@
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        29分钟
+        30分钟
 
         
       </p>
@@ -1250,6 +1250,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2025.03.24</td>
 <td style="text-align:center">DynamicRoutesCache 处理路由变更监听事件时，忽略使用动态路由缓存的应用程序自身上下线事件。</td>
 </tr>
+<tr>
+<td style="text-align:center">2025.03.25</td>
+<td style="text-align:center">更换gateway中动态路由转发的技术路线，将 ServerWebExchange 重定向的动作前移，拟用实现AbstractGatewayFilterFactory工厂类直接改写初始 exchange请求，不在 GlobalFilter 中做改写动作。该技术路线已具备可行性，待迁移PartitionNoCheckFilter 的逻辑至AbstractGatewayFilterFactory实现类的 apply 方法中。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
@@ -1680,7 +1684,7 @@ Relying upon circular references is discouraged and they are prohibited by <span
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        14386字
+        14560字
       </p>
 
       <p>

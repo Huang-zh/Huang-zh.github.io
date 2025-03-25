@@ -1704,6 +1704,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2025.03.24</td>
 <td style="text-align:center">DynamicRoutesCache 处理路由变更监听事件时，忽略使用动态路由缓存的应用程序自身上下线事件。</td>
 </tr>
+<tr>
+<td style="text-align:center">2025.03.25</td>
+<td style="text-align:center">更换gateway中动态路由转发的技术路线，将 ServerWebExchange 重定向的动作前移，拟用实现AbstractGatewayFilterFactory工厂类直接改写初始 exchange请求，不在 GlobalFilter 中做改写动作。该技术路线已具备可行性，待迁移PartitionNoCheckFilter 的逻辑至AbstractGatewayFilterFactory实现类的 apply 方法中。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
