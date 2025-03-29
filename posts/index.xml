@@ -1710,7 +1710,7 @@ Relying upon circular references is discouraged and they are prohibited by <span
 </tr>
 <tr>
 <td style="text-align:center">2025.03.29</td>
-<td style="text-align:center">1、去除原来的 ParitionNoCheckFilter，迁移节点定位的逻辑至AbstractGatewayFilterFactory的实现类DynamicRoutesGatewayFilterFactory中，编码完成，自测完成，根据分片定位路由，转发至指定分片成功。<br/>2、调整部分错误枚举的提示信息。<br/>3、网关启动时支持立即刷新分片-资产账号区间缓存，防止启动后因为定时任务尚未执行而导致资产账号定位时请求获取不到具体的分片返回报错。</td>
+<td style="text-align:center">1、去除原来的 ParitionNoCheckFilter，迁移节点定位的逻辑至AbstractGatewayFilterFactory的实现类DynamicRoutesGatewayFilterFactory中，编码完成，自测完成，根据分片定位路由，转发至指定分片成功。<br/>2、调整部分错误枚举的提示信息。<br/>3、网关启动时支持立即刷新分片-资产账号区间缓存，防止启动后因为定时任务尚未执行而导致资产账号定位时请求获取不到具体的分片返回报错。<br/>4、业务子系统支持接入 DynamicRoutes，维护当前子系统下当前分片的所有路由，后续可用于主备选举。编码进度 30%</td>
 </tr>
 </tbody>
 </table>
