@@ -43,7 +43,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-03-02T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-03-02T00:00:00+00:00" />
-<meta itemprop="wordCount" content="15248"><meta itemprop="image" content="https://lemonhuang.com"/>
+<meta itemprop="wordCount" content="15289"><meta itemprop="image" content="https://lemonhuang.com"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://lemonhuang.com"/>
@@ -1272,7 +1272,7 @@ Relying upon circular references is discouraged and they are prohibited by <span
 </tr>
 <tr>
 <td style="text-align:center">2025.07.27</td>
-<td style="text-align:center">1、DynamicArbHandler动态选主类，通过抢占式cas 发布自身分片信息来获取arb准入许可，并通过 NacosNamingService 监听主分片信息，在主分片下线的瞬时触发自动切主动作，考虑并发，编码进度 100%,自测进度 100%。<br/>其中存在优化点：主分片下线后，订阅者触发 arb 切主动作时，判断配置项主分片信息的超时时间戳仍未超时，则继续监听，需要后续优化成：配合拉去 instance实例信息列表，判断主分片是否真的下线，并且所有分片都要在 shutdown 时进行清理自身发布配置的操作。</td>
+<td style="text-align:center">1、DynamicArbHandler动态选主类，通过抢占式cas 发布自身分片信息来获取arb准入许可，并通过 NacosNamingService 监听主分片信息，在主分片下线的瞬时触发自动切主动作，考虑并发，编码进度 100%,自测进度 100%。<br/>2、选举主分片心跳超时时间可配，引入配置项 dynamic.arb.timeout。<strong style="color:red">其中存在优化点：主分片下线后，订阅者触发 arb 切主动作时，判断配置项主分片信息的超时时间戳仍未超时，则继续监听，需要后续优化成：配合拉去 instance实例信息列表，判断主分片是否真的下线，并且所有分片都要在 shutdown 时进行清理自身发布配置的操作。</strong></td>
 </tr>
 </tbody>
 </table>
@@ -1704,7 +1704,7 @@ Relying upon circular references is discouraged and they are prohibited by <span
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        15248字
+        15289字
       </p>
 
       <p>
