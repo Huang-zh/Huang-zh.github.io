@@ -1724,6 +1724,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2025.04.02</td>
 <td style="text-align:center">1、DynamicRoutes维护当前子系统下当前分片的所有路由，后续可用于主备选举。编码完成，自测完成。<br/>2、新建动态选主类，通过注解引入，后续将通过探测主节点是否存活的动作来发起主备选举动作，编码进度 20%。</td>
 </tr>
+<tr>
+<td style="text-align:center">2025.07.27</td>
+<td style="text-align:center">1、DynamicArbHandler动态选主类，通过抢占式cas 发布自身分片信息来获取arb准入许可，并通过 NacosNamingService 监听主分片信息，在主分片下线的瞬时触发自动切主动作，考虑并发，编码进度 100%,自测进度 100%。<br/>其中存在优化点：主分片下线后，订阅者触发 arb 切主动作时，判断配置项主分片信息的超时时间戳仍未超时，则继续监听，需要后续优化成：配合拉去 instance实例信息列表，判断主分片是否真的下线，并且所有分片都要在 shutdown 时进行清理自身发布配置的操作。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
