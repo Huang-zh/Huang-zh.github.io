@@ -1732,6 +1732,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2025.07.30</td>
 <td style="text-align:center">DynamicArbHandler选举时，添加isMasterAlive方法，用于规避超时时间内主分片更新令牌后断线，在到达超时时间窗口前启动其他分片会误判断主分片仍然存活，导致不发起切主动作的 bug。</td>
 </tr>
+<tr>
+<td style="text-align:center">2025.07.31</td>
+<td style="text-align:center">DynamicArbHandler新增内部类UpdateConfigManager，提供单线程池和同步延迟队列，定时获取令牌，更新主分片存活信息的动作。编码完成，待自测。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
