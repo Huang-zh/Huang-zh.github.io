@@ -1738,7 +1738,7 @@ Relying upon circular references is discouraged and they are prohibited by <span
 </tr>
 <tr>
 <td style="text-align:center">2025.08.01</td>
-<td style="text-align:center">UpdateConfigManager，更新主分片存活信息前，判断当前主分片是否为本分片，如果不是本分片，直接自身中断更新线程并关闭线程池。</td>
+<td style="text-align:center">1、UpdateConfigManager，更新主分片存活信息前，判断当前主分片是否为本分片，如果不是本分片，直接自身中断更新线程并关闭线程池。<br/>2、修复网关启动后未配置分片号导致动态选举报错的问题。</td>
 </tr>
 </tbody>
 </table>
