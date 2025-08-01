@@ -1736,6 +1736,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2025.07.31</td>
 <td style="text-align:center">DynamicArbHandler新增内部类UpdateConfigManager，提供单线程池和同步延迟队列，定时获取令牌，更新主分片存活信息的动作。编码完成，待自测。</td>
 </tr>
+<tr>
+<td style="text-align:center">2025.08.01</td>
+<td style="text-align:center">UpdateConfigManager，更新主分片存活信息前，判断当前主分片是否为本分片，如果不是本分片，直接自身中断更新线程并关闭线程池。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
