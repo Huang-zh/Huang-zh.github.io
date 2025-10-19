@@ -1755,6 +1755,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2025.08.01</td>
 <td style="text-align:center">1、UpdateConfigManager，更新主分片存活信息前，判断当前主分片是否为本分片，如果不是本分片，直接自身中断更新线程并关闭线程池。<br/>2、修复网关启动后未配置分片号导致动态选举报错的问题。</td>
 </tr>
+<tr>
+<td style="text-align:center">2025.10.18</td>
+<td style="text-align:center">1、修正部分系统框架日志级别。<br/>2、DynamicRouteCache 正确维护全分片路由表。<br/>3、网关不需要触发选举，新增 gatewayEnable 判断逻辑，网关根据该配置项需要监听全业务系统主分片信息。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
