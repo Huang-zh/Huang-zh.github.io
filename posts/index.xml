@@ -1763,6 +1763,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2025.11.19</td>
 <td style="text-align:center">1、设计方案，网关如何维护下游服务元数据，方便运行时监听下游服务存活信息？</td>
 </tr>
+<tr>
+<td style="text-align:center">2026.01.07</td>
+<td style="text-align:center">1、DynamicArbHandler 和 DynamicRouteCache 解耦，可单独通过 EnableDynamicArb 注解引入DynamicArbHandler，只做动态切主的动作。<br/><strong style="color:red">2、方案确定：后续网关也需要在DynamicArbHandler中定时轮询机制获取所有多分片主备示例列表，以及各主分片存活情况探测，同时要为各主分片注册监听器，通过事件驱动机制+轮询驱动机制双重保障主备节点切换的灵活性和稳定性。</strong></td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
