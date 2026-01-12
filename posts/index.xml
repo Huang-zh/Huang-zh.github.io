@@ -1775,6 +1775,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2026.01.10</td>
 <td style="text-align:center">1、DynamicArbHandler 抽象出PollingWorker 和 Token，作为后续轮询机制的基类，继承该基类，实现 doPolling 即可拥有不同的轮询机制能力。<br/>2、UpdateConfigManager 和 UpdateConfigToken 改造，统一继承自 PollingWorker 和 Token。<br/>3、DynamicArbHandler引入 MasterWatchingWorker,定时触发向 nacos 拉取对应节点分片的主分片信息的动作，并维护进自身的 route 缓存，外界可通过 getMasterURI(string serviceNameWithPartitionNo)方法来获取指定分片的最新主分片 URI信息。</td>
 </tr>
+<tr>
+<td style="text-align:center">2026.01.12</td>
+<td style="text-align:center">1、DynamicArbHandler 新增 MasterWatchingManager，统一管理主分片轮询器 MasterWatchingWorker 的生命周期，以及对外界提供轮询器的注册和注销动作，同时外界能通过该成员类获取指定分片的主分片 URI。<br/>2、DynamicRouteCache 配套改造，网关在启动时会自动向 DynamicArbHandler 注册已上线的主分片监听器，当程序全部下线时，自动注销主分片监听器。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
