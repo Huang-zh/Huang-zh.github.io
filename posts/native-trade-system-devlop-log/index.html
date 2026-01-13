@@ -43,7 +43,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-03-02T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-03-02T00:00:00+00:00" />
-<meta itemprop="wordCount" content="16385"><meta itemprop="image" content="https://lemonhuang.com"/>
+<meta itemprop="wordCount" content="16583"><meta itemprop="image" content="https://lemonhuang.com"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://lemonhuang.com"/>
@@ -136,7 +136,7 @@
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        33分钟
+        34分钟
 
         
       </p>
@@ -1310,6 +1310,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2026.01.12</td>
 <td style="text-align:center">1、DynamicArbHandler 新增 MasterWatchingManager，统一管理主分片轮询器 MasterWatchingWorker 的生命周期，以及对外界提供轮询器的注册和注销动作，同时外界能通过该成员类获取指定分片的主分片 URI。<br/>2、DynamicRouteCache 配套改造，网关在启动时会自动向 DynamicArbHandler 注册已上线的主分片监听器，当程序全部下线时，自动注销主分片监听器。</td>
 </tr>
+<tr>
+<td style="text-align:center">2026.01.13</td>
+<td style="text-align:center">1、DynamicArbHandler内部主分片轮询管理器MasterWatchingManager，支持热点实时更新维护的主分片监听器，根据最新的实例列表来注册或注销对应分片的主分片MasterWatchingWorker。<br/>2、DynamicRouteCache 配套改造，网关实时监听多分片上下线，获取最新的实例列表送入 DynamicArbHandler，来动态实时刷新对应存活分片的主节点。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
@@ -1740,7 +1744,7 @@ Relying upon circular references is discouraged and they are prohibited by <span
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        16385字
+        16583字
       </p>
 
       <p>
