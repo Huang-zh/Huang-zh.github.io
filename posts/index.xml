@@ -1791,6 +1791,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2026.01.15</td>
 <td style="text-align:center">1、引入配置项 multiPartitionNo，开启多分片模式，供主分片轮询器管理类对接下游业务多分片子系统。<strong style="color:red">2、isMasterAlive(object,serverName)需要支持传入分片号，内部再根据实时获取的实例列表的元数据包含的分片号进行判断，避免分片错乱选举，导致多分片主备情况出现的脑裂。</strong></td>
 </tr>
+<tr>
+<td style="text-align:center">2026.01.18</td>
+<td style="text-align:center">1、isMasterAlive 支持传入分片号，DynamicArbHandler 内部判断主分片存活逻辑改造，每个分片只判断本分片主节点的状态，避免跨分片错误判断引起脑裂。<br/>2、DynamicArbHandler 开放multiPartitionNo、gatewayEnabled、partitionNo 的关键元数据信息 get 方法，DynamicRouteCache在初始化过程中根据多分片模式和网关模式，区分维护主分片 URI 路由信息和注册主分片轮询器的范围。<br/>3、DynamicRouteCache网关对接单节点系统改造，增加单节点判断逻辑，避免单节点的系统上下线被网关检测到后走入多分片逻辑而报错。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>

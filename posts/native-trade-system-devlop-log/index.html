@@ -43,7 +43,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-03-02T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-03-02T00:00:00+00:00" />
-<meta itemprop="wordCount" content="16895"><meta itemprop="image" content="https://lemonhuang.com"/>
+<meta itemprop="wordCount" content="17189"><meta itemprop="image" content="https://lemonhuang.com"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://lemonhuang.com"/>
@@ -136,7 +136,7 @@
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        34分钟
+        35分钟
 
         
       </p>
@@ -1322,6 +1322,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2026.01.15</td>
 <td style="text-align:center">1、引入配置项 multiPartitionNo，开启多分片模式，供主分片轮询器管理类对接下游业务多分片子系统。<strong style="color:red">2、isMasterAlive(object,serverName)需要支持传入分片号，内部再根据实时获取的实例列表的元数据包含的分片号进行判断，避免分片错乱选举，导致多分片主备情况出现的脑裂。</strong></td>
 </tr>
+<tr>
+<td style="text-align:center">2026.01.18</td>
+<td style="text-align:center">1、isMasterAlive 支持传入分片号，DynamicArbHandler 内部判断主分片存活逻辑改造，每个分片只判断本分片主节点的状态，避免跨分片错误判断引起脑裂。<br/>2、DynamicArbHandler 开放multiPartitionNo、gatewayEnabled、partitionNo 的关键元数据信息 get 方法，DynamicRouteCache在初始化过程中根据多分片模式和网关模式，区分维护主分片 URI 路由信息和注册主分片轮询器的范围。<br/>3、DynamicRouteCache网关对接单节点系统改造，增加单节点判断逻辑，避免单节点的系统上下线被网关检测到后走入多分片逻辑而报错。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
@@ -1752,7 +1756,7 @@ Relying upon circular references is discouraged and they are prohibited by <span
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        16895字
+        17189字
       </p>
 
       <p>
