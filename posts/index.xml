@@ -1795,6 +1795,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2026.01.18</td>
 <td style="text-align:center">1、isMasterAlive 支持传入分片号，DynamicArbHandler 内部判断主分片存活逻辑改造，每个分片只判断本分片主节点的状态，避免跨分片错误判断引起脑裂。<br/>2、DynamicArbHandler 开放multiPartitionNo、gatewayEnabled、partitionNo 的关键元数据信息 get 方法，DynamicRouteCache在初始化过程中根据多分片模式和网关模式，区分维护主分片 URI 路由信息和注册主分片轮询器的范围。<br/>3、DynamicRouteCache网关对接单节点系统改造，增加单节点判断逻辑，避免单节点的系统上下线被网关检测到后走入多分片逻辑而报错。</td>
 </tr>
+<tr>
+<td style="text-align:center">2026.01.19</td>
+<td style="text-align:center">1、多分片选主结合业务场景完成单元测试，测试业务：竞价委托-融资买入，节点 credit-trade-system#52（一主两备），credit-trade-system#53（一主一备）。测试账号 52 分片，在主节点切换之后，gateway的 DynamicRouteCache 正常监听，网关转发至 52 分片的请求在DynamicRoutesGatewayFilterFactory正常路由。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
