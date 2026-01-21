@@ -1803,6 +1803,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2026.01.20</td>
 <td style="text-align:center">1、无锁事件环形队列配套支持多分片改造，支持每个分片不同主备节点配置不同端口启动，无需在不同主备节点的配置文件中配置同样的端口。<br/></td>
 </tr>
+<tr>
+<td style="text-align:center">2026.01.21</td>
+<td style="text-align:center">1、网关引入system-arg 全局参数系统路由，支持系统对全局参数的设置，同时新增 SystemArgumentFilter，用于过滤参数系统的请求。<br/></td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
