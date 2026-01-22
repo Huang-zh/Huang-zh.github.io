@@ -624,7 +624,7 @@ PS:一席蓝色的长裙，蓬松的大波浪，把我也迷的不要不要的�
             <pubDate>Sat, 02 Mar 2024 00:00:00 +0000</pubDate>
             
             <guid>https://lemonhuang.com/posts/native-trade-system-devlop-log/</guid>
-            <description>1. 依赖和中间件 open-jdk 17.0.7 graalvm 22.3.2 Maven 3.6.3 nacos 2.2.3 Redis 6.0 Mysql 8.0 Springboot 3.0.6 SpringCloud Alibaba 2022.0.0.0 mybatis-plus 3.5.3 Seata 1.7.0 Netty 4.1.99 Disruptor 4.0.0 2. 模块总览 模块名 中文名 备注 native-cloud-user-system 交易账户系统 用于维护证券交易账户数据，负责客户开</description>
+            <description>1. 依赖和中间件 open-jdk 17.0.7 graalvm 22.3.2 Maven 3.6.3 nacos 2.2.3 Redis 6.0 Mysql 8.0 Springboot 3.0.6 SpringCloud Alibaba 2022.0.0.0 mybatis-plus 3.5.3 Seata 1.7.0 Netty 4.1.99 Disruptor 4.0.0 2. 模块总览 模块名 中文名 备注 native-cloud-system-argument 全局参数配置系统 用于维护交易系统各分片需要使用的</description>
             <content type="html"><![CDATA[<h3 id="1-依赖和中间件">1. 依赖和中间件</h3>
 <ul>
 <li>open-jdk 17.0.7</li>
@@ -650,6 +650,11 @@ PS:一席蓝色的长裙，蓬松的大波浪，把我也迷的不要不要的�
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:center">native-cloud-system-argument</td>
+<td style="text-align:center">全局参数配置系统</td>
+<td style="text-align:center">用于维护交易系统各分片需要使用的配置项、代码行情价格信息。</td>
+</tr>
 <tr>
 <td style="text-align:center">native-cloud-user-system</td>
 <td style="text-align:center">交易账户系统</td>
