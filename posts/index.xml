@@ -1816,6 +1816,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2026.01.22</td>
 <td style="text-align:center">1、新建 native-cloud-system-argument，用于维护交易系统全局参数，集成native-cloud-common-auth、native-cloud-common-result、native-cloud-common-cache等系统公共模块。<br/>2、网关到全局参数系统连通性测试完成，鉴权白名单配置完成验证。</td>
 </tr>
+<tr>
+<td style="text-align:center">2026.01.23</td>
+<td style="text-align:center">1、native-cloud-system-argument 全局系统参数服务模块深度集成动态路由 DynamicRoutesCache 和动态切主 DynamicArbHandler。开启动态主备切换和全局路由动态缓存。为后续组播参数写入请求到各交易核心分片的分发动作做基础准备。<br/>2、调整配置项，参数系统分片号定义为 95。同时修改同步发送请求工具 ClientWorker 的日志级别为error，减少无意义的日志信息。<br/><strong style="color:red">3、DynamicRoutesCache 还需要适配全局参数异步组播至下游交易核心多分片的场景，需要扩展 dynamic.routes.application 配置项，配置项的值需要解析为额外需要全局动态路由缓存进行监听的<strong style="color:blue"> 应用程序+分片 </strong>的最终列表，通过列表，全局动态路由缓存需要额外对这些列表中配置的下游分片进行<strong style="color:blue"> URI 列表和主分片 URI </strong>的维护。</strong></td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
