@@ -43,7 +43,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-03-02T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-03-02T00:00:00+00:00" />
-<meta itemprop="wordCount" content="18695"><meta itemprop="image" content="https://lemonhuang.com"/>
+<meta itemprop="wordCount" content="18866"><meta itemprop="image" content="https://lemonhuang.com"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://lemonhuang.com"/>
@@ -1367,6 +1367,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2026.01.28</td>
 <td style="text-align:center">1、自定义 rpc 协议 Lemon Protocal 支持字符串格式单元自测完毕，性能测试达标。测试指标如下：<br/><strong style="color:red">10参数（long型:2个,double型:3个,string型:4个，boolean型:1个）</strong> <br/> <strong style="color:red">总共 5 批次，单批次 10000 并发，</strong>序列化+反序列化总耗时在 440 ms - 500 ms，平均单笔在 <strong style="color:red">44 us - 50 us 之间</strong>，相较 Alibaba FastJson 单笔平均在60 ms - 70 ms，性能上超越一个数量级，<strong style="color:blue">但 后者在兼容性和数据结构复杂性上做了大量的适配，所以可能多少对它序列化的性能有些影响。</strong><br/>平均单笔，在内存上相较 Alibaba FastJson 少占用 3 字节，<strong style="color:red">10000 并发 * 5 批次，总计少用 150000 字节 ≈ 0.143 MB。</strong></td>
 </tr>
+<tr>
+<td style="text-align:center">2026.01.29</td>
+<td style="text-align:center">1、账户系统集成 openfeign，支持设置 RBAC 模型资源权限后，同步给 System-Argument，数据链路打通，内部 RPC api 调用正常。后续将由System-Argument通过自身额外订阅的服务列表，通过 Lemon-Ringbuffer发送 Lemon-RPC-Protocal 至服务列表主节点，主备集群内部通过Lemon-RPC-Protocal完成主从复制，保障数据一致性。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
@@ -1797,7 +1801,7 @@ Relying upon circular references is discouraged and they are prohibited by <span
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        18695字
+        18866字
       </p>
 
       <p>
