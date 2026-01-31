@@ -1840,6 +1840,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2026.01.29</td>
 <td style="text-align:center">1、账户系统集成 openfeign，支持设置 RBAC 模型资源权限后，同步给 System-Argument，数据链路打通，内部 RPC api 调用正常。后续将由System-Argument通过自身额外订阅的服务列表，通过 Lemon-Ringbuffer发送 Lemon-RPC-Protocal 至服务列表主节点，主备集群内部通过Lemon-RPC-Protocal完成主从复制，保障数据一致性。</td>
 </tr>
+<tr>
+<td style="text-align:center">2026.01.31</td>
+<td style="text-align:center">1、ByteTypeUtil 支持单批次多行数据的序列化和反序列化，编码完成，自测完成。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
