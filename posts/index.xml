@@ -1844,6 +1844,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2026.01.31</td>
 <td style="text-align:center">1、ByteTypeUtil 支持单批次多行数据的序列化和反序列化，编码完成，自测完成。</td>
 </tr>
+<tr>
+<td style="text-align:center">2026.02.01</td>
+<td style="text-align:center">1、ByteTypeUtil 修复字符 char 类型入参场景下，因编码格式引起的反序列化IndexOutOfBound失败。至此，Lemon-RPC-Protocal已在类型方面，支持八种基本类型的序列化和反序列化；在记录批次方面，支持单批次单/多条数据传输。在协议事先约定方面，支持序列化端灵活变更字段后，反序列化端解析过程自动灵活解析，无需双方事先约定 IDL，属于变更字段友好型传输协议。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>

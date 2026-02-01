@@ -43,7 +43,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-03-02T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-03-02T00:00:00+00:00" />
-<meta itemprop="wordCount" content="18910"><meta itemprop="image" content="https://lemonhuang.com"/>
+<meta itemprop="wordCount" content="19102"><meta itemprop="image" content="https://lemonhuang.com"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://lemonhuang.com"/>
@@ -136,7 +136,7 @@
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        38分钟
+        39分钟
 
         
       </p>
@@ -1375,6 +1375,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2026.01.31</td>
 <td style="text-align:center">1、ByteTypeUtil 支持单批次多行数据的序列化和反序列化，编码完成，自测完成。</td>
 </tr>
+<tr>
+<td style="text-align:center">2026.02.01</td>
+<td style="text-align:center">1、ByteTypeUtil 修复字符 char 类型入参场景下，因编码格式引起的反序列化IndexOutOfBound失败。至此，Lemon-RPC-Protocal已在类型方面，支持八种基本类型的序列化和反序列化；在记录批次方面，支持单批次单/多条数据传输。在协议事先约定方面，支持序列化端灵活变更字段后，反序列化端解析过程自动灵活解析，无需双方事先约定 IDL，属于变更字段友好型传输协议。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
@@ -1805,7 +1809,7 @@ Relying upon circular references is discouraged and they are prohibited by <span
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        18910字
+        19102字
       </p>
 
       <p>
