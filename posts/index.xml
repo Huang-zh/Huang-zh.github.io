@@ -1856,6 +1856,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2026.02.03</td>
 <td style="text-align:center">1、native-cloud-common-ringbuff 模块分隔符改造，支持换行符作为消息临界字符。<br/>2、统一账户系统 RBAC 权限-资源新增/修改标准接口开发，编码进度 30%。</td>
 </tr>
+<tr>
+<td style="text-align:center">2026.02.05</td>
+<td style="text-align:center">1、统一账户系统 RBAC 权限-资源新增/修改标准接口开发，完成角色-资源权限模型更新接口，在事务内先删除再批量新增，确保原子性。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>

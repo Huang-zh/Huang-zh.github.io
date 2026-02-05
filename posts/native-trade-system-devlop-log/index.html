@@ -43,7 +43,7 @@
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-03-02T00:00:00+00:00" />
 <meta itemprop="dateModified" content="2024-03-02T00:00:00+00:00" />
-<meta itemprop="wordCount" content="19299"><meta itemprop="image" content="https://lemonhuang.com"/>
+<meta itemprop="wordCount" content="19361"><meta itemprop="image" content="https://lemonhuang.com"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://lemonhuang.com"/>
@@ -1387,6 +1387,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2026.02.03</td>
 <td style="text-align:center">1、native-cloud-common-ringbuff 模块分隔符改造，支持换行符作为消息临界字符。<br/>2、统一账户系统 RBAC 权限-资源新增/修改标准接口开发，编码进度 30%。</td>
 </tr>
+<tr>
+<td style="text-align:center">2026.02.05</td>
+<td style="text-align:center">1、统一账户系统 RBAC 权限-资源新增/修改标准接口开发，完成角色-资源权限模型更新接口，在事务内先删除再批量新增，确保原子性。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
@@ -1817,7 +1821,7 @@ Relying upon circular references is discouraged and they are prohibited by <span
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        19299字
+        19361字
       </p>
 
       <p>
