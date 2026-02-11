@@ -1868,6 +1868,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2026.02.10</td>
 <td style="text-align:center">1、native-cloud-common-ringbuffer 模块新增 ClientWorker、ClientProperty，拟通过这两个类提供一对多的发送功能（后续实现组播的基石）。编码完成，需设计并提供测试用例和压测方案。</td>
 </tr>
+<tr>
+<td style="text-align:center">2026.02.11</td>
+<td style="text-align:center">1、native-cloud-common-ringbuffer 新增发送客户端相关程序项：ClientWorker、ClientProperty，测试通过。12000 tps 压测，序列化+反序列化耗时 区间在 962 ms - 1106 ms 之间，基本达成 12000 tps，低延时指标性能压测达标。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
