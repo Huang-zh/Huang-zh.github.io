@@ -1874,7 +1874,7 @@ Relying upon circular references is discouraged and they are prohibited by <span
 </tr>
 <tr>
 <td style="text-align:center">2026.02.14</td>
-<td style="text-align:center">1、native-cloud-system-argument 模块深度集成高性能通信模块 native-cloud-common-ringbuffer，使用二进制协议进行参数交互和分发的工作。<br/>2、修复native-cloud-dynamic-routes 在 ipv6 子网环境下解析机器 ip地址失败引起重复选举的问题。<br/>3、native-cloud-system-argument新增 DatasyncWorker，用于向子系统进行参数同步的动作，这个类在整个应用程序的生命周期内严格控制只能初始化一次。</td>
+<td style="text-align:center">1、native-cloud-system-argument 模块深度集成高性能通信模块 native-cloud-common-ringbuffer，使用二进制协议进行参数交互和分发的工作。<br/>2、修复native-cloud-dynamic-routes 在 ipv6 子网环境下解析机器 ip地址失败引起重复选举的问题。<br/>3、native-cloud-system-argument新增 DatasyncWorker，用于向子系统进行参数同步的动作，这个类在整个应用程序的生命周期内严格控制只能初始化一次。<br/>4、DynamicArbHandler的方法updateWorker，增加 needRemove标识，适配参数同步场景入口程序需要额外监听下游业务子系统，当needRemove为 false 时，不执行轮询器的 remove 动作。</td>
 </tr>
 </tbody>
 </table>
