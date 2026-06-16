@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="author" content="[huangzh]">
-<meta name="description" content="每一天你都会有机会，和很多人擦身而过 有些人会成为你的朋友，或者是知己 有些人会跟你斗得头破血流 管他呢 开心就好😄 关于我 1997年，处女座，祖籍浙" />
+<meta name="description" content="每一天你都会有机会，和很多人擦身而过 有些人会成为你的朋友，或者是知己 有些人会跟你斗得头破血流 管他呢 开心就好😄 .tw-line { white-space: nowrap; margin: 0.5em 0; } .tw-line.typing::after { content: &#34;&#34;; display: inline-block; width: 2px;" />
 <meta name="keywords" content="" />
 <meta name="robots" content="noodp" />
 <meta name="theme-color" content="" />
@@ -41,20 +41,20 @@
 
 
 <meta itemprop="name" content="简介">
-<meta itemprop="description" content="每一天你都会有机会，和很多人擦身而过 有些人会成为你的朋友，或者是知己 有些人会跟你斗得头破血流 管他呢 开心就好😄 关于我 1997年，处女座，祖籍浙">
+<meta itemprop="description" content="每一天你都会有机会，和很多人擦身而过 有些人会成为你的朋友，或者是知己 有些人会跟你斗得头破血流 管他呢 开心就好😄 .tw-line { white-space: nowrap; margin: 0.5em 0; } .tw-line.typing::after { content: &#34;&#34;; display: inline-block; width: 2px;">
 
-<meta itemprop="wordCount" content="1188"><meta itemprop="image" content="https://lemonhuang.com"/>
+<meta itemprop="wordCount" content="1328"><meta itemprop="image" content="https://lemonhuang.com"/>
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://lemonhuang.com"/>
 
 <meta name="twitter:title" content="简介"/>
-<meta name="twitter:description" content="每一天你都会有机会，和很多人擦身而过 有些人会成为你的朋友，或者是知己 有些人会跟你斗得头破血流 管他呢 开心就好😄 关于我 1997年，处女座，祖籍浙"/>
+<meta name="twitter:description" content="每一天你都会有机会，和很多人擦身而过 有些人会成为你的朋友，或者是知己 有些人会跟你斗得头破血流 管他呢 开心就好😄 .tw-line { white-space: nowrap; margin: 0.5em 0; } .tw-line.typing::after { content: &#34;&#34;; display: inline-block; width: 2px;"/>
 
 
 
     <meta property="og:title" content="简介" />
-<meta property="og:description" content="每一天你都会有机会，和很多人擦身而过 有些人会成为你的朋友，或者是知己 有些人会跟你斗得头破血流 管他呢 开心就好😄 关于我 1997年，处女座，祖籍浙" />
+<meta property="og:description" content="每一天你都会有机会，和很多人擦身而过 有些人会成为你的朋友，或者是知己 有些人会跟你斗得头破血流 管他呢 开心就好😄 .tw-line { white-space: nowrap; margin: 0.5em 0; } .tw-line.typing::after { content: &#34;&#34;; display: inline-block; width: 2px;" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lemonhuang.com/about/" /><meta property="og:image" content="https://lemonhuang.com"/><meta property="article:section" content="" />
 
@@ -140,11 +140,62 @@
             <div class="post-content">
                 <p><img src="https://s21.ax1x.com/2025/11/09/pZ9PMwV.jpg" alt="huang-zh"></p>
 <blockquote>
-<p>每一天你都会有机会，和很多人擦身而过<br/><br/>
-有些人会成为你的朋友，或者是知己<br/><br/>
-有些人会跟你斗得头破血流<br/><br/>
-管他呢 开心就好😄<br/></p>
+<div class="typewriter" id="tw">
+  <p class="tw-line">每一天你都会有机会，和很多人擦身而过</p>
+  <p class="tw-line">有些人会成为你的朋友，或者是知己</p>
+  <p class="tw-line">有些人会跟你斗得头破血流</p>
+  <p class="tw-line">管他呢 开心就好😄</p>
+</div>
 </blockquote>
+<style>
+.tw-line {
+  white-space: nowrap;
+  margin: 0.5em 0;
+}
+.tw-line.typing::after {
+  content: "";
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: currentColor;
+  animation: tw-blink 1s steps(1) infinite;
+}
+@keyframes tw-blink {
+  50% { opacity: 0; }
+}
+</style>
+<script>
+(function () {
+  var el = document.getElementById('tw');
+  if (!el) return;
+  var lines = Array.prototype.slice.call(el.getElementsByClassName('tw-line'));
+  var texts = lines.map(function (l) { return l.textContent; });
+  var SPEED = 140;
+  var PAUSE = 500;
+  var li = 0;
+  var ci = 0;
+  lines.forEach(function (l) { l.textContent = ''; });
+  (function type() {
+    if (li >= texts.length) {
+      lines.forEach(function (l) { l.classList.remove('typing'); });
+      return;
+    }
+    lines.forEach(function (l) { l.classList.remove('typing'); });
+    lines[li].classList.add('typing');
+    ci = ci + 1;
+    lines[li].textContent = texts[li].slice(0, ci);
+    if (ci >= texts[li].length) {
+      li = li + 1;
+      ci = 0;
+      setTimeout(type, PAUSE);
+    } else {
+      setTimeout(type, SPEED);
+    }
+  })();
+})();
+</script>
 <h3 id="关于我">关于我</h3>
 <ul>
 <li><strong>1997年，处女座，祖籍浙江温州，现坐标浙江杭州。</strong></li>
@@ -191,7 +242,7 @@
 .badge-marquee .movie-group {
   gap: 8px;
   align-items: center;
-  padding: 5px 0;
+  padding: 5px 8px 5px 0;
 }
 .badge-marquee .movie-track {
   animation-duration: 60s;
