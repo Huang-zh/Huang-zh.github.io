@@ -5,8 +5,211 @@
         <description>Recent content in Posts on 此间的少年</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en</language>
-        <lastBuildDate>Sat, 02 Aug 2025 00:00:00 +0000</lastBuildDate>
+        <lastBuildDate>Thu, 13 Aug 2026 00:00:00 +0000</lastBuildDate>
         <atom:link href="https://lemonhuang.com/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>记一次线上排查：Nacos 节点下线失败（监听不生效）</title>
+            <link>https://lemonhuang.com/posts/nacos-event-block-fix/</link>
+            <pubDate>Thu, 13 Aug 2026 00:00:00 +0000</pubDate>
+            
+            <guid>https://lemonhuang.com/posts/nacos-event-block-fix/</guid>
+            <description>一、问题背景 native-cloud-system 微服务体系中，SystemArgumentApplication（system-arg 分片 95）通过 DynamicRoutesCache 监听 Nacos 的 Instance</description>
+            <content type="html"><![CDATA[<h2 id="一问题背景">一、问题背景</h2>
+<p><code>native-cloud-system</code> 微服务体系中，<code>SystemArgumentApplication</code>（<code>system-arg</code> 分片 95）通过 <code>DynamicRoutesCache</code> 监听 Nacos 的 <code>InstancesChangeEvent</code>，用于动态维护下游业务子系统（如 <code>credit-trade-system</code>）的路由缓存，并在主备切换时更新主分片 URI。</p>
+<p>现象：<strong>停止 <code>CreditTradeApplication</code> 后，<code>system-arg</code> 无法感知节点下线，路由缓存不更新，监听仿佛失效。</strong></p>
+<h2 id="二诡异的现象三种场景相互矛盾">二、诡异的现象：三种场景相互矛盾</h2>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>表现</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>run 启动 + do-while 注释</td>
+<td>停止 CreditTrade，监听不生效</td>
+</tr>
+<tr>
+<td>run 启动 + do-while 保留（1s 延迟）</td>
+<td>监听正常生效</td>
+</tr>
+<tr>
+<td>debug 启动 + do-while 注释</td>
+<td>监听正常生效</td>
+</tr>
+</tbody>
+</table>
+<p>同样的代码、同样的操作，只差启动方式，结果截然不同——这是典型的<strong>时序 / 竞态问题</strong>，而不是简单的逻辑 bug。</p>
+<h2 id="三排查过程">三、排查过程</h2>
+<h3 id="1-初步怀疑事件-servicename-带-group-前缀导致-name-匹配失败">1. 初步怀疑：事件 serviceName 带 group 前缀，导致 name 匹配失败</h3>
+<p>run 模式日志显示 Nacos 客户端内部事件名格式为 <code>native-cloud-system@@system-arg</code>（带 group 前缀），而监听器里用的是纯名 <code>equals</code> 匹配，一度怀疑是匹配 bug。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">[SUBSCRIBE-SERVICE] service:system-arg, group:native-cloud-system
+init new ips(0) service: native-cloud-system@@system-arg -&gt; []
+</code></pre></div><h3 id="2-关键一步加探测日志">2. 关键一步：加探测日志</h3>
+<p>在 <code>onEvent</code> 入口加无条件探测日志，用 run 模式复测，日志给出了决定性证据：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">[ncesChangeEvent] =======探测: 收到 InstancesChangeEvent, serviceName=system-arg, hosts.size=0=======
+[ingWorkerThread] init new ips(1) service: native-cloud-system@@credit-trade-system -&gt; [8881 实例]
+</code></pre></div><p><strong>结论一：事件 serviceName 是纯名 <code>system-arg</code>（无 group 前缀），name 匹配正常，之前的怀疑作废。</strong></p>
+<p><strong>结论二：<code>onEvent</code> 全程只被调用了一次，且是 <code>hosts.size=0</code> 的空实例事件！</strong> 之后 system-arg 上线（0→1）、credit-trade 下线（<code>removed ips(1)</code> 已到达客户端）均无任何探测日志、无异常——典型的&quot;<strong>事件分发线程被无限循环卡死</strong>&ldquo;特征。</p>
+<h2 id="四根因分析">四、根因分析</h2>
+<h3 id="时序重建">时序重建</h3>
+<ol>
+<li>启动早期 <code>updateDynamicRoutes()</code> 中 <code>discoveryClient.getInstances(&quot;system-arg&quot;)</code> 触发订阅，<strong>此时本系统自己还没注册</strong>（日志：订阅在 39.867，注册在 40.816），Nacos 立即推送 <strong>0 实例</strong> 的初始事件。</li>
+<li><code>registerSubscriber</code> 注册全局监听后（39.920），<strong>第一个到达的事件就是这个 <code>system-arg</code> 空实例事件</strong>（39.932）。</li>
+<li>该事件进入场景 1：过滤后实例列表仍为空，走到下方自旋：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">URI masterURI <span style="color:#f92672">=</span> dynamicArbHandler<span style="color:#f92672">.</span><span style="color:#a6e22e">getMasterURI</span><span style="color:#f92672">(</span>key<span style="color:#f92672">);</span>
+<span style="color:#75715e">// 每个分片第一个节点上线的时候因为轮询机制存在延时，这里做一个 loop
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>masterURI <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">||</span> <span style="color:#f92672">!</span>isMasterAlive<span style="color:#f92672">(</span>instances<span style="color:#f92672">,</span> masterURI<span style="color:#f92672">)){</span>
+    masterURI <span style="color:#f92672">=</span> dynamicArbHandler<span style="color:#f92672">.</span><span style="color:#a6e22e">getMasterURI</span><span style="color:#f92672">(</span>key<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><ul>
+<li>轮询器首轮尚未出结果 → <code>masterURI == null</code> → 条件成立；</li>
+<li>即便有值，<code>isMasterAlive(空列表, uri)</code> 内部用 <code>anyMatch</code> 判断，<strong>对空列表恒返回 false</strong> → 条件依旧成立；</li>
+<li>循环内<strong>无 sleep、无超时</strong> → 无限忙等死循环。</li>
+</ul>
+<h3 id="为什么后续事件全部被丢弃">为什么后续事件全部被丢弃</h3>
+<p>Nacos 的 <code>NotifyCenter</code> 是<strong>单线程</strong>分发 <code>InstancesChangeEvent</code>。这个 <code>ncesChangeEvent</code> 线程被卡死在空事件的自旋里后，事件队列不再被消费，之后 system-arg 上线、credit-trade 上下线等所有事件全部堆积丢弃——表现为&quot;监听失效&rdquo;。</p>
+<h3 id="三个现象的闭环解释">三个现象的闭环解释</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>registerSubscriber 时机</th>
+<th>第一个到达的事件</th>
+<th>结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>run + do-while 注释</td>
+<td>早（39.920）</td>
+<td>system-arg <strong>空事件</strong>（39.932）</td>
+<td><strong>卡死，监听失效</strong></td>
+</tr>
+<tr>
+<td>run + do-while 存在</td>
+<td>晚（+1s）</td>
+<td>system-arg 上线事件（1 实例）</td>
+<td>躲过空事件，正常</td>
+</tr>
+<tr>
+<td>debug + do-while 注释</td>
+<td>更晚（启动慢）</td>
+<td>跳过空事件，首个是上线事件</td>
+<td>正常</td>
+</tr>
+</tbody>
+</table>
+<p><strong>do-while 的 1s 延迟真正的作用不是&quot;等 masterHost&quot;，而是碰巧让注册晚于空事件发布、躲过了致命空事件</strong>——所以它存在时&quot;生效&quot;，删掉就&quot;失效&quot;。debug 启动慢同理。</p>
+<h2 id="五代码修改前后对比">五、代码修改前后对比</h2>
+<h3 id="修改前onevent-场景-1">修改前（<code>onEvent</code> 场景 1）</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">String name <span style="color:#f92672">=</span> instancesChangeEvent<span style="color:#f92672">.</span><span style="color:#a6e22e">getServiceName</span><span style="color:#f92672">();</span>
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>name<span style="color:#f92672">.</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span>applicationName<span style="color:#f92672">)){</span>
+    <span style="color:#75715e">// 场景 1，下游业务子系统收到本分片的上下线事件
+</span><span style="color:#75715e"></span>    List<span style="color:#f92672">&lt;</span>Instance<span style="color:#f92672">&gt;</span> instances <span style="color:#f92672">=</span> instancesChangeEvent<span style="color:#f92672">.</span><span style="color:#a6e22e">getHosts</span><span style="color:#f92672">();</span>
+    <span style="color:#75715e">// 筛选当前子系统中本分片的实例，比如 credit-trade-system子系统的 52分片的所有实例（后续可用于主备选举）
+</span><span style="color:#75715e"></span>    instances <span style="color:#f92672">=</span> instances<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">()</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>instance <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">return</span> instance<span style="color:#f92672">.</span><span style="color:#a6e22e">getServiceName</span><span style="color:#f92672">().</span><span style="color:#a6e22e">endsWith</span><span style="color:#f92672">(</span>applicationName<span style="color:#f92672">);</span>
+            <span style="color:#f92672">})</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>instance <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">return</span> partitionNo<span style="color:#f92672">.</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span>Integer<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>instance<span style="color:#f92672">.</span><span style="color:#a6e22e">getMetadata</span><span style="color:#f92672">().</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;partitionNo&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">()));</span>
+            <span style="color:#f92672">})</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">());</span>
+    <span style="color:#75715e">// serviceName#partitionNo 作为缓存唯一键
+</span><span style="color:#75715e"></span>    String key <span style="color:#f92672">=</span> applicationName<span style="color:#f92672">.</span><span style="color:#a6e22e">concat</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;#&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">concat</span><span style="color:#f92672">(</span>partitionNo<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">());</span>
+    <span style="color:#75715e">// 下游业务子系统开启 EnableDynamicRoutes 说明是多分片主备模式，也必须开启 EnableDynamicArb 进行动态选举
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// 可以直接从 DynamicArbHandler 获取当前应用分片的主节点
+</span><span style="color:#75715e"></span>    URI masterURI <span style="color:#f92672">=</span> dynamicArbHandler<span style="color:#f92672">.</span><span style="color:#a6e22e">getMasterURI</span><span style="color:#f92672">(</span>key<span style="color:#f92672">);</span>
+    <span style="color:#75715e">// 每个分片第一个节点上线的时候因为轮询机制存在延时，这里做一个 loop
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">while</span> <span style="color:#f92672">(</span>masterURI <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">||</span> <span style="color:#f92672">!</span>isMasterAlive<span style="color:#f92672">(</span>instances<span style="color:#f92672">,</span> masterURI<span style="color:#f92672">)){</span>
+        masterURI <span style="color:#f92672">=</span> dynamicArbHandler<span style="color:#f92672">.</span><span style="color:#a6e22e">getMasterURI</span><span style="color:#f92672">(</span>key<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+    log<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;维护{}的主分片 URI:{}&#34;</span><span style="color:#f92672">,</span> key<span style="color:#f92672">,</span> masterURI<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">());</span>
+    routes<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> masterURI<span style="color:#f92672">);</span>
+    partitionInstances<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> instances<span style="color:#f92672">);</span>
+    String instanceList <span style="color:#f92672">=</span> instances<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>vi <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> vi<span style="color:#f92672">.</span><span style="color:#a6e22e">getIp</span><span style="color:#f92672">()</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;:&#34;</span> <span style="color:#f92672">+</span> vi<span style="color:#f92672">.</span><span style="color:#a6e22e">getPort</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}).</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">joining</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;,&#34;</span><span style="color:#f92672">));</span>
+    log<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;更新应用程序{}的路由，新的路由列表{}&#34;</span><span style="color:#f92672">,</span> key<span style="color:#f92672">,</span> instanceList<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h3 id="修改后onevent-场景-1">修改后（<code>onEvent</code> 场景 1）</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">String name <span style="color:#f92672">=</span> instancesChangeEvent<span style="color:#f92672">.</span><span style="color:#a6e22e">getServiceName</span><span style="color:#f92672">();</span>
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>name<span style="color:#f92672">.</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span>applicationName<span style="color:#f92672">)){</span>
+    <span style="color:#75715e">// 场景 1，下游业务子系统收到本分片的上下线事件
+</span><span style="color:#75715e"></span>    List<span style="color:#f92672">&lt;</span>Instance<span style="color:#f92672">&gt;</span> instances <span style="color:#f92672">=</span> instancesChangeEvent<span style="color:#f92672">.</span><span style="color:#a6e22e">getHosts</span><span style="color:#f92672">();</span>
+    <span style="color:#75715e">// 筛选当前子系统中本分片的实例，比如 credit-trade-system子系统的 52分片的所有实例（后续可用于主备选举）
+</span><span style="color:#75715e"></span>    instances <span style="color:#f92672">=</span> instances<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">()</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>instance <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">return</span> instance<span style="color:#f92672">.</span><span style="color:#a6e22e">getServiceName</span><span style="color:#f92672">().</span><span style="color:#a6e22e">endsWith</span><span style="color:#f92672">(</span>applicationName<span style="color:#f92672">);</span>
+            <span style="color:#f92672">})</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>instance <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>
+                <span style="color:#66d9ef">return</span> partitionNo<span style="color:#f92672">.</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span>Integer<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>instance<span style="color:#f92672">.</span><span style="color:#a6e22e">getMetadata</span><span style="color:#f92672">().</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;partitionNo&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">()));</span>
+            <span style="color:#f92672">})</span>
+            <span style="color:#f92672">.</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">());</span>
+    <span style="color:#75715e">// serviceName#partitionNo 作为缓存唯一键
+</span><span style="color:#75715e"></span>    String key <span style="color:#f92672">=</span> applicationName<span style="color:#f92672">.</span><span style="color:#a6e22e">concat</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;#&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">concat</span><span style="color:#f92672">(</span>partitionNo<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">());</span>
+    <span style="color:#75715e">// ====== 修复：空实例事件（启动初期本系统尚未注册时 Nacos 会推送 0 实例）绝不能进入下方自旋，
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// 否则 isMasterAlive(空列表) 恒为 false，无限忙等会把 Nacos 唯一的事件分发线程卡死，
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// 导致后续所有上下线事件全部丢失（表现为&#34;监听失效&#34;）======
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>instances<span style="color:#f92672">.</span><span style="color:#a6e22e">isEmpty</span><span style="color:#f92672">()){</span>
+        <span style="color:#75715e">// 启动初期缓存本就没有该分片，无需清理；真正全部下线时同样走这里，仅打印即可
+</span><span style="color:#75715e"></span>        log<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;收到本分片{}的空实例事件，当前无存活节点，本轮跳过路由更新&#34;</span><span style="color:#f92672">,</span> key<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#75715e">// 下游业务子系统开启 EnableDynamicRoutes 说明是多分片主备模式，也必须开启 EnableDynamicArb 进行动态选举
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// 可以直接从 DynamicArbHandler 获取当前应用分片的主节点
+</span><span style="color:#75715e"></span>    URI masterURI <span style="color:#f92672">=</span> dynamicArbHandler<span style="color:#f92672">.</span><span style="color:#a6e22e">getMasterURI</span><span style="color:#f92672">(</span>key<span style="color:#f92672">);</span>
+    <span style="color:#75715e">// 每个分片第一个节点上线的时候因为轮询机制存在延时，这里做一个 loop，加退避与超时上限，防止卡死事件分发线程
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">long</span> deadline <span style="color:#f92672">=</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">currentTimeMillis</span><span style="color:#f92672">()</span> <span style="color:#f92672">+</span> 15000L<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">while</span> <span style="color:#f92672">((</span>masterURI <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">||</span> <span style="color:#f92672">!</span>isMasterAlive<span style="color:#f92672">(</span>instances<span style="color:#f92672">,</span> masterURI<span style="color:#f92672">))</span> <span style="color:#f92672">&amp;&amp;</span> System<span style="color:#f92672">.</span><span style="color:#a6e22e">currentTimeMillis</span><span style="color:#f92672">()</span> <span style="color:#f92672">&lt;</span> deadline<span style="color:#f92672">){</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">sleep</span><span style="color:#f92672">(</span>200L<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>InterruptedException e<span style="color:#f92672">){</span>
+            Thread<span style="color:#f92672">.</span><span style="color:#a6e22e">currentThread</span><span style="color:#f92672">().</span><span style="color:#a6e22e">interrupt</span><span style="color:#f92672">();</span>
+            <span style="color:#66d9ef">return</span><span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        masterURI <span style="color:#f92672">=</span> dynamicArbHandler<span style="color:#f92672">.</span><span style="color:#a6e22e">getMasterURI</span><span style="color:#f92672">(</span>key<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>masterURI <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">||</span> <span style="color:#f92672">!</span>isMasterAlive<span style="color:#f92672">(</span>instances<span style="color:#f92672">,</span> masterURI<span style="color:#f92672">)){</span>
+        log<span style="color:#f92672">.</span><span style="color:#a6e22e">error</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;等待{}主分片 URI 超时，本轮路由缓存暂不更新&#34;</span><span style="color:#f92672">,</span> key<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">return</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    log<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;维护{}的主分片 URI:{}&#34;</span><span style="color:#f92672">,</span> key<span style="color:#f92672">,</span> masterURI<span style="color:#f92672">.</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">());</span>
+    routes<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> masterURI<span style="color:#f92672">);</span>
+    partitionInstances<span style="color:#f92672">.</span><span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>key<span style="color:#f92672">,</span> instances<span style="color:#f92672">);</span>
+    String instanceList <span style="color:#f92672">=</span> instances<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>vi <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> vi<span style="color:#f92672">.</span><span style="color:#a6e22e">getIp</span><span style="color:#f92672">()</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;:&#34;</span> <span style="color:#f92672">+</span> vi<span style="color:#f92672">.</span><span style="color:#a6e22e">getPort</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}).</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">joining</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;,&#34;</span><span style="color:#f92672">));</span>
+    log<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;更新应用程序{}的路由，新的路由列表{}&#34;</span><span style="color:#f92672">,</span> key<span style="color:#f92672">,</span> instanceList<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><h3 id="修改点归纳">修改点归纳</h3>
+<ol>
+<li><strong>根治：空实例事件直接 <code>return</code></strong>——启动初期缓存本就没有该分片，无需清理；真正全部下线时同样安全，只打日志跳过。</li>
+<li><strong>防御：自旋加 200ms 退避 + 15s 超时</strong>，并处理中断——即使轮询器长时间未就绪等同类场景，也不会再卡死事件分发线程。</li>
+<li><strong>删除探测日志</strong>。</li>
+</ol>
+<h3 id="关于-do-while">关于 do-while</h3>
+<p>它只是&quot;碰巧用 1s 延迟躲过了那个致命空事件&quot;才让人误以为有用。修复后空事件已不再致命，do-while 可以放心删除（当前保持注释状态即可）。</p>
+<h2 id="六验证">六、验证</h2>
+<p>保持 do-while 注释，run 启动 <code>SystemArgumentApplication</code>，等完全启动后停止 <code>CreditTradeApplication</code>，日志应出现：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">收到本分片system-arg#95的空实例事件，当前无存活节点，本轮跳过路由更新   ← 启动早期正常跳过
+-------收到额外监听的服务程序事件，服务程序名:credit-trade-system-----   ← 停止 CreditTrade 后
+检测到应用程序credit-trade-system已无存活节点，缓存路由表：...将全部下线！
+</code></pre></div><p>出现这两条，说明监听链路已完全恢复。</p>
+<h2 id="七经验总结">七、经验总结</h2>
+<ol>
+<li><strong>Nacos 的 <code>NotifyCenter</code> 事件分发是单线程的</strong>，任何一个监听器的死循环都可能拖垮所有事件分发——监听器代码必须保证不阻塞、不忙等。</li>
+<li><strong>空实例事件（0 实例）是合法的、必然会出现的</strong>（订阅后尚未注册、或集群全部下线时），业务代码必须显式处理，绝不能把空列表当作&quot;还没有数据&quot;直接进入依赖 <code>anyMatch</code> 的逻辑（空列表 <code>anyMatch</code> 恒为 false）。</li>
+<li><strong>所有自旋循环都必须带退避与超时上限</strong>，否则一旦前置条件永不满足就是灾难。</li>
+<li><strong>&ldquo;加个延迟就能好&quot;往往不是真正修复</strong>——延迟只是改变了竞态窗口，掩盖了真实的根因，去掉延迟后问题必定复现（debug/run 差异同理）。</li>
+<li>排查此类&quot;偶发失效&quot;问题时，<strong>在事件入口加无条件探测日志</strong>是最快的一步定位手段：有日志 → 看匹配分支；无日志 → 看线程是否被卡死、事件是否根本没派发。</li>
+</ol>
+]]></content>
+        </item>
         
         <item>
             <title>夜</title>

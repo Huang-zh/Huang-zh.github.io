@@ -6,7 +6,16 @@
     <description>Recent content on 此间的少年</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 02 Aug 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://lemonhuang.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 13 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://lemonhuang.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>记一次线上排查：Nacos 节点下线失败（监听不生效）</title>
+      <link>https://lemonhuang.com/posts/nacos-event-block-fix/</link>
+      <pubDate>Thu, 13 Aug 2026 00:00:00 +0000</pubDate>
+      
+      <guid>https://lemonhuang.com/posts/nacos-event-block-fix/</guid>
+      <description>一、问题背景 native-cloud-system 微服务体系中，SystemArgumentApplication（system-arg 分片 95）通过 DynamicRoutesCache 监听 Nacos 的 Instance</description>
+    </item>
+    
     <item>
       <title>夜</title>
       <link>https://lemonhuang.com/posts/20250802/</link>
