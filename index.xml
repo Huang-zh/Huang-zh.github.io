@@ -251,6 +251,15 @@
     </item>
     
     <item>
+      <title>心情</title>
+      <link>https://lemonhuang.com/feeling/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://lemonhuang.com/feeling/</guid>
+      <description>回头看看来时的路，发现已经走出很远。 /* ===== 心情页卡片式时间线（内联样式，仅本页生效） ===== */ .content { position: relative; } /* 贯穿的时间线 */ .content::before { content: &#34;&#34;; position: absolute; left: 15px; top: 0; bottom: 0; width: 2px;</description>
+    </item>
+    
+    <item>
       <title>简介</title>
       <link>https://lemonhuang.com/about/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
