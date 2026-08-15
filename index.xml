@@ -6,11 +6,11 @@
     <description>Recent content on 此间的少年</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 14 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://lemonhuang.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 14 Aug 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://lemonhuang.com/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Lemon-Protocal，基于二进制的 RPC 交互协议设计报告</title>
       <link>https://lemonhuang.com/posts/lemon-protocol/</link>
-      <pubDate>Fri, 14 Aug 2026 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 14 Aug 2026 00:00:00 +0800</pubDate>
       
       <guid>https://lemonhuang.com/posts/lemon-protocol/</guid>
       <description>/* Lemon-Protocol 文章自包含代码块配色（GitHub 浅色风格） 内嵌于文章头部，随 md 迁移到任意支持 unsafe HTML 的站点即生效 */ .highlight, pre { background: #f6f8fa !important; border: 1px solid #e4e7eb; border-radius: 6px; } .highlight { padding: 0.75rem 1rem; overflow-x: auto;</description>
@@ -19,7 +19,7 @@
     <item>
       <title>记一次线上排查：Nacos 节点下线失败（监听不生效）</title>
       <link>https://lemonhuang.com/posts/nacos-event-block-fix/</link>
-      <pubDate>Thu, 13 Aug 2026 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 13 Aug 2026 00:00:00 +0800</pubDate>
       
       <guid>https://lemonhuang.com/posts/nacos-event-block-fix/</guid>
       <description>一、问题背景 native-cloud-system 微服务体系中，SystemArgumentApplication（system-arg 分片 95）通过 DynamicRoutesCache 监听 Nacos 的 Instance</description>
@@ -28,7 +28,7 @@
     <item>
       <title>夜</title>
       <link>https://lemonhuang.com/posts/20250802/</link>
-      <pubDate>Sat, 02 Aug 2025 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 02 Aug 2025 00:00:00 +0800</pubDate>
       
       <guid>https://lemonhuang.com/posts/20250802/</guid>
       <description>夜，那么黑，那么暗，那么长。 是那么冰冷，我感到悲伤。 挣扎着，做一个人，而不是沦为一台 on 24-hour call 的机器。 为自己而活。别让记忆里只剩下工位上苍白无力</description>
@@ -37,7 +37,7 @@
     <item>
       <title>二月小记</title>
       <link>https://lemonhuang.com/posts/20250227/</link>
-      <pubDate>Tue, 25 Feb 2025 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 25 Feb 2025 00:00:00 +0800</pubDate>
       
       <guid>https://lemonhuang.com/posts/20250227/</guid>
       <description>该怎么形容这天崩的蛇年开局？ 固然自己有错，但，工作中谁又不会犯错。一定要填鸭式、灭绝人性的一次次复盘，再小的错也会变成滔天大罪。 离心离德，还</description>
@@ -46,7 +46,7 @@
     <item>
       <title>月光 moonlight</title>
       <link>https://lemonhuang.com/posts/moonlight/</link>
-      <pubDate>Mon, 04 Nov 2024 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 04 Nov 2024 00:00:00 +0800</pubDate>
       
       <guid>https://lemonhuang.com/posts/moonlight/</guid>
       <description>写代码时，习惯让歌单随机播放。 这一晚播放到这首月光 Moonlight feat. Mahya。 伴奏用钢琴和 blues 吉他伴以轻快的点缀，专辑封面是忧郁的深蓝。 低潮部分 Lu1 娓娓道来</description>
@@ -55,7 +55,7 @@
     <item>
       <title> 交易系统系统间数据交互格式设计</title>
       <link>https://lemonhuang.com/posts/native-trade-system-data-message-design/</link>
-      <pubDate>Thu, 03 Oct 2024 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 03 Oct 2024 00:00:00 +0800</pubDate>
       
       <guid>https://lemonhuang.com/posts/native-trade-system-data-message-design/</guid>
       <description>背景 交易系统的特点，除了高吞吐量、高并发之外，往往对延迟有着非常敏感的要求，业界话术：高抖动敏感。 但是时延并不是针对所有业务，比如交易系统涉</description>
@@ -64,7 +64,7 @@
     <item>
       <title>分布式事务流水序列号处理</title>
       <link>https://lemonhuang.com/posts/native-trade-system-serial-no/</link>
-      <pubDate>Fri, 20 Sep 2024 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 20 Sep 2024 00:00:00 +0800</pubDate>
       
       <guid>https://lemonhuang.com/posts/native-trade-system-serial-no/</guid>
       <description>概念 在交易系统中，通常存在流水号的概念，在生成交易订单时，会通过分片+流水号的形式记录一个全局唯一的委托号。 对于流水号的获取，通常有如下要求</description>
@@ -73,7 +73,7 @@
     <item>
       <title>在千岛湖</title>
       <link>https://lemonhuang.com/posts/20240902/</link>
-      <pubDate>Mon, 02 Sep 2024 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 02 Sep 2024 00:00:00 +0800</pubDate>
       
       <guid>https://lemonhuang.com/posts/20240902/</guid>
       <description>我从来没去过千岛湖，我这么和我的爱人说。于是，就有了一场说走就走的自驾游。在我生日的这个节点，二人驱车前往湖光山色之间，度过了很松弛的两日。</description>
@@ -82,7 +82,7 @@
     <item>
       <title>在泉州</title>
       <link>https://lemonhuang.com/posts/20240829/</link>
-      <pubDate>Thu, 29 Aug 2024 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 29 Aug 2024 00:00:00 +0800</pubDate>
       
       <guid>https://lemonhuang.com/posts/20240829/</guid>
       <description>整理相册的时候，突然看到一组照片，是2023年春节，自己独自在泉州的时候记录下的风景。 那么，我决定在2024年的8月份，尝试用一种回忆的叙事</description>
@@ -91,7 +91,7 @@
     <item>
       <title>自在如风</title>
       <link>https://lemonhuang.com/posts/20240827/</link>
-      <pubDate>Tue, 27 Aug 2024 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 27 Aug 2024 00:00:00 +0800</pubDate>
       
       <guid>https://lemonhuang.com/posts/20240827/</guid>
       <description>自在如风这个词，是从我的爱人那里第一次听说的。 遇见她之后，生活也添了些色彩，我开始去了解很多从前没尝试过的事物。 做陶艺，吃舒芙蕾，涉足这座城</description>
@@ -100,7 +100,7 @@
     <item>
       <title>我的篮球</title>
       <link>https://lemonhuang.com/posts/20240819/</link>
-      <pubDate>Mon, 19 Aug 2024 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 19 Aug 2024 00:00:00 +0800</pubDate>
       
       <guid>https://lemonhuang.com/posts/20240819/</guid>
       <description>我有一颗篮球，静静的蜷缩在阳台的角落上很久，落了很厚很厚的灰。 我没有心思擦拭它，即使近日里我曾想过去拍拍它，就像我曾经隔三差五那样。 但无比繁</description>
@@ -109,7 +109,7 @@
     <item>
       <title>立秋日记</title>
       <link>https://lemonhuang.com/posts/20240808/</link>
-      <pubDate>Thu, 08 Aug 2024 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 08 Aug 2024 00:00:00 +0800</pubDate>
       
       <guid>https://lemonhuang.com/posts/20240808/</guid>
       <description>甲辰龙年，七月初五，立秋已过。 今年我身处的环境异常寒冷，和当下白日里超过四十摄氏度的气温大相径庭。 眼下的光景，正直盛夏，路上的蝉鸣不绝于耳，</description>
@@ -118,7 +118,7 @@
     <item>
       <title>一些思绪</title>
       <link>https://lemonhuang.com/posts/20240612/</link>
-      <pubDate>Wed, 12 Jun 2024 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 12 Jun 2024 00:00:00 +0800</pubDate>
       
       <guid>https://lemonhuang.com/posts/20240612/</guid>
       <description>时间来到了2024年，甲辰龙年，正直初夏，芒种才过，雨水很多。 今年他的吉他更加陈旧了，弦枕处的裂痕更深了，那是时间流逝的痕迹。 像是一位老朋友</description>
@@ -127,7 +127,7 @@
     <item>
       <title>云交易系统开发手册</title>
       <link>https://lemonhuang.com/posts/native-trade-system-devlop-log/</link>
-      <pubDate>Sat, 02 Mar 2024 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 02 Mar 2024 00:00:00 +0800</pubDate>
       
       <guid>https://lemonhuang.com/posts/native-trade-system-devlop-log/</guid>
       <description>1. 依赖和中间件 open-jdk 17.0.7 graalvm 22.3.2 Maven 3.6.3 nacos 2.2.3 Redis 6.0 Mysql 8.0 Springboot 3.0.6 SpringCloud Alibaba 2022.0.0.0 mybatis-plus 3.5.3 Seata 1.7.0 Netty 4.1.99 Disruptor 4.0.0 2. 模块总览 模块名 中文名 备注 native-cloud-system-argument 全局参数配置系统 用于维护交易系统各分片需要使用的</description>
@@ -244,7 +244,7 @@
     <item>
       <title>浮生如梦</title>
       <link>https://lemonhuang.com/posts/firstpost/</link>
-      <pubDate>Thu, 24 Aug 2023 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 24 Aug 2023 00:00:00 +0800</pubDate>
       
       <guid>https://lemonhuang.com/posts/firstpost/</guid>
       <description>午月间 安逸的人 情不禁的人 得意的人 忘形的人 悻悻而归的人 痴心的人 醉醺醺的人 神隐的人 驾五色龙船的人 将信疑的人 无我的人 喜乐的人 奔波游离的人 失约的人 摇</description>
