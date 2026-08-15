@@ -43,7 +43,7 @@
 <meta itemprop="name" content="心情">
 <meta itemprop="description" content="回头看看来时的路，发现已经走出很远。 /* ===== 心情页卡片式时间线（内联样式，仅本页生效） ===== */ .content { position: relative; } /* 贯穿的时间线 */ .content::before { content: &#34;&#34;; position: absolute; left: 15px; top: 0; bottom: 0; width: 2px;">
 
-<meta itemprop="wordCount" content="477"><meta itemprop="image" content="https://lemonhuang.com"/>
+<meta itemprop="wordCount" content="635"><meta itemprop="image" content="https://lemonhuang.com"/>
 <meta itemprop="keywords" content="" />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://lemonhuang.com"/>
@@ -167,7 +167,17 @@
   border: 1px solid rgba(74, 144, 217, 0.25);
   border-radius: 10px;
   background: rgba(74, 144, 217, 0.06);
+  /* 入场动画：从左侧滑入 + 淡入 */
+  opacity: 0;
+  transform: translateX(-24px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
+.tl-item.in {
+  opacity: 1;
+  transform: none;
+}
+/* 未加载到的批次：隐藏 */
+.tl-pending { display: none; }
 [data-theme="dark"] .tl-item {
   border-color: #4e4e57;
   background: #2c2e33;
@@ -244,6 +254,15 @@
   .tl-item::before { left: -24px; }
   .tl-item::after { left: -12px; width: 14px; }
 }
+/* 系统开启“减少动态效果”时直接显示 */
+@media (prefers-reduced-motion: reduce) {
+  .tl-item {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .tl-pending { display: block; }
+}
 </style>
 <!-- 新增心情：复制下面的格式，粘贴到第一条卡片之前（时间倒序）：
      <div class="tl-item">
@@ -275,6 +294,66 @@
   <h3>2022-05-05</h3>
   <p>带着装不下的期待，匆匆的赶来。</p>
 </div>
+<script>
+(function () {
+  var items = Array.prototype.slice.call(document.querySelectorAll('.tl-item'));
+  if (!items.length) return;
+
+  var reduceMotion = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var noIO = !('IntersectionObserver' in window);
+
+  // 不支持 IO 或减少动态：全部直接显示
+  if (noIO || reduceMotion) {
+    items.forEach(function (it) { it.classList.add('in'); });
+    return;
+  }
+
+  var BATCH = 3;
+  var DELAY = 120;
+  var batches = [];
+  for (var i = 0; i < items.length; i += BATCH) {
+    batches.push(items.slice(i, i + BATCH));
+  }
+
+  function animateIn(batch, baseIdx) {
+    batch.forEach(function (it, idx) {
+      it.style.transitionDelay = ((baseIdx || 0) + idx) * DELAY + 'ms';
+      it.classList.add('in');
+    });
+  }
+
+  // 第一批直接播放入场动画
+  animateIn(batches[0], 0);
+
+  // 其余批次先隐藏，并在每批前插入哨兵
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      var n = parseInt(e.target.getAttribute('data-batch'), 10);
+      var batch = batches[n];
+      if (batch) {
+        batch.forEach(function (it) { it.classList.remove('tl-pending'); });
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            animateIn(batch, 0);
+          });
+        });
+        e.target.remove();
+      }
+    });
+  }, { rootMargin: '400px 0px', threshold: 0 });
+
+  for (var b = 1; b < batches.length; b++) {
+    var s = document.createElement('div');
+    s.className = 'tl-sentinel';
+    s.setAttribute('data-batch', b);
+    batches[b][0].parentNode.insertBefore(s, batches[b][0]);
+    batches[b].forEach(function (it) { it.classList.add('tl-pending'); });
+    io.observe(s);
+  }
+})();
+</script>
 
             </div>
         </article>
