@@ -5,8 +5,950 @@
         <description>Recent content in Posts on 此间的少年</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en</language>
-        <lastBuildDate>Thu, 13 Aug 2026 00:00:00 +0000</lastBuildDate>
+        <lastBuildDate>Fri, 14 Aug 2026 00:00:00 +0000</lastBuildDate>
         <atom:link href="https://lemonhuang.com/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>Lemon-Protocal，基于二进制的 RPC 交互协议设计报告</title>
+            <link>https://lemonhuang.com/posts/lemon-protocol/</link>
+            <pubDate>Fri, 14 Aug 2026 00:00:00 +0000</pubDate>
+            
+            <guid>https://lemonhuang.com/posts/lemon-protocol/</guid>
+            <description>/* Lemon-Protocol 文章自包含代码块配色（GitHub 浅色风格） 内嵌于文章头部，随 md 迁移到任意支持 unsafe HTML 的站点即生效 */ .highlight, pre { background: #f6f8fa !important; border: 1px solid #e4e7eb; border-radius: 6px; } .highlight { padding: 0.75rem 1rem; overflow-x: auto;</description>
+            <content type="html"><![CDATA[<style>
+/* Lemon-Protocol 文章自包含代码块配色（GitHub 浅色风格）
+   内嵌于文章头部，随 md 迁移到任意支持 unsafe HTML 的站点即生效 */
+.highlight,
+pre {
+  background: #f6f8fa !important;
+  border: 1px solid #e4e7eb;
+  border-radius: 6px;
+}
+.highlight {
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+}
+.highlight pre {
+  background: transparent !important;
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+pre code:not([class*="language-"]) {
+  color: #24292e !important;
+}
+:not(pre) > code {
+  background: #f3f4f6;
+  color: #c7254e;
+  padding: 1px 6px;
+  border-radius: 5px;
+}
+</style>
+<blockquote>
+<p>协议载体：<code>com.huang.buffer.util.ByteTypeUtil</code><br/>
+配套产物：<code>com.huang.buffer.core.MessageMetaData</code><br/>
+反序列化入口：<code>GenerateMessageDataHandler.channelRead → ByteTypeUtil.handleLineBytes</code>（统一入口）<br/>
+版本：2026-08-15 修订（2026-01-31 初版实现）</p>
+</blockquote>
+<hr>
+<h2 id="一协议概述">一、协议概述</h2>
+<p>Lemon-Protocol 是一种<strong>基于类型标记 + 长度前缀的紧凑型二进制序列化协议</strong>，用于把一组 <code>Map&lt;String, Object&gt;</code> 参数（单条）或一组同构的行记录（多条，形如关系表的列式压缩）编码为字节流，支持跨 TCP 长连接传输，并可在环形缓冲（RingBuffer/Disruptor）内作为事件载荷零拷贝传递。</p>
+<p>协议核心设计目标：</p>
+<ol>
+<li><strong>极致紧凑</strong>：头部只保留字段个数、类型表、长度表，键名只在消息尾部出现一次，避免 JSON 式重复键名带来的体积膨胀。</li>
+<li><strong>批量压缩</strong>：多行消息把&quot;类型表/长度表/名称表&quot;去重为一份，数据区按行列矩阵排布，适合同构批量数据。</li>
+<li><strong>类型自描述</strong>：每个字段带 1 字节类型标记，反序列化时无需外部 schema 即可还原 9 种基础类型。</li>
+<li><strong>流式边界</strong>：每条消息以 <code>\n</code> 结尾，可作为 Socket 流中多条消息的切分点。</li>
+</ol>
+<hr>
+<h2 id="二类型系统type-枚举">二、类型系统（Type 枚举）</h2>
+<p>协议内置 9 种可传输类型 + 1 种兜底类型。标记字节为<strong>类型名首字母的 ASCII 码</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>标记字节</th>
+<th>ASCII 字符</th>
+<th>值占用字节数</th>
+<th>二进制编码</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BYTE</code></td>
+<td>98</td>
+<td><code>b</code></td>
+<td>1</td>
+<td>原样 1 字节</td>
+</tr>
+<tr>
+<td><code>SHORT</code></td>
+<td>115</td>
+<td><code>s</code></td>
+<td>2</td>
+<td>大端序 2 字节</td>
+</tr>
+<tr>
+<td><code>CHAR</code></td>
+<td>99</td>
+<td><code>c</code></td>
+<td>1</td>
+<td>取低 8 位（仅单字节字符）</td>
+</tr>
+<tr>
+<td><code>FLOAT</code></td>
+<td>102</td>
+<td><code>f</code></td>
+<td>4</td>
+<td>IEEE 754 大端序 4 字节</td>
+</tr>
+<tr>
+<td><code>DOUBLE</code></td>
+<td>100</td>
+<td><code>d</code></td>
+<td>8</td>
+<td>IEEE 754 大端序 8 字节</td>
+</tr>
+<tr>
+<td><code>INTEGER</code></td>
+<td>105</td>
+<td><code>i</code></td>
+<td>4</td>
+<td>大端序 4 字节</td>
+</tr>
+<tr>
+<td><code>LONG</code></td>
+<td>108</td>
+<td><code>l</code></td>
+<td>8</td>
+<td>大端序 8 字节</td>
+</tr>
+<tr>
+<td><code>BOOLEAN</code></td>
+<td>66</td>
+<td><code>B</code></td>
+<td>1</td>
+<td>1 字节，非 0 即 true</td>
+</tr>
+<tr>
+<td><code>STRING</code></td>
+<td>83</td>
+<td><code>S</code></td>
+<td>变长（UTF-8）</td>
+<td>UTF-8 字节序列；单行长度记录于长度表，多行内嵌 2 字节长度前缀</td>
+</tr>
+<tr>
+<td><code>UNSUPPORTED</code></td>
+<td>0</td>
+<td>—</td>
+<td>—</td>
+<td>反序列化时返回 null</td>
+</tr>
+</tbody>
+</table>
+<p>设计细节：<code>boolean</code> 用小写 <code>b</code> 会与 <code>byte</code>（98）冲突，因此用大写 <code>B</code>（66）；<code>string</code> 用小写 <code>s</code> 会与 <code>short</code>（115）冲突，因此用大写 <code>S</code>（83）。</p>
+<hr>
+<h2 id="三消息格式">三、消息格式</h2>
+<p>协议存在<strong>单行消息</strong>与<strong>多行消息</strong>两种变体，二者均共享&quot;类型表 + 长度表 + 值区 + 尾部名称区&quot;的骨架，区别仅在头部。</p>
+<h3 id="31-单行消息格式generatebytes解析端保留但未接入发送链路">3.1 单行消息格式（<code>generateBytes</code>；解析端保留但未接入发送链路）</h3>
+<table>
+<thead>
+<tr>
+<th>域</th>
+<th>字节偏移</th>
+<th>长度（字节）</th>
+<th>内容 / 定义</th>
+<th>计算规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>字段数 N</strong></td>
+<td><code>[0]</code></td>
+<td>1</td>
+<td>列数，范围 0~255；<code>N=0</code> 时直接返回空字节数组</td>
+<td>类型区 / 长度区 / 值区的规模基准</td>
+</tr>
+<tr>
+<td><strong>类型区</strong></td>
+<td><code>[1, 1+N)</code></td>
+<td>N</td>
+<td>每列 1 字节类型标记（见 二、类型系统）</td>
+<td>起点 = <code>1</code>；长度 = <code>N</code></td>
+</tr>
+<tr>
+<td><strong>长度区</strong></td>
+<td><code>[1+N, 1+3N)</code></td>
+<td>2N</td>
+<td>每列 2 字节<strong>大端序</strong>长度，容量 0~65535（STRING 可超 255）</td>
+<td>起点 = <code>1+N</code>；长度 = <code>2N</code></td>
+</tr>
+<tr>
+<td><strong>值区</strong></td>
+<td><code>[1+3N, 1+3N+Σlen)</code></td>
+<td>Σlen</td>
+<td>按列顺序拼接各列值：定长类型直接复制；STRING 按长度表写 UTF-8 字节</td>
+<td>起点 = <code>1+3N</code>；长度 = Σlen（各列长度之和）</td>
+</tr>
+<tr>
+<td><strong>名称区</strong></td>
+<td>值区之后</td>
+<td>不定</td>
+<td><code>key1|key2|…|keyN\n</code>（UTF-8，<code>\n</code> 结尾作消息终止边界）</td>
+<td>紧随值区；长度 = 键名总字节数 + 1</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>单条消息总长度 = <code>1 + N + 2N + Σlen + 名称区长度</code>。</p>
+</blockquote>
+<ul>
+<li><strong>一号域（字段数 N）</strong>：1 字节，取值范围 0~255，<code>N=0</code> 时直接返回空字节数组。</li>
+<li><strong>二号域（类型区）</strong>：N 个字节，按列顺序记录每列的类型标记。</li>
+<li><strong>三号域（长度区）</strong>：N×2 字节，按列顺序记录每列值的字节长度（大端序），容量 0~65535，因此字符串长度允许超过 255。</li>
+<li><strong>四号域（值区）</strong>：按列顺序拼接各列值，定长类型直接复制，<code>STRING</code> 按记录长度写入 UTF-8 字节。</li>
+<li><strong>名称区</strong>：各列键名以 <code>|</code> 连接，末尾追加换行符 <code>\n</code>（作为消息终止边界）。</li>
+</ul>
+<h3 id="32-多行消息格式generatelinebytes--handlelinebytes">3.2 多行消息格式（<code>generateLineBytes</code> / <code>handleLineBytes</code>）</h3>
+<table>
+<thead>
+<tr>
+<th>域</th>
+<th>字节偏移</th>
+<th>长度（字节）</th>
+<th>内容 / 定义</th>
+<th>计算规则</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>一号域 lineMark</strong></td>
+<td><code>[0]</code></td>
+<td>1</td>
+<td><code>'Y'</code>(89)=多行，<code>'N'</code>(78)=单行</td>
+<td>行数 &gt;1 写 <code>'Y'</code>，否则写 <code>'N'</code></td>
+</tr>
+<tr>
+<td><strong>二号域 lineNumber</strong></td>
+<td><code>[1, 3)</code></td>
+<td>2</td>
+<td>行数 M，大端序，上限 65535；单行时被忽略</td>
+<td><code>M = list.size()</code>；解码时 <code>'N'</code> 按 1 行处理</td>
+</tr>
+<tr>
+<td><strong>三号域 列头数 N</strong></td>
+<td><code>[3]</code></td>
+<td>1</td>
+<td>列数，范围 0~255</td>
+<td><code>N = 首行列数</code></td>
+</tr>
+<tr>
+<td><strong>四号域 类型区</strong></td>
+<td><code>[4, 4+N)</code></td>
+<td>N</td>
+<td>每列 1 字节类型标记；<strong>仅首行写入</strong>，后续行复用</td>
+<td>起点 = <code>4</code>；长度 = <code>N</code></td>
+</tr>
+<tr>
+<td><strong>五号域 长度区</strong></td>
+<td><code>[4+N, 4+3N)</code></td>
+<td>2N</td>
+<td>定长列写字节长度（大端）；<strong>STRING 列写 0</strong>（实际长度内嵌于值区）；仅首行写入</td>
+<td>起点 = <code>4+N</code>；长度 = <code>2N</code></td>
+</tr>
+<tr>
+<td><strong>六号域 值区</strong></td>
+<td><code>[4+3N, 4+3N+Σlen)</code></td>
+<td>Σlen</td>
+<td>行主序：先第 1 行 N 列，再第 2 行 N 列…；定长列按宽度平铺；<strong>STRING 列每行 = 2 字节大端长度前缀 + UTF-8</strong>（同列行内变长）</td>
+<td>起点 = <code>4+3N</code>；Σlen = Σ(所有行所有列)：定长按类型宽、STRING 按 <code>2 + 字节数</code></td>
+</tr>
+<tr>
+<td><strong>名称区</strong></td>
+<td>值区之后</td>
+<td>不定</td>
+<td>首行键名 <code>key1|…|keyN\n</code>（UTF-8，<code>\n</code> 结尾作消息终止边界）</td>
+<td>紧随值区；长度 = 键名总字节数 + 1</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>多行消息总长度 = <code>4 + N + 2N + Σlen + 名称区长度</code>。</p>
+</blockquote>
+<ul>
+<li><strong>一号域（lineMark）</strong>：1 字节，<code>'Y'</code>（89）表示多行、<code>'N'</code>（78）表示单行。</li>
+<li><strong>二号域（lineNumber）</strong>：2 字节大端序行数，上限 <code>2^16 - 1 = 65535</code> 行；单行时该域被忽略，解码时按 1 行处理。</li>
+<li><strong>三号域（parameterNumber）</strong>：1 字节列头数，上限 255 列；单行/多行通用。</li>
+<li><strong>四号域（类型区）</strong>：N 个字节，<strong>仅首行写入</strong>，后续行复用同一类型表。</li>
+<li><strong>五号域（长度区）</strong>：N×2 字节，<strong>仅首行写入</strong>，后续行复用。定长列写入其字节长度（大端序）；<strong>STRING 列长度表置 0</strong>（实际长度内嵌于值区，见下）。</li>
+<li><strong>六号域（值区）</strong>：<strong>行主序（row-major）</strong>——先排第一行的 N 列，再排第二行的 N 列，以此类推。定长列按各自字节宽度平铺；<strong>STRING 列每行以 2 字节大端长度前缀开头，后跟 UTF-8 字节</strong>，因此<strong>同一 String 列在不同行允许长度不同（行内变长）</strong>，单值上限 65535 字节。</li>
+<li><strong>名称区</strong>：取首行键名，<code>|</code> 连接，以 <code>\n</code> 结尾。</li>
+</ul>
+<h3 id="33-空消息">3.3 空消息</h3>
+<p><code>parameters</code> 为空（单行）或 <code>list</code> 为空（多行）时，序列化直接返回 <code>new byte[0]</code>。</p>
+<h3 id="34-字节序与字符集">3.4 字节序与字符集</h3>
+<ul>
+<li>所有多字节数值均为<strong>大端序（Big-Endian，网络序）</strong>。</li>
+<li><code>STRING</code> 与名称区一律使用 <strong>UTF-8</strong> 编码。</li>
+</ul>
+<hr>
+<h2 id="四序列化过程编码">四、序列化过程（编码）</h2>
+<h3 id="41-单行generatebytesmapstring-object">4.1 单行：<code>generateBytes(Map&lt;String, Object&gt;)</code></h3>
+<pre tabindex="0"><code>generateBytes(map)
+ ├─ map 为空 → 返回 new byte[0]
+ ├─ generateParameterLength(map)   → 构造头部 + 值区字节
+ │    ├─ N = map.size()，总长度 = 1 + N + 2N + Σ(各值长度)
+ │    ├─ bytes[0] = N
+ │    ├─ 逐列写入：类型标记（Type.xxx.type()）
+ │    ├─ 逐列写入：长度值（2 字节大端序写入，index 每次 +2）
+ │    ├─ 逐列写入：值本体（Integer/Long/Double/Float/Short 用 Netty Unpooled.copyXxx 大端复制；
+ │    │             CHAR/BYTE/BOOLEAN 直接写 1 字节；STRING 写 UTF-8 字节）
+ │    └─ 返回头部+值区字节
+ ├─ generateParameterNameBytes(map) → &quot;key1|key2|…|keyN&quot; + &quot;\n&quot; 的 UTF-8 字节
+ └─ Unpooled.wrappedBuffer(头部+值区, 名称区) 合并为完整消息
+</code></pre><h3 id="42-多行generatelinebyteslistmapstring-object">4.2 多行：<code>generateLineBytes(List&lt;Map&lt;String, Object&gt;&gt;)</code></h3>
+<pre tabindex="0"><code>generateLineBytes(list)
+ ├─ list 为空 → 返回 new byte[0]
+ ├─ generateLineParameterLength(list) → 构造头部 + 值区字节
+ │    ├─ lineNumber = list.size()，N = 首行列数
+ │    ├─ lineMark = lineNumber &gt; 1 ? 'Y' : 'N'
+ │    ├─ 总长度 = 4 + N + 2N + Σ(遍历所有行所有列)：
+ │    │    定长列按类型字节宽累加；STRING 列按 2 + UTF-8 字节数累加（含内嵌前缀）
+ │    ├─ bytes[0] = lineMark；bytes[1..2] = lineNumber（大端序）
+ │    ├─ bytes[3] = N
+ │    ├─ 外层循环行 i，内层循环列 v：
+ │    │    ├─ i == 0 时写入类型表与长度表（定长列写真实长度、STRING 置 0；后续行跳过）
+ │    │    └─ 每行每列都写值本体：定长列同单行规则；
+ │    │       STRING 先写 2 字节大端长度前缀，再写 UTF-8 字节（行内变长的关键）
+ │    └─ 返回头部+值区字节
+ └─ 名称区取首行：generateParameterNameBytes(list.get(0))，合并返回
+</code></pre><h3 id="43-各类型值编码对照">4.3 各类型值编码对照</h3>
+<table>
+<thead>
+<tr>
+<th>Java 类型</th>
+<th>写入方式</th>
+<th>占用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Integer</code></td>
+<td><code>Unpooled.copyInt</code> 大端</td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>Long</code></td>
+<td><code>Unpooled.copyLong</code> 大端</td>
+<td>8</td>
+</tr>
+<tr>
+<td><code>Double</code></td>
+<td><code>Unpooled.copyDouble</code> 大端</td>
+<td>8</td>
+</tr>
+<tr>
+<td><code>Float</code></td>
+<td><code>Unpooled.copyFloat</code> 大端</td>
+<td>4</td>
+</tr>
+<tr>
+<td><code>Short</code></td>
+<td><code>Unpooled.copyShort</code> 大端</td>
+<td>2</td>
+</tr>
+<tr>
+<td><code>Character</code></td>
+<td><code>(byte) value</code> 取低 8 位</td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>Byte</code></td>
+<td><code>(byte) value</code></td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>Boolean</code></td>
+<td><code>Unpooled.copyBoolean</code></td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>String</code></td>
+<td>UTF-8 字节序列</td>
+<td>变长（≤65535）</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="五反序列化过程解码">五、反序列化过程（解码）</h2>
+<h3 id="51-单行1-字节头格式解析历史保留未接入发送链路">5.1 单行：1 字节头格式解析（历史保留，未接入发送链路）</h3>
+<blockquote>
+<p>说明：单行 1 字节头格式（<code>generateBytes</code> 产物）的解析器仅以私有方法保留在
+<code>GenerateMessageDataHandler</code> 中，<strong>当前未接入发送链路</strong>。统一入口为 5.2 的
+<code>handleLineBytes</code>——单行消息以 <code>generateLineBytes(List.of(map))</code> 发送（4 字节头），
+服务端收到后按 1 行处理。</p>
+</blockquote>
+<pre tabindex="0"><code>handleBytes(bytes)   // 1 字节头：N + 类型区 + 长度区 + 值区 + 名称区
+ ├─ N = bytes[0]；N == 0 → 返回空列表
+ ├─ typeIndex = 1，index = 1 + N，offset = 1 + 3N
+ ├─ while (index ≤ 3N)  逐列：
+ │    ├─ length = (bytes[index] &lt;&lt; 8) | bytes[index+1]    ← 2 字节大端长度
+ │    ├─ type = getType(bytes[typeIndex])
+ │    ├─ 从 offset 拷贝 length 字节 → getValue(type, copy) 还原 Object
+ │    ├─ 构造 MessageMetaData(type, value)；offset += length；index += 2；typeIndex += 1
+ ├─ 尾部解析名称：byteBuf.toString(offset, 剩余, UTF-8) → split(&quot;\\|&quot;) → 逐列 setName
+ └─ 返回 List&lt;MessageMetaData&gt;（一列一个元素）
+</code></pre><h3 id="52-多行handlelinebytesbyte统一反序列化入口">5.2 多行：<code>handleLineBytes(byte[])</code>（统一反序列化入口）</h3>
+<pre tabindex="0"><code>handleLineBytes(bytes)
+ ├─ lineMark = bytes[0]
+ │    ├─ 'N' → lineNumber = 1（单行）
+ │    └─ 其他 → lineNumber = (bytes[1] &lt;&lt; 8) | bytes[2]（多行）
+ ├─ N = bytes[3]；lineNumber == 0 → 返回空列表
+ ├─ typeIndex = 4，index = 4 + N，offset = 4 + 3N
+ ├─ while (lineNumber &gt; 0)  逐行：
+ │    ├─ while (index &lt; 4 + N + 2N)  逐列：
+ │    │    ├─ type = getType(bytes[typeIndex])
+ │    │    ├─ STRING：长度表恒为 0 → 忽略；改从 offset 读内嵌 2 字节 strLen，
+ │    │    │          copy(offset+2, strLen)；offset += strLen + 2
+ │    │    └─ 定长：length = 长度表 2 字节大端；copy(offset, length)；offset += length
+ │    ├─ 一行结束：结果入 result；typeIndex 复位 4、index 复位 4 + N；lineNumber--
+ ├─ 尾部解析名称区 → 每行每列 setName
+ └─ 返回 List&lt;List&lt;MessageMetaData&gt;&gt;（行 × 列）
+</code></pre><h3 id="53-类型还原getvaluetype-bytebuf">5.3 类型还原：<code>getValue(Type, ByteBuf)</code></h3>
+<p>按类型标记分别调用 Netty <code>ByteBuf</code> 的读取 API：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>还原方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CHAR</code></td>
+<td><code>getCharSequence(0, 1, UTF_8).charAt(0)</code></td>
+</tr>
+<tr>
+<td><code>SHORT</code></td>
+<td><code>getShort(0)</code></td>
+</tr>
+<tr>
+<td><code>FLOAT</code></td>
+<td><code>getFloat(0)</code></td>
+</tr>
+<tr>
+<td><code>DOUBLE</code></td>
+<td><code>getDouble(0)</code></td>
+</tr>
+<tr>
+<td><code>INTEGER</code></td>
+<td><code>getInt(0)</code></td>
+</tr>
+<tr>
+<td><code>LONG</code></td>
+<td><code>getLong(0)</code></td>
+</tr>
+<tr>
+<td><code>BOOLEAN</code></td>
+<td><code>getBoolean(0)</code></td>
+</tr>
+<tr>
+<td><code>STRING</code></td>
+<td>读取全部剩余字节转 UTF-8 字符串</td>
+</tr>
+<tr>
+<td>其他</td>
+<td>null</td>
+</tr>
+</tbody>
+</table>
+<h3 id="54-解码产物messagemetadata">5.4 解码产物：<code>MessageMetaData</code></h3>
+<pre tabindex="0"><code>MessageMetaData {
+    ByteTypeUtil.Type type;   // 字段类型
+    Object             data;  // 还原后的值
+    String             name;  // 字段名（来自尾部名称区）
+}
+</code></pre><p>业务侧按 <code>name</code> 取 <code>data</code> 并自行强转为对应类型即可使用。</p>
+<hr>
+<h2 id="六设计要点与边界限制">六、设计要点与边界限制</h2>
+<h3 id="61-长度字段容量">6.1 长度字段容量</h3>
+<p>长度表每个字段占 <strong>2 字节大端序，容量 0~65535</strong>。<strong>字符串（STRING）长度允许超过 255 字节</strong>（容量上限 65535 字节）：</p>
+<ul>
+<li><strong>单行格式</strong>：STRING 长度按实际 UTF-8 字节数写入长度表；</li>
+<li><strong>多行格式</strong>：STRING 列在长度表置 0，实际字节长度改为内嵌在值区每行的 2 字节前缀中（见 3.2），因此多行 STRING 同样支持最长 65535 字节。</li>
+</ul>
+<h3 id="62-多行模式string-行内变长定长列天然等长">6.2 多行模式：String 行内变长，定长列天然等长</h3>
+<p>多行消息只写首行的类型表/长度表，后续行复用。</p>
+<ul>
+<li><strong>定长列</strong>（INTEGER/LONG/DOUBLE/FLOAT/SHORT/CHAR/BYTE/BOOLEAN）：字节宽度由类型唯一决定，天然等长；</li>
+<li><strong>STRING 列</strong>：实际长度内嵌在值区每行的 2 字节前缀中，<strong>同一列在不同行允许长度不同（行内变长）</strong>，解码端按前缀逐个还原，不存在&quot;同列等长&quot;约束。</li>
+</ul>
+<blockquote>
+<p>早期实现曾按首行长度估算总预算导致越界/空洞，2026-08-15 已改为遍历所有行所有列精确累计（见修订记录）。</p>
+</blockquote>
+<h3 id="63-单行格式与-linemark-的兼容性已统一入口">6.3 单行格式与 <code>lineMark</code> 的兼容性（已统一入口）</h3>
+<p>单行 1 字节头格式（<code>generateBytes</code>）的 <code>bytes[0]</code> 是字段数 N，若直接交给 <code>handleLineBytes</code>，会被当作 <code>lineMark</code> 判断，当 <code>N == 78('N')</code> 或 <code>N == 89('Y')</code> 时会误判分支导致解析错乱。
+<strong>当前已统一入口</strong>：发送端（<code>InnerTestController</code>）一律使用 <code>generateLineBytes(List.of(map))</code> 生成 4 字节头消息，服务端 <code>GenerateMessageDataHandler.channelRead</code> 统一走 <code>ByteTypeUtil.handleLineBytes</code>，二者完全对齐。<code>generateBytes</code> 及 1 字节头解析器仅作历史保留。</p>
+<h3 id="64-名称区尾随换行">6.4 名称区尾随换行</h3>
+<p><code>split(&quot;\\|&quot;)</code> 未去除末尾 <code>\n</code>，最后一个字段名会携带换行符（<code>&quot;nameN\n&quot;</code>）。当前仅用于 <code>setName</code>，若下游用 name 精确匹配需注意。</p>
+<h3 id="65-消息边界">6.5 消息边界</h3>
+<p>名称区固定以 <code>\n</code> 结尾，在流式 TCP 场景中可作为下一条消息的切分点（<code>GenerateMessageDataHandler</code> 收到的 <code>byte[]</code> 即按此切分后的单条完整消息）。</p>
+<h3 id="66-map-迭代顺序">6.6 Map 迭代顺序</h3>
+<p>头部类型表/长度表/值区与名称区均基于同一 <code>Map</code> 迭代顺序生成（<code>HashMap</code> 顺序不保证），但解码时列顺序由头部决定、名称仅作标记，故<strong>列序不影响正确性</strong>（键名与值是一一对应的，只要类型/长度/值三表顺序一致即可）。</p>
+<hr>
+<h2 id="七适合的场景">七、适合的场景</h2>
+<h3 id="71-高度契合的场景">7.1 高度契合的场景</h3>
+<ol>
+<li>
+<p><strong>高频、低延迟的内网二进制通信</strong></p>
+<ul>
+<li>交易/撮合/行情等对时延敏感的场景；<code>ProtocolFastjsonCompareTest</code> 内置与 fastjson 的序列化体积与耗时对照基准（实测见 十、与 fastjson 的基准对比）。</li>
+<li>头部紧凑（N 字段单行仅 <code>3N+1</code> 字节头），键名只出现一次，体积远小于 JSON（无引号、冒号、重复键名）。</li>
+</ul>
+</li>
+<li>
+<p><strong>同构批量行数据的列式压缩传输</strong></p>
+<ul>
+<li>多行模式把类型/长度/名称各存一份，数据区按行列矩阵排布，适合批量订单同步、批量状态上报、批量指标回传等&quot;一张表多条记录&quot;的载荷，压缩比高且解码遍历规则简单。</li>
+</ul>
+</li>
+<li>
+<p><strong>环形缓冲（RingBuffer / Disruptor）事件载荷</strong></p>
+<ul>
+<li>模块名 <code>native-cloud-common-ringbuffer</code> 表明协议与环形缓冲配套：事件对象携带 <code>byte[]</code> 消息，规避对象池中对象引用竞争，序列化产物不可变，天然适配无锁队列的并发模型。</li>
+</ul>
+</li>
+<li>
+<p><strong>长连接 TCP 流式传输</strong></p>
+<ul>
+<li><code>InnerTestController</code> 通过 <code>SocketChannel</code> 直接写入 <code>generateLineBytes</code> 产物（4 字节头；单条记录用单元素 List）；<code>GenerateMessageDataHandler</code>（Netty <code>ChannelInboundHandlerAdapter</code>）在服务端经 <code>ByteTypeUtil.handleLineBytes</code> 统一解码。<code>\n</code> 边界适合单工/半双工的命令-回执流。</li>
+</ul>
+</li>
+<li>
+<p><strong>结构固定、类型简单的参数协议</strong></p>
+<ul>
+<li>字段名/类型/数量在收发双方约定固定（如 RPC 命令参数、配置下发、业务标记回写），无需动态 schema 协商。</li>
+</ul>
+</li>
+</ol>
+<h3 id="72-不适合的场景">7.2 不适合的场景</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>嵌套对象 / 数组 / 泛型 / 枚举</td>
+<td>仅支持 9 种标量 + String，无递归结构支持</td>
+</tr>
+<tr>
+<td>超长文本（&gt;65535 字节字符串）</td>
+<td>长度字段 2 字节容量上限 65535</td>
+</tr>
+<tr>
+<td>动态字段结构频繁变更</td>
+<td>需收发双端同步类型/长度/名称三表约定</td>
+</tr>
+<tr>
+<td>跨语言生态对接</td>
+<td>目前绑定 Netty <code>ByteBuf</code> 与 Java 类型体系，需其他语言自行实现编解码</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="八总结">八、总结</h2>
+<p>Lemon-Protocol 是一套<strong>面向高性能 Java 内网通信的紧凑二进制协议</strong>：以&quot;字段数 + 类型表 + 长度表 + 值区 + 尾部名称区&quot;为骨架，单行变体面向单条参数、多行变体面向批量行数据。多行 STRING 列通过值区内嵌长度前缀支持行内变长，发送/接收已统一为 4 字节头格式，天然适配环形缓冲与长连接流式传输。其优势在于体积小、解码规则简单、零对象复用的并发友好；使用时需注意 String 单值 65535 字节上限、名称区尾随换行等边界条件。</p>
+<hr>
+<h2 id="九测试验证与修订记录">九、测试验证与修订记录</h2>
+<h3 id="91-单元测试bytetypeutilcodectestjunit-5">9.1 单元测试：<code>ByteTypeUtilCodecTest</code>（JUnit 5）</h3>
+<p>测试类位于 <code>native-cloud-common-ringbuffer/src/test/java/com/huang/buffer/ByteTypeUtilCodecTest.java</code>，2026-08-15 新增，<strong>7 个用例全部通过</strong>（<code>Tests run: 7, Failures: 0, Errors: 0</code>）：</p>
+<table>
+<thead>
+<tr>
+<th>测试方法</th>
+<th>场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>testSingleLineAllTypesRoundTrip</code></td>
+<td>单行（单元素 List）8 种类型字段往返</td>
+</tr>
+<tr>
+<td><code>testSingleLineVariableStringLengths</code></td>
+<td>单行同列多 String，长度各异（含 300 字节 UTF-8）</td>
+</tr>
+<tr>
+<td><code>testMultiLineAllTypesRoundTrip</code></td>
+<td>3 行 × 全类型</td>
+</tr>
+<tr>
+<td><code>testMultiLineVariableLengthStringPerRow</code></td>
+<td><strong>核心场景</strong>：同一 String 列 3 行长度不同（行内变长）</td>
+</tr>
+<tr>
+<td><code>testMultiLineStringNear65535Bytes</code></td>
+<td>60000 字节 String（2 字节前缀上限内）</td>
+</tr>
+<tr>
+<td><code>testEmptyParameters</code></td>
+<td>空列表 / 空 Map 返回空字节数组</td>
+</tr>
+<tr>
+<td><code>testByteTypeDeserializationStatus</code></td>
+<td>记录现状：BYTE 可序列化，但反序列化无 BYTE 分支，<code>data</code> 恒为 <code>null</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="92-2026-08-15-修订记录">9.2 2026-08-15 修订记录</h3>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>修复</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>定长字段长度区&quot;小端写、大端读&quot;不一致</td>
+<td>序列化端 16 处（单行 + 多行）统一改为完整 2 字节大端写，与解码端一致；此前 INTEGER 长度被读出 1024（实际 4）、LONG/DOUBLE 2048、CHAR/BYTE/BOOLEAN 256，导致 <code>copy</code> 越界或数据错乱</td>
+</tr>
+<tr>
+<td>长度区游标 <code>+1</code> 错位</td>
+<td>单行 <code>lengthIndex = 1 + N + 1</code>、多行 <code>lengthIndex = 4 + N + 1</code> 各删掉多余 <code>+1</code>，与解码端 <code>1+N</code> / <code>4+N</code> 对齐</td>
+</tr>
+<tr>
+<td>多行长度预算只算首行导致越界/空洞</td>
+<td>改为遍历所有行所有值精确累计（String 按 <code>2 + 字节数</code>）</td>
+</tr>
+<tr>
+<td>发送端与接收端格式不统一</td>
+<td><code>InnerTestController</code> 两处发送由单行 1 字节头 <code>generateBytes</code> 改为 4 字节头 <code>generateLineBytes(List.of(map))</code>，与服务端 <code>handleLineBytes</code> 完全对齐</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>以上缺陷在旧实现下未被端到端验证暴露——新增的 <code>ByteTypeUtilCodecTest</code> 首次对
+混合类型 + 行内变长 String 做了全链路往返断言。</p>
+</blockquote>
+<hr>
+<h2 id="十与-fastjson-的基准对比">十、与 fastjson 的基准对比</h2>
+<h3 id="101-测试方法与环境">10.1 测试方法与环境</h3>
+<ul>
+<li><strong>基准类</strong>：<code>ProtocolFastjsonCompareTest</code>（<code>native-cloud-common-ringbuffer/src/test/java/com/huang/buffer/</code>），2026-08-15 新增。</li>
+<li><strong>环境</strong>：macOS；OpenJDK 17（GraalVM CE 22.3.2）；Maven 3.6.3；fastjson 1.2.78（test scope）。</li>
+<li><strong>方法</strong>：JIT 预热（单数据 5000 次、多数据 200 次）+ 固定迭代（单数据 50000 次、多数据 500 次）取平均单次耗时；volatile sink 消费返回值防止 JIT 死代码消除；两轮采样结果一致（波动 &lt;5%）。</li>
+<li><strong>数据集</strong>：单数据 = 1 行 × 10 列；多数据 = 1000 行 × 10 列。字段含 INTEGER/LONG/DOUBLE/FLOAT/CHAR/BOOLEAN/STRING×4，字符串含中文。</li>
+<li><strong>口径</strong>：Lemon = <code>generateLineBytes</code> / <code>handleLineBytes</code>；fastjson = <code>JSON.toJSONString</code> / <code>parseObject</code>、<code>parseArray</code>。字节数 = Lemon 协议字节数组长度 vs JSON 字符串 <strong>UTF-8 字节数</strong>（网络传输口径）。</li>
+</ul>
+<h3 id="102-单数据场景1-行--10-列">10.2 单数据场景（1 行 × 10 列）</h3>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>Lemon-Protocol</th>
+<th>fastjson</th>
+<th>差异</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>序列化字节数</td>
+<td>181 B</td>
+<td>180 B</td>
+<td>基本持平（+0.6%）</td>
+</tr>
+<tr>
+<td>序列化耗时</td>
+<td>2989 ns/次</td>
+<td>2592 ns/次</td>
+<td>fastjson 快约 15%</td>
+</tr>
+<tr>
+<td>反序列化耗时</td>
+<td>4919 ns/次</td>
+<td>2307 ns/次</td>
+<td>fastjson 快约 2.1 倍</td>
+</tr>
+</tbody>
+</table>
+<h3 id="103-多数据场景1000-行--10-列">10.3 多数据场景（1000 行 × 10 列）</h3>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>Lemon-Protocol</th>
+<th>fastjson</th>
+<th>差异</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>序列化字节数</td>
+<td>88877 B（约 87 KB）</td>
+<td>187071 B（约 183 KB）</td>
+<td><strong>Lemon 省约 52%</strong></td>
+</tr>
+<tr>
+<td>序列化耗时</td>
+<td>540182 ns/次（约 540 µs）</td>
+<td>832626 ns/次（约 833 µs）</td>
+<td><strong>Lemon 快约 35%</strong></td>
+</tr>
+<tr>
+<td>反序列化耗时</td>
+<td>2321653 ns/次（约 2.32 ms）</td>
+<td>874340 ns/次（约 874 µs）</td>
+<td>fastjson 快约 2.7 倍</td>
+</tr>
+</tbody>
+</table>
+<h3 id="104-结论与原因分析">10.4 结论与原因分析</h3>
+<ol>
+<li><strong>字节数</strong>：多数据场景 Lemon 优势显著——类型表 + 长度表 + 二进制定长编码去除了 JSON 的键名重复与文本格式开销（键名仅出现一次），体积约为 fastjson 的 47%；单数据场景因头部固定开销（<code>4 + N + 2N + 名称区</code>）占比高，与 JSON 几乎持平（181 vs 180）。</li>
+<li><strong>序列化</strong>：多数据场景 Lemon 快约 35%（键名只写一次、定长数值直接写二进制）；单数据场景 fastjson 略快约 15%（JIT 对 Map 序列化路径优化成熟，Lemon 单条仍有头部组装开销）。</li>
+<li><strong>反序列化</strong>：当前实现 Lemon 明显慢于 fastjson（单数据约 2.1 倍、多数据约 2.7 倍）。主要原因：<code>handleLineBytes</code> 逐行逐列创建 <code>MessageMetaData</code> 对象、经 <code>ByteBuf</code> 读取与 <code>copy</code> 拷贝、逐列走类型分支；批量场景下对象分配与拷贝开销被放大。<strong>这是后续优化重点</strong>（如按类型表批量解码、列式批量拷贝、减少中间对象）。</li>
+</ol>
+<blockquote>
+<p>说明：耗时与本机 JIT 状态 / JDK 版本强相关；单数据场景差异处于纳秒级，工程上可视为同量级。<code>ProtocolFastjsonCompareTest</code> 保留在测试目录，可随时重跑复现。</p>
+</blockquote>
+<hr>
+<h2 id="附录协议字节布局示意图">附录：协议字节布局示意图</h2>
+<h3 id="a-单行消息整体布局n-字段">A. 单行消息整体布局（N 字段）</h3>
+<p>各域定义、偏移与计算规则见 <strong>3.1 表格</strong>，此处给出字节排布速览（纯 ASCII，等宽字体下对齐）：</p>
+<pre tabindex="0"><code>0           1              1+N               1+3N             1+3N+sumLen
++-----------+---------------+-----------------+----------------+------------------+
+| N  (1B)   | type (N x 1B) | len (2N x 2B)   | values        | names &quot;...\n&quot;     |
+| 字段数    | 每列1B类型标记  | 每列2B大端长度   | 按列拼接的值    | key1|key2|...|keyN |
++-----------+---------------+-----------------+----------------+------------------+
+</code></pre><h3 id="b-单行消息逐字节示例3-字段id100integer--nameabcstring--flagtrueboolean">B. 单行消息逐字节示例（3 字段：<code>id=100(Integer)</code> + <code>name=&quot;abc&quot;(String)</code> + <code>flag=true(Boolean)</code>）</h3>
+<table>
+<thead>
+<tr>
+<th>偏移</th>
+<th>hex</th>
+<th>值（hex）</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0x00</td>
+<td><code>03</code></td>
+<td>字段数 N = 3</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0x01</td>
+<td><code>69 ('i')</code></td>
+<td>第1列类型标记：INTEGER</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0x02</td>
+<td><code>53 ('S')</code></td>
+<td>第2列类型标记：STRING</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0x03</td>
+<td><code>42 ('B')</code></td>
+<td>第3列类型标记：BOOLEAN</td>
+</tr>
+<tr>
+<td>4</td>
+<td>0x04</td>
+<td><code>00 04</code></td>
+<td>第1列值长度 = 4（大端）</td>
+</tr>
+<tr>
+<td>6</td>
+<td>0x06</td>
+<td><code>00 03</code></td>
+<td>第2列值长度 = 3（大端）</td>
+</tr>
+<tr>
+<td>8</td>
+<td>0x08</td>
+<td><code>00 01</code></td>
+<td>第3列值长度 = 1（大端）</td>
+</tr>
+<tr>
+<td>10</td>
+<td>0x0A</td>
+<td><code>00 00 00 64</code></td>
+<td>第1列值：100（大端 int）</td>
+</tr>
+<tr>
+<td>14</td>
+<td>0x0E</td>
+<td><code>61 62 63</code></td>
+<td>第2列值：&ldquo;abc&rdquo;（UTF-8）</td>
+</tr>
+<tr>
+<td>17</td>
+<td>0x11</td>
+<td><code>01</code></td>
+<td>第3列值：true（1 字节）</td>
+</tr>
+<tr>
+<td>18</td>
+<td>0x12</td>
+<td><code>69 64 7C 6E 61 6D 65 7C</code></td>
+<td>名称区：&ldquo;id|name|flag&rdquo;（续下行）</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td><code>66 6C 61 67</code></td>
+<td>名称区剩余：<code>flag</code></td>
+</tr>
+<tr>
+<td>30</td>
+<td>0x1E</td>
+<td><code>0A</code></td>
+<td>边界符：<code>\n</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>总长 = 1 + 3 + 6 + 8 + 13 + 1 = 32 字节</p>
+</blockquote>
+<h3 id="c-多行消息整体布局m-行--n-列">C. 多行消息整体布局（M 行 × N 列）</h3>
+<p>各域定义、偏移与计算规则见 <strong>3.2 表格</strong>，此处给出字节排布速览（纯 ASCII，等宽字体下对齐）：</p>
+<pre tabindex="0"><code>0           1        3    4              4+N            4+3N             4+3N+sumLen
++-----------+--------+----+--------------+---------------+-----------------+------------------+
+| lineMark  | line M | N  | type (N x 1B)| len (2N x 2B) | values          | names &quot;...\n&quot;     |
+| 'Y'/'N'   | (2B)   |(1B)| row1 only    | row1 only     | row-major       | row1 keys        |
++-----------+--------+----+--------------+---------------+-----------------+------------------+
+                                                          | 定长列按宽平铺；STRING 每行 2B 前缀 + UTF-8
+</code></pre><h3 id="d-多行消息逐字节示例2-行--3-列idinteger--pricedouble--codestringabcd">D. 多行消息逐字节示例（2 行 × 3 列：<code>id(Integer)</code> + <code>price(Double)</code> + <code>code(String=&quot;AB&quot;/&quot;CD&quot;)</code>）</h3>
+<table>
+<thead>
+<tr>
+<th>偏移</th>
+<th>hex</th>
+<th>值（hex）</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0x00</td>
+<td><code>59 ('Y')</code></td>
+<td>lineMark：多行</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0x01</td>
+<td><code>00 02</code></td>
+<td>行数 M = 2（大端）</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0x03</td>
+<td><code>03</code></td>
+<td>列数 N = 3</td>
+</tr>
+<tr>
+<td>4</td>
+<td>0x04</td>
+<td><code>69 ('i') 64 ('d') 53 ('S')</code></td>
+<td>类型区：INTEGER / DOUBLE / STRING</td>
+</tr>
+<tr>
+<td>7</td>
+<td>0x07</td>
+<td><code>00 04</code></td>
+<td>第1列(id)长度 = 4（大端）</td>
+</tr>
+<tr>
+<td>9</td>
+<td>0x09</td>
+<td><code>00 08</code></td>
+<td>第2列(price)长度 = 8（大端）</td>
+</tr>
+<tr>
+<td>11</td>
+<td>0x0B</td>
+<td><code>00 00</code></td>
+<td>第3列(code, STRING)长度表置 0</td>
+</tr>
+<tr>
+<td>13</td>
+<td>0x0D</td>
+<td><code>00 00 00 64</code></td>
+<td>行1 id = 100（大端 int）</td>
+</tr>
+<tr>
+<td>17</td>
+<td>0x11</td>
+<td><code>40 59 40 00 …(8B)…</code></td>
+<td>行1 price = 100.5（大端 double）</td>
+</tr>
+<tr>
+<td>25</td>
+<td>0x19</td>
+<td><code>00 02 41 42</code></td>
+<td>行1 code = &ldquo;AB&rdquo;（2B 前缀 00 02 + UTF-8）</td>
+</tr>
+<tr>
+<td>29</td>
+<td>0x1D</td>
+<td><code>00 00 00 65</code></td>
+<td>行2 id = 101</td>
+</tr>
+<tr>
+<td>33</td>
+<td>0x21</td>
+<td><code>40 69 20 00 …(8B)…</code></td>
+<td>行2 price = 200.75（大端 double）</td>
+</tr>
+<tr>
+<td>41</td>
+<td>0x29</td>
+<td><code>00 02 43 44</code></td>
+<td>行2 code = &ldquo;CD&rdquo;</td>
+</tr>
+<tr>
+<td>45</td>
+<td>0x2D</td>
+<td><code>69 64 7C 70 72 69 63 65 7C</code></td>
+<td>名称区：&ldquo;id|price|code&rdquo;（续下行）</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td><code>63 6F 64 65</code></td>
+<td>名称区剩余：<code>code</code></td>
+</tr>
+<tr>
+<td>58</td>
+<td>0x3A</td>
+<td><code>0A</code></td>
+<td>边界符：<code>\n</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>总长 = 4(头) + 3(类型) + 6(长度) + 32(值区) + 14(名称区) = 59 字节
+值区 = 行1(4+8+2+2) + 行2(4+8+2+2) = 32 字节（code 每行含 2 字节长度前缀）</p>
+</blockquote>
+<h3 id="e-解码指针轨迹多行为例handlelinebytes">E. 解码指针轨迹（多行为例，<code>handleLineBytes</code>）</h3>
+<pre tabindex="0"><code>lineMark→(判单/多行) → lineNumber(M) → N → 指针初始化：
+   typeIndex = 4（类型区起点）   index = 4+N（长度区起点）   offset = 4+3N（值区起点）
+   每列：
+     STRING：长度表置 0 → 忽略；改读 offset 处内嵌 2B strLen → copy(offset+2, strLen) → offset += strLen+2
+     定长：读长度表 2B length → copy(offset, length) → offset += length
+   每行结束：typeIndex 复位 4、index 复位 4+N、offset 连续、M--
+ 名称区：从当前 offset 到末尾 split(&quot;\\|&quot;) 得键名，按列 set 到每行的 MessageMetaData
+</code></pre>]]></content>
+        </item>
         
         <item>
             <title>记一次线上排查：Nacos 节点下线失败（监听不生效）</title>

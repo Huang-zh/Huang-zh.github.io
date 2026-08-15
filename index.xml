@@ -6,7 +6,16 @@
     <description>Recent content on 此间的少年</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 13 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://lemonhuang.com/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 14 Aug 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://lemonhuang.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Lemon-Protocal，基于二进制的 RPC 交互协议设计报告</title>
+      <link>https://lemonhuang.com/posts/lemon-protocol/</link>
+      <pubDate>Fri, 14 Aug 2026 00:00:00 +0000</pubDate>
+      
+      <guid>https://lemonhuang.com/posts/lemon-protocol/</guid>
+      <description>/* Lemon-Protocol 文章自包含代码块配色（GitHub 浅色风格） 内嵌于文章头部，随 md 迁移到任意支持 unsafe HTML 的站点即生效 */ .highlight, pre { background: #f6f8fa !important; border: 1px solid #e4e7eb; border-radius: 6px; } .highlight { padding: 0.75rem 1rem; overflow-x: auto;</description>
+    </item>
+    
     <item>
       <title>记一次线上排查：Nacos 节点下线失败（监听不生效）</title>
       <link>https://lemonhuang.com/posts/nacos-event-block-fix/</link>
