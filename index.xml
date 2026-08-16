@@ -5,7 +5,7 @@
     <link>https://lemonhuang.com/</link>
     <description>Recent content on 此间的少年</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
+    <language>zh-cn</language>
     <lastBuildDate>Fri, 14 Aug 2026 00:00:00 +0800</lastBuildDate><atom:link href="https://lemonhuang.com/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Lemon-Protocal，基于二进制的 RPC 交互协议设计报告</title>

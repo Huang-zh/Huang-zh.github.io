@@ -1,10 +1,10 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
-        <title>Posts on 此间的少年</title>
+        <title>文章 on 此间的少年</title>
         <link>https://lemonhuang.com/posts/</link>
-        <description>Recent content in Posts on 此间的少年</description>
+        <description>Recent content in 文章 on 此间的少年</description>
         <generator>Hugo -- gohugo.io</generator>
-        <language>en</language>
+        <language>zh-cn</language>
         <lastBuildDate>Fri, 14 Aug 2026 00:00:00 +0800</lastBuildDate>
         <atom:link href="https://lemonhuang.com/posts/index.xml" rel="self" type="application/rss+xml" />
         

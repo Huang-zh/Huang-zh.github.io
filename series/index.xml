@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Series on 此间的少年</title>
+    <title>系列 on 此间的少年</title>
     <link>https://lemonhuang.com/series/</link>
-    <description>Recent content in Series on 此间的少年</description>
+    <description>Recent content in 系列 on 此间的少年</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en</language>
+    <language>zh-cn</language>
     <lastBuildDate>Tue, 19 Sep 2023 21:41:08 +0800</lastBuildDate><atom:link href="https://lemonhuang.com/series/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>算法</title>
