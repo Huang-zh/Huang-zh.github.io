@@ -1,144 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="author" content="[huangzh]">
-<meta name="description" content="/* ===== 写风页：瀑布流 &#43; Lightbox（内联样式，仅本页生效） ===== */ /* 瀑布流：CSS 多列实现，时间倒序（最新在上、在左） */ .photos-wall { column-count: 3; column-gap: 14px; } .photo { /* 覆" />
-<meta name="keywords" content="" />
-<meta name="robots" content="noodp" />
-<meta name="theme-color" content="" />
-<link rel="canonical" href="https://lemonhuang.com/photos/" />
-<link rel="icon" type="image/png" href="/static/favicon-96x96.png" sizes="96x96" />
-<link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
-<link rel="shortcut icon" href="/static/favicon.ico" />
-<link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png" />
-<link rel="manifest" href="/static/site.webmanifest" />
+---
+author: ["huangzh"]
+isCJKLanguage : true
+title : "写风"
+---
 
-
-    <title>
-        
-            写风 :: 此间的少年 
-        
-    </title>
-
-
-
-
-
-<link rel="stylesheet" href="/main.b78c3be9451dc4ca61ca377f3dc2cf2e6345a44c2bae46216a322ef366daa399.css" integrity="sha256-t4w76UUdxMphyjd/PcLPLmNFpEwrrkYhajIu82bao5k=">
-
-
-
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="">
-    <link rel="shortcut icon" href="/favicon.ico">
-    <meta name="msapplication-TileColor" content="">
-
-
-<meta itemprop="name" content="写风">
-<meta itemprop="description" content="/* ===== 写风页：瀑布流 &#43; Lightbox（内联样式，仅本页生效） ===== */ /* 瀑布流：CSS 多列实现，时间倒序（最新在上、在左） */ .photos-wall { column-count: 3; column-gap: 14px; } .photo { /* 覆">
-
-<meta itemprop="wordCount" content="523"><meta itemprop="image" content="https://lemonhuang.com"/>
-<meta itemprop="keywords" content="" />
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://lemonhuang.com"/>
-
-<meta name="twitter:title" content="写风"/>
-<meta name="twitter:description" content="/* ===== 写风页：瀑布流 &#43; Lightbox（内联样式，仅本页生效） ===== */ /* 瀑布流：CSS 多列实现，时间倒序（最新在上、在左） */ .photos-wall { column-count: 3; column-gap: 14px; } .photo { /* 覆"/>
-
-
-
-    <meta property="og:title" content="写风" />
-<meta property="og:description" content="/* ===== 写风页：瀑布流 &#43; Lightbox（内联样式，仅本页生效） ===== */ /* 瀑布流：CSS 多列实现，时间倒序（最新在上、在左） */ .photos-wall { column-count: 3; column-gap: 14px; } .photo { /* 覆" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://lemonhuang.com/photos/" /><meta property="og:image" content="https://lemonhuang.com"/><meta property="article:section" content="" />
-
-<meta property="og:site_name" content="此间的少年" />
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    </head>
-
-    
-        <body>
-    
-    
-        <div class="container">
-            <header class="header">
-    <span class="header__inner">
-        <a href="/" style="text-decoration: none;">
-    <div class="logo">
-        
-            <span class="logo__mark">></span>
-            <span class="logo__text ">
-                huan.g</span>
-            <span class="logo__cursor" style=
-                  "
-                   
-                   ">
-            </span>
-        
-    </div>
-</a>
-
-
-        <span class="header__right">
-            
-                <nav class="menu">
-    <ul class="menu__inner"><li><a href="/posts/">文章</a></li><li><a href="/categories/">分类</a></li><li><a href="/feeling/">心情</a></li><li><a href="/photos/">写风</a></li><li><a href="/about/">关于</a></li>
-    </ul>
-</nav>
-
-                <span class="menu-trigger">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
-                    </svg>
-                </span>
-            
-        </span>
-    </span>
-</header>
-
-
-
-            <div class="content">
-                
-    <main class="post">
-
-        <div class="post-info">
-            
-            </p>
-        </div>
-
-        <article>
-            <h2 class="post-title"><a href="https://lemonhuang.com/photos/">写风</a></h2>
-
-            
-            
-            
-
-            <div class="post-content">
-                <style>
+<style>
 /* ===== 写风页：瀑布流 + Lightbox（内联样式，仅本页生效） ===== */
 
 /* 瀑布流：CSS 多列实现，时间倒序（最新在上、在左） */
@@ -248,41 +114,56 @@
   .lightbox-next { right: 6px; }
 }
 </style>
+
 <div class="photos-wall" id="photosWall">
+
   <figure class="photo" data-desc="热辣的山风和梦幻般的婚礼" data-location="浙江杭州" data-date="2026-08-02" data-full="/imgs/wedding.JPG">
-    <img src="/imgs/thumbs/wedding.jpg" alt="婚礼" loading="lazy" decoding="async">
+    <img src="/imgs/wedding.JPG" alt="婚礼" loading="lazy" decoding="async">
   </figure>
+
   <figure class="photo" data-desc="下午有风吹过，院子里此刻很安详，等待着高朋满座，chill more..." data-location="同坞里" data-date="2026-08-02" data-full="/imgs/w.JPG">
-    <img src="/imgs/thumbs/w.jpg" alt="同坞里" loading="lazy" decoding="async">
+    <img src="/imgs/w.JPG" alt="同坞里" loading="lazy" decoding="async">
   </figure>
+
   <figure class="photo" data-desc="明媚的色调，是我梦想中的婚礼" data-location="同坞里" data-date="2026-08-02" data-full="/imgs/a.JPG">
-    <img src="/imgs/thumbs/a.jpg" alt="同坞里" loading="lazy" decoding="async">
+    <img src="/imgs/a.JPG" alt="同坞里" loading="lazy" decoding="async">
   </figure>
+
   <figure class="photo" data-desc="新郎兼主持人兼吉他手🤵‍♂️🎤🎸" data-location="同坞里" data-date="2026-08-02" data-full="/imgs/s.JPG">
-    <img src="/imgs/thumbs/s.jpg" alt="同坞里" loading="lazy" decoding="async">
+    <img src="/imgs/s.JPG" alt="同坞里" loading="lazy" decoding="async">
   </figure>
+
   <figure class="photo" data-desc="波光粼粼" data-location="湘湖" data-date="2026-03-25" data-full="/imgs/lake.jpg">
-    <img src="/imgs/thumbs/lake.jpg" alt="湖" loading="lazy" decoding="async">
+    <img src="/imgs/lake.jpg" alt="湖" loading="lazy" decoding="async">
   </figure>
+
   <figure class="photo" data-desc="雨过天晴，天空划过一道彩虹" data-location="长江澳" data-date="2025-09-05" data-full="/imgs/rainbow.jpg">
-    <img src="/imgs/thumbs/rainbow.jpg" alt="彩虹" loading="lazy" decoding="async">
+    <img src="/imgs/rainbow.jpg" alt="彩虹" loading="lazy" decoding="async">
   </figure>
+
   <figure class="photo" data-desc="山就在那里，等风也等你" data-location="高田坑" data-date="2025-08-05" data-full="/imgs/mountains.jpg">
-    <img src="/imgs/thumbs/mountains.jpg" alt="山" loading="lazy" decoding="async">
+    <img src="/imgs/mountains.jpg" alt="山" loading="lazy" decoding="async">
   </figure>
+
   <figure class="photo" data-desc="南洋风味的香辣虾，柠檬酸辣腐竹，和国民菜番茄炒蛋" data-location="浙江杭州" data-date="2025-07-04" data-full="/imgs/food.jpg">
-    <img src="/imgs/thumbs/food.jpg" alt="美食" loading="lazy" decoding="async">
+    <img src="/imgs/food.jpg" alt="美食" loading="lazy" decoding="async">
   </figure>
+
   <figure class="photo" data-desc="云卷云舒" data-location="建业路" data-date="2025-06-17" data-full="/imgs/cloud.jpg">
-    <img src="/imgs/thumbs/cloud.jpg" alt="云" loading="lazy" decoding="async">
+    <img src="/imgs/cloud.jpg" alt="云" loading="lazy" decoding="async">
   </figure>
+
   <figure class="photo" data-desc="她夏了夏天" data-location="小河直街" data-date="2024-07-22" data-full="/imgs/summer.JPG">
-    <img src="/imgs/thumbs/summer.jpg" alt="夏日的 city walk" loading="lazy" decoding="async">
+    <img src="/imgs/summer.JPG" alt="夏日的 city walk" loading="lazy" decoding="async">
   </figure>
+
   <figure class="photo" data-desc="长河落日圆，是长河地铁站的落日很圆😄" data-location="长河" data-date="2024-05-16" data-full="/imgs/sunset.jpg">
-    <img src="/imgs/thumbs/sunset.jpg" alt="日落" loading="lazy" decoding="async">
+    <img src="/imgs/sunset.jpg" alt="日落" loading="lazy" decoding="async">
   </figure>
+
+
 </div>
+
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
   <button class="lightbox-close" id="lbClose" aria-label="关闭">×</button>
   <button class="lightbox-prev" id="lbPrev" aria-label="上一张">‹</button>
@@ -293,6 +174,7 @@
     <div class="lightbox-meta" id="lbMeta"></div>
   </div>
 </div>
+
 <script>
 (function () {
   var wall = document.getElementById('photosWall');
@@ -398,71 +280,3 @@
   });
 })();
 </script>
-
-            </div>
-        </article>
-
-        <hr />
-
-        <div class="post-info">
-            
-            
-  		</div>
-    </main>
-
-            </div>
-
-            
-                <footer class="footer">
-    
-
-    
-    <div>© 2023 - <span id="year"></span><br/></div>
-    <div>网站已经运行 <span id="days">0</span></div>
-    <div class="footer__inner">
-        <div class="footer__content">
-            <span><a href="http://beian.miit.gov.cn">浙ICP备19022115号-1</a></span>
-        </div>        
-        <script>
-            var s0 = '2023-06-01';
-            s1 = new Date(s0.replace(/-/g, "/"));
-            s2 = new Date();
-            var days = s2.getTime() - s1.getTime();
-
-            var date = new Date;
-            var year = date.getFullYear();
-            document.getElementById('year').innerHTML = year;
-
-            var BootDate = new Date(s0);
-            function ShowRunTime(id) {
-                var NowDate = new Date();
-                var RunDateM = parseInt(NowDate - BootDate);
-                var RunDays = Math.floor(RunDateM / (24 * 3600 * 1000));
-                var RunHours = Math.floor(RunDateM % (24 * 3600 * 1000) / (3600 * 1000));
-                var RunMinutes = Math.floor(RunDateM % (24 * 3600 * 1000) % (3600 * 1000) / (60 * 1000));
-                var RunSeconds = Math.round(RunDateM % (24 * 3600 * 1000) % (3600 * 1000) % (60 * 1000) / 1000);
-                var days = RunDays + "天" + RunHours + "时" + RunMinutes + "分" + RunSeconds + "秒";
-                document.getElementById(id).innerHTML = days;
-            }
-            ShowRunTime('days');
-            setInterval("ShowRunTime('days')", 1000);
-        </script>
-    </div>
-    
-</footer>
-
-
-
-            
-        </div>
-
-        
-
-
-
-<script type="text/javascript" src="/bundle.min.644292943ae47eef02fcd64b11757aeb8caeeaebf473a823b62099edccac808e8d82689359f285e5d95994e5ad5ae3b9c1ccc281eb1828e67d0ba6630f95b832.js" integrity="sha512-ZEKSlDrkfu8C/NZLEXV664yu6uv0c6gjtiCZ7cysgI6NgmiTWfKF5dlZlOWtWuO5wczCgesYKOZ9C6ZjD5W4Mg=="></script>
-
-
-
-    </body>
-</html>
