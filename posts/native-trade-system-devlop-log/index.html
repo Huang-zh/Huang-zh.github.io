@@ -42,8 +42,8 @@
 
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-03-02T00:00:00+08:00" />
-<meta itemprop="dateModified" content="2026-08-15T20:50:03+08:00" />
-<meta itemprop="wordCount" content="20481"><meta itemprop="image" content="https://lemonhuang.com"/>
+<meta itemprop="dateModified" content="2026-08-17T22:52:53+08:00" />
+<meta itemprop="wordCount" content="20852"><meta itemprop="image" content="https://lemonhuang.com"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://lemonhuang.com"/>
@@ -58,7 +58,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lemonhuang.com/posts/native-trade-system-devlop-log/" /><meta property="og:image" content="https://lemonhuang.com"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2024-03-02T00:00:00+08:00" />
-<meta property="article:modified_time" content="2026-08-15T20:50:03+08:00" /><meta property="og:site_name" content="此间的少年" />
+<meta property="article:modified_time" content="2026-08-17T22:52:53+08:00" /><meta property="og:site_name" content="此间的少年" />
 
 
 
@@ -150,7 +150,7 @@
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        41分钟
+        42分钟
 
         
       </p>
@@ -1433,6 +1433,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2026.08.15</td>
 <td style="text-align:center">1、Lemon-Protocol 支持单、多数据序列化和反序列化过程中字符串变长的场景，并补充单元测试和与 FastJson 序列化耗时、字节占比指标比较。</td>
 </tr>
+<tr>
+<td style="text-align:center">2026.08.17</td>
+<td style="text-align:center">1、DynamicArbHandler 内部类 MasterWatchingWorker.doPolling() 取消第一轮立即获得令牌（delay=0 立即触发）的动作，首次轮询统一走 schedule 延时队列，待新一轮时间窗口到期后再发起主分片查询，避免多分片、多监听器在启动阶段立即触发导致重复选举。<br/>2、核对 Seata 客户端与 Server 版本，客户端 seata-spring-boot-starter 1.7.0 与 seata-server 1.7.0 一致，协议完全兼容，排除因版本不匹配导致分布式事务异常的可能（&ldquo;重启 seata 即恢复&quot;问题排查结论）。<br/>3、梳理 DynamicArbHandler、DynamicRoutesCache、DataSyncWorker 三组件的启动顺序与依赖关系：三者并非由注解排序驱动，而是通过 getBean 强制依赖形成先后顺序（DynamicArbHandler → DynamicRoutesCache → DataSyncWorker），构建&quot;先完成选主、再注册分片轮询器、最后建立二进制同步客户端&quot;的初始化链路。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
@@ -1863,7 +1867,7 @@ Relying upon circular references is discouraged and they are prohibited by <span
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        20481字
+        20852字
       </p>
 
       <p>
@@ -1880,7 +1884,7 @@ Relying upon circular references is discouraged and they are prohibited by <span
           
           
             
-              (最后修改: 2026-08-15 20:50)
+              (最后修改: 2026-08-17 22:52)
             
           
          
