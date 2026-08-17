@@ -43,7 +43,7 @@
 <meta itemprop="name" content="Redis存储原理剖析&lt;一&gt;：存储模型和基础命令解析">
 <meta itemprop="description" content="1. 前言 2022年，是充满挑战性的一年。 这一年，我选择离开了自己熟悉的信息化领域，把精力投向了互联网金融。 在22年的后半程，鉴于平台和团队所带"><meta itemprop="datePublished" content="2023-08-25T22:10:44+08:00" />
 <meta itemprop="dateModified" content="2023-08-25T22:10:44+08:00" />
-<meta itemprop="wordCount" content="6697"><meta itemprop="image" content="https://lemonhuang.com"/>
+<meta itemprop="wordCount" content="6763"><meta itemprop="image" content="https://lemonhuang.com"/>
 <meta itemprop="keywords" content="redis," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://lemonhuang.com"/>
@@ -351,18 +351,33 @@ dictEntry <span style="color:#f92672">*</span><span style="color:#a6e22e">dictAd
     <span style="color:#66d9ef">return</span> entry;
 }
 </code></pre></div><p>如果觉得不够清晰，可以看一下dictFind的调用时序图：</p>
-
-<script async type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js">
-    var config = {
-      startOnLoad:true,
-      theme:'neutral',
-      align:'left'
-    };
-    mermaid.initialize(config);
-  </script>
+<script defer type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js"></script>
+<script defer type="application/javascript">
+  (function () {
+    function init() {
+      if (window.mermaid) {
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: 'neutral',
+          align: 'left'
+        });
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
+<style>
+  .mermaid svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+</style>
+<div class="mermaid">
   
-  <div class="mermaid">
-    
    sequenceDiagram
 　　participant dictAddOrFind
 　　participant dictAddRaw
@@ -377,7 +392,7 @@ dictEntry <span style="color:#f92672">*</span><span style="color:#a6e22e">dictAd
 　　dictAddRaw-->>dictAddOrFind:return
 　　Note OVER		dictAddOrFind: 已存在返回&existing，否则返回dictEntry *entry
 
-  </div>
+</div>
 
 <hr>
 <h4 id="42-set-key-value">4.2 set key value</h4>
@@ -589,18 +604,33 @@ sds <span style="color:#a6e22e">sdsnewlen</span>(<span style="color:#66d9ef">con
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> NULL; 
 }
 </code></pre></div><p>那么，来画一个简单的setKey函数执行add key命令时的时序图，省略集群同步和监听通知等步骤后如下：
-
-<script async type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js">
-    var config = {
-      startOnLoad:true,
-      theme:'neutral',
-      align:'left'
-    };
-    mermaid.initialize(config);
-  </script>
+<script defer type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js"></script>
+<script defer type="application/javascript">
+  (function () {
+    function init() {
+      if (window.mermaid) {
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: 'neutral',
+          align: 'left'
+        });
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
+<style>
+  .mermaid svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+</style>
+<div class="mermaid">
   
-  <div class="mermaid">
-    
   sequenceDiagram
 　　participant setKey
 　　participant lookupKeyWrite
@@ -624,7 +654,7 @@ sds <span style="color:#a6e22e">sdsnewlen</span>(<span style="color:#66d9ef">con
 		Note OVER setKey: 调用incrRefCount使value引用计数+1
 		Note OVER setKey: 调用removeExpire重置expire过期时间
 
-  </div>
+</div>
 </p>
 <p>比起一层层深入的跟踪源码，这种时序图能更直观的反应代码执行时的主体流程，也更考验对代码整体逻辑的总结归纳能力。</p>
 <p>至此，通过两个简单案例的分析，由浅入深，可以洞悉redis在存储数据时其字典数据结构的全貌：</p>
@@ -698,7 +728,7 @@ sds <span style="color:#a6e22e">sdsnewlen</span>(<span style="color:#66d9ef">con
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        6697字
+        6763字
       </p>
 
       <p>

@@ -5,8 +5,226 @@
         <description>Recent content in 文章 on 此间的少年</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Fri, 14 Aug 2026 00:00:00 +0800</lastBuildDate>
+        <lastBuildDate>Mon, 17 Aug 2026 00:00:00 +0800</lastBuildDate>
         <atom:link href="https://lemonhuang.com/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>动态路由三组件启动时序分析</title>
+            <link>https://lemonhuang.com/posts/native-trade-system-dynamic-routes/</link>
+            <pubDate>Mon, 17 Aug 2026 00:00:00 +0800</pubDate>
+            
+            <guid>https://lemonhuang.com/posts/native-trade-system-dynamic-routes/</guid>
+            <description>模块：native-cloud-common-dynamic-routes + native-cloud-system-argument .post-content pre { background: #f2f3f5 !important; color: #1f2328 !important; border: 1px solid #d9d9d9 !important; border-radius: 6px; box-shadow: none !important; text-shadow: none !important; } .post-content pre code { background: transparent !important; color:</description>
+            <content type="html"><![CDATA[<blockquote>
+<p>模块：<code>native-cloud-common-dynamic-routes</code> + <code>native-cloud-system-argument</code></p>
+</blockquote>
+<style>
+  .post-content pre {
+    background: #f2f3f5 !important;
+    color: #1f2328 !important;
+    border: 1px solid #d9d9d9 !important;
+    border-radius: 6px;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  .post-content pre code {
+    background: transparent !important;
+    color: #1f2328 !important;
+    text-shadow: none !important;
+  }
+</style>
+
+<h2 id="一启动顺序">一、启动顺序</h2>
+<p>三者<strong>不是靠注解排序启动的，而是靠 &ldquo;getBean 强制依赖&rdquo; 形成先后顺序</strong>：</p>
+<pre tabindex="0"><code>DataSyncWorker  @PostConstruct init() ──getBean──&gt; DynamicRoutesCache  setApplicationContext ──getBean──&gt; DynamicArbHandler
+   (Ordered=102)                          (Ordered=101)                          (Ordered=100)
+</code></pre><p>实际创建/初始化顺序：</p>
+<ol>
+<li><strong>DynamicArbHandler</strong>（先完成 <code>afterPropertiesSet</code> → 首次 <code>doArb</code> 选主）</li>
+<li><strong>DynamicRoutesCache</strong>（后完成 <code>@PostConstruct init</code> → 注册轮询器 + 服务上下线监听）</li>
+<li><strong>DataSyncWorker</strong>（最后完成 <code>@PostConstruct init</code> → 建立二进制客户端）</li>
+</ol>
+<p><code>getOrder()</code> 的 100/101/102 与依赖链方向一致，但 Spring 中 bean 创建顺序由依赖驱动，Ordered 在这里只是意图标识/列表排序用。</p>
+<h2 id="二依赖关系">二、依赖关系</h2>
+<table>
+<thead>
+<tr>
+<th>类</th>
+<th>注册方式</th>
+<th>依赖</th>
+<th>强依赖点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DynamicArbHandler</code></td>
+<td><code>@EnableDynamicArb</code> → Selector → <code>DynamicArbConfiguration</code> <code>@Bean</code>（<code>@ConditionalOnBean(NacosConfigService)</code>）</td>
+<td>NacosConfigService、NacosNamingService</td>
+<td>不依赖另外两个</td>
+</tr>
+<tr>
+<td><code>DynamicRoutesCache</code></td>
+<td><code>@EnableDynamicRoutes</code> → Selector → <code>DynamicRoutesConfiguration</code> <code>@Bean</code></td>
+<td>DiscoveryClient、<strong>DynamicArbHandler</strong></td>
+<td><code>setApplicationContext</code> 中 <code>getBean(DynamicArbHandler.class)</code></td>
+</tr>
+<tr>
+<td><code>DataSyncWorker</code></td>
+<td><code>@Component</code>（组件扫描）</td>
+<td>RestTemplate、<strong>DynamicRoutesCache</strong></td>
+<td><code>@PostConstruct init()</code> 中 <code>getBean(DynamicRoutesCache.class)</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="三加载时序流程图">三、加载时序流程图</h2>
+<script defer type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js"></script>
+<script defer type="application/javascript">
+  (function () {
+    function init() {
+      if (window.mermaid) {
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: 'neutral',
+          align: 'left'
+        });
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
+<style>
+  .mermaid svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+</style>
+<div class="mermaid">
+  
+sequenceDiagram
+    participant APP as 启动类
+    participant IOC as Spring 容器
+    participant ARB as DynamicArbHandler<br/>(Ordered=100, InitializingBean)
+    participant ROUTE as DynamicRoutesCache<br/>(Ordered=101)
+    participant SYNC as DataSyncWorker<br/>(Ordered=102)
+    participant NACOS as Nacos 配置/注册中心
+
+    Note over APP: @EnableDynamicArb → DynamicArbHandlerSelector → DynamicArbConfiguration<br/>@EnableDynamicRoutes → DynamicRoutesSelector → DynamicRoutesConfiguration<br/>@Component 扫描 DataSyncWorker
+
+    rect rgb(235,245,255)
+    Note over IOC,ARB: ① DynamicArbHandler 初始化
+    IOC->>ARB: 创建 bean（先建 nacosConfigService）
+    ARB->>ARB: 构造器
+    ARB->>ARB: setApplicationContext / setEnvironment
+    ARB->>ARB: afterPropertiesSet()
+    ARB->>ARB: getHost() / initConfig() / initService()
+    ARB->>NACOS: 检查 config serverStatus == "UP"
+    alt gatewayEnabled || multiPartitionNo
+        ARB->>ARB: new MasterWatchingManager(32)
+    end
+    alt !gatewayEnabled（业务程序）
+        ARB->>ARB: doArb(dataId, false) —— 首次选主
+        ARB->>NACOS: getConfig(dataId, group) 嗅探
+        ARB->>NACOS: publishConfigCas 竞选主分片
+        ARB->>ARB: 成功→updateConfigSchedule()<br/>→ UpdateConfigManager.doPolling() 心跳刷新<br/>失败→subscribe 实例监听，主下线时 doArb(dataId,true)
+    end
+    end
+
+    rect rgb(240,255,240)
+    Note over IOC,ROUTE: ② DynamicRoutesCache 初始化
+    IOC->>ROUTE: 创建 bean
+    ROUTE->>ROUTE: 构造器（routes 缓存初始化）
+    ROUTE->>IOC: setApplicationContext → getBean(DynamicArbHandler)<br/>【强制依赖：若 ① 未完成，此处同步触发其完整创建】
+    ROUTE->>ROUTE: setEnvironment
+    ROUTE->>ROUTE: @PostConstruct init()
+    ROUTE->>ARB: 读取 multiPartitionNo / gatewayEnabled / extendApplicationList
+    ROUTE->>ROUTE: updateDynamicRoutes()
+    ROUTE->>ARB: registerWorker(serviceName, partitionNo)<br/>→ MasterWatchingWorker(3000).doPolling() 定时轮询主分片
+    ROUTE->>NACOS: registerServiceEvent() → NotifyCenter 订阅 InstancesChangeEvent
+    end
+
+    rect rgb(255,250,235)
+    Note over IOC,SYNC: ③ DataSyncWorker 初始化（参数系统场景）
+    IOC->>SYNC: 创建 bean（@Component）
+    SYNC->>SYNC: 构造器 / setApplicationContext
+    SYNC->>IOC: @PostConstruct init() → getBean(DynamicRoutesCache)<br/>【强制依赖：若 ② 未完成，此处同步触发其完整创建】
+    SYNC->>IOC: getBean(RestTemplate)
+    SYNC->>SYNC: initWorkers()
+    SYNC->>ROUTE: getExtendApplicationList() / getUriWithApplication()
+    SYNC->>下游: GET /ringBufferInner/port → new ClientWorker（二进制通信客户端）
+    end
+
+</div>
+
+<h2 id="四关键机制说明">四、关键机制说明</h2>
+<ul>
+<li><strong>DynamicArbHandler 最先行</strong>：<code>DynamicRoutesCache.setApplicationContext</code> 中 <code>getBean(DynamicArbHandler.class)</code> 会同步触发其完整创建，所以 <code>afterPropertiesSet</code>（含首次 <code>doArb(false)</code> 竞选）必然在 <code>DynamicRoutesCache.init()</code> 之前完成——这也是&quot;启动期两次选举&quot;问题的基础时序。</li>
+<li><strong>DynamicRoutesCache 承上启下</strong>：它从 <code>DynamicArbHandler</code> 拿模式标志（<code>gatewayEnabled</code>/<code>multiPartitionNo</code>/<code>extendApplicationList</code>），并在 <code>updateDynamicRoutes()</code> 中反向调用 <code>registerWorker</code> 给每个分片注册 <code>MasterWatchingWorker</code> 轮询器。</li>
+<li><strong>DataSyncWorker 最后</strong>：只有路由缓存和轮询器就绪后，<code>initWorkers()</code> 才能拿到&quot;各分片主节点 URI&quot;，再调下游 <code>/ringBufferInner/port</code> 建二进制客户端；它只发主节点（备节点同步由主节点 redo 完成）。</li>
+<li><code>MasterWatchingWorker.doPolling()</code> 首次轮询已改为同样走 <code>schedule</code> 延时（2026-08-17 修改），不再 <code>delay=0</code> 立即触发，避免启动窗口期重复选举。</li>
+</ul>
+<h2 id="五关键代码位置索引">五、关键代码位置索引</h2>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th>方法</th>
+<th>位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DynamicArbHandler</td>
+<td><code>afterPropertiesSet()</code></td>
+<td><code>native-cloud-common/native-cloud-common-dynamic-routes/src/main/java/com/huang/DynamicArbHandler.java</code> 第 102 行</td>
+</tr>
+<tr>
+<td>DynamicArbHandler</td>
+<td><code>doArb(String, boolean)</code></td>
+<td>同文件第 145 行</td>
+</tr>
+<tr>
+<td>DynamicArbHandler</td>
+<td><code>registerWorker(...)</code></td>
+<td>同文件第 495 行</td>
+</tr>
+<tr>
+<td>DynamicArbHandler</td>
+<td><code>MasterWatchingWorker.doPolling()</code></td>
+<td>同文件第 872 行</td>
+</tr>
+<tr>
+<td>DynamicRoutesCache</td>
+<td><code>setApplicationContext</code>（getBean 强依赖）</td>
+<td><code>.../DynamicRoutesCache.java</code> 第 97 行</td>
+</tr>
+<tr>
+<td>DynamicRoutesCache</td>
+<td><code>@PostConstruct init()</code></td>
+<td>同文件第 75 行</td>
+</tr>
+<tr>
+<td>DynamicRoutesCache</td>
+<td><code>updateDynamicRoutes()</code> / <code>registerServiceEvent()</code></td>
+<td>同文件第 117 / 205 行</td>
+</tr>
+<tr>
+<td>DataSyncWorker</td>
+<td><code>@PostConstruct init()</code></td>
+<td><code>native-cloud-system-argument/src/main/java/com/huang/worker/DataSyncWorker.java</code> 第 47 行</td>
+</tr>
+<tr>
+<td>DataSyncWorker</td>
+<td><code>initWorkers()</code></td>
+<td>同文件第 68 行</td>
+</tr>
+</tbody>
+</table>
+]]></content>
+        </item>
         
         <item>
             <title>Lemon-Protocal，基于二进制的 RPC 交互协议设计报告</title>
@@ -4766,18 +4984,33 @@ start 和 end 中的字符串仅限于’L’, ‘R’和’X’。
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> dictGetSignedIntegerVal(de);
 }
 </code></pre></div><p>简略画出这段代码调用的时序图：
-
-<script async type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js">
-    var config = {
-      startOnLoad:true,
-      theme:'neutral',
-      align:'left'
-    };
-    mermaid.initialize(config);
-  </script>
+<script defer type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js"></script>
+<script defer type="application/javascript">
+  (function () {
+    function init() {
+      if (window.mermaid) {
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: 'neutral',
+          align: 'left'
+        });
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
+<style>
+  .mermaid svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+</style>
+<div class="mermaid">
   
-  <div class="mermaid">
-    
   sequenceDiagram
 　　participant expireIfNeeded
 　　participant keyIsExpired
@@ -4797,7 +5030,7 @@ start 和 end 中的字符串仅限于’L’, ‘R’和’X’。
 　　Note OVER expireIfNeeded: 向监听了key的客户端发布key过期事件
 　　Note OVER expireIfNeeded: 根据预设的删除方式，选择同步或者是异步删除key对应的dictEntry
 
-  </div>
+</div>
 </p>
 <p>其中，在使用具体的删除方式时，涉及到一个值lazyfree_lazy_expire，它需要我们在redis.conf文件中进行配置：</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">lazyfree-lazy-expire no
@@ -5129,18 +5362,33 @@ dictEntry <span style="color:#f92672">*</span><span style="color:#a6e22e">dictAd
     <span style="color:#66d9ef">return</span> entry;
 }
 </code></pre></div><p>如果觉得不够清晰，可以看一下dictFind的调用时序图：</p>
-
-<script async type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js">
-    var config = {
-      startOnLoad:true,
-      theme:'neutral',
-      align:'left'
-    };
-    mermaid.initialize(config);
-  </script>
+<script defer type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js"></script>
+<script defer type="application/javascript">
+  (function () {
+    function init() {
+      if (window.mermaid) {
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: 'neutral',
+          align: 'left'
+        });
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
+<style>
+  .mermaid svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+</style>
+<div class="mermaid">
   
-  <div class="mermaid">
-    
    sequenceDiagram
 　　participant dictAddOrFind
 　　participant dictAddRaw
@@ -5155,7 +5403,7 @@ dictEntry <span style="color:#f92672">*</span><span style="color:#a6e22e">dictAd
 　　dictAddRaw-->>dictAddOrFind:return
 　　Note OVER		dictAddOrFind: 已存在返回&existing，否则返回dictEntry *entry
 
-  </div>
+</div>
 
 <hr>
 <h4 id="42-set-key-value">4.2 set key value</h4>
@@ -5367,18 +5615,33 @@ sds <span style="color:#a6e22e">sdsnewlen</span>(<span style="color:#66d9ef">con
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> NULL; 
 }
 </code></pre></div><p>那么，来画一个简单的setKey函数执行add key命令时的时序图，省略集群同步和监听通知等步骤后如下：
-
-<script async type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js">
-    var config = {
-      startOnLoad:true,
-      theme:'neutral',
-      align:'left'
-    };
-    mermaid.initialize(config);
-  </script>
+<script defer type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js"></script>
+<script defer type="application/javascript">
+  (function () {
+    function init() {
+      if (window.mermaid) {
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: 'neutral',
+          align: 'left'
+        });
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
+<style>
+  .mermaid svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+</style>
+<div class="mermaid">
   
-  <div class="mermaid">
-    
   sequenceDiagram
 　　participant setKey
 　　participant lookupKeyWrite
@@ -5402,7 +5665,7 @@ sds <span style="color:#a6e22e">sdsnewlen</span>(<span style="color:#66d9ef">con
 		Note OVER setKey: 调用incrRefCount使value引用计数+1
 		Note OVER setKey: 调用removeExpire重置expire过期时间
 
-  </div>
+</div>
 </p>
 <p>比起一层层深入的跟踪源码，这种时序图能更直观的反应代码执行时的主体流程，也更考验对代码整体逻辑的总结归纳能力。</p>
 <p>至此，通过两个简单案例的分析，由浅入深，可以洞悉redis在存储数据时其字典数据结构的全貌：</p>
@@ -5471,18 +5734,33 @@ sds <span style="color:#a6e22e">sdsnewlen</span>(<span style="color:#66d9ef">con
 <p>失约的人</p>
 <p>摇摇晃的人</p>
 <p>妙悟的人</p>
-<!-- 
-<script async type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js">
-    var config = {
-      startOnLoad:true,
-      theme:'neutral',
-      align:'left'
-    };
-    mermaid.initialize(config);
-  </script>
+<!-- <script defer type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js"></script>
+<script defer type="application/javascript">
+  (function () {
+    function init() {
+      if (window.mermaid) {
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: 'neutral',
+          align: 'left'
+        });
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
+<style>
+  .mermaid svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+</style>
+<div class="mermaid">
   
-  <div class="mermaid">
-    
 pie
     title French Words I Know
     "Merde" : 50
@@ -5490,7 +5768,7 @@ pie
     "Alors" : 10
     "Non" : 5
 
-  </div>
+</div>
  -->
 ]]></content>
         </item>
