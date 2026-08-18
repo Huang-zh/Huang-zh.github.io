@@ -43,7 +43,7 @@
 <meta itemprop="name" content="动态路由三组件启动时序分析">
 <meta itemprop="description" content="解析 DynamicArbHandler、DynamicRoutesCache、DataSyncWorker 三者的启动顺序与依赖关系，梳理主分片选主、轮询器注册、二进制客户端建立的全过程。"><meta itemprop="datePublished" content="2026-08-17T00:00:00+08:00" />
 <meta itemprop="dateModified" content="2026-08-17T22:40:00+08:00" />
-<meta itemprop="wordCount" content="1551"><meta itemprop="image" content="https://lemonhuang.com"/>
+<meta itemprop="wordCount" content="1514"><meta itemprop="image" content="https://lemonhuang.com"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://lemonhuang.com"/>
@@ -173,22 +173,6 @@
         <blockquote>
 <p>模块：<code>native-cloud-common-dynamic-routes</code> + <code>native-cloud-system-argument</code></p>
 </blockquote>
-<style>
-  .post-content pre {
-    background: #f2f3f5 !important;
-    color: #1f2328 !important;
-    border: 1px solid #d9d9d9 !important;
-    border-radius: 6px;
-    box-shadow: none !important;
-    text-shadow: none !important;
-  }
-  .post-content pre code {
-    background: transparent !important;
-    color: #1f2328 !important;
-    text-shadow: none !important;
-  }
-</style>
-
 <h2 id="一启动顺序">一、启动顺序</h2>
 <p>三者<strong>不是靠注解排序启动的，而是靠 &ldquo;getBean 强制依赖&rdquo; 形成先后顺序</strong>：</p>
 <pre tabindex="0"><code>DataSyncWorker  @PostConstruct init() ──getBean──&gt; DynamicRoutesCache  setApplicationContext ──getBean──&gt; DynamicArbHandler
@@ -232,7 +216,7 @@
 </tbody>
 </table>
 <h2 id="三加载时序流程图">三、加载时序流程图</h2>
-<script defer type="application/javascript" src="https://cdn.jsdelivr.net/npm/mermaid@9.1.1/dist/mermaid.min.js"></script>
+<script defer type="application/javascript" src="/mermaid/mermaid.min.js"></script>
 <script defer type="application/javascript">
   (function () {
     function init() {
@@ -410,7 +394,7 @@ sequenceDiagram
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        1551字
+        1514字
       </p>
 
       <p>
