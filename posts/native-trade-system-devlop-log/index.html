@@ -42,8 +42,8 @@
 
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-03-02T00:00:00+08:00" />
-<meta itemprop="dateModified" content="2026-08-17T22:52:53+08:00" />
-<meta itemprop="wordCount" content="20852"><meta itemprop="image" content="https://lemonhuang.com"/>
+<meta itemprop="dateModified" content="2026-08-20T23:30:00+08:00" />
+<meta itemprop="wordCount" content="21366"><meta itemprop="image" content="https://lemonhuang.com"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://lemonhuang.com"/>
@@ -58,7 +58,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lemonhuang.com/posts/native-trade-system-devlop-log/" /><meta property="og:image" content="https://lemonhuang.com"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2024-03-02T00:00:00+08:00" />
-<meta property="article:modified_time" content="2026-08-17T22:52:53+08:00" /><meta property="og:site_name" content="此间的少年" />
+<meta property="article:modified_time" content="2026-08-20T23:30:00+08:00" /><meta property="og:site_name" content="此间的少年" />
 
 
 
@@ -150,7 +150,7 @@
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        42分钟
+        43分钟
 
         
       </p>
@@ -1437,6 +1437,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2026.08.17</td>
 <td style="text-align:center">1、DynamicArbHandler 内部类 MasterWatchingWorker.doPolling() 取消第一轮立即获得令牌（delay=0 立即触发）的动作，首次轮询统一走 schedule 延时队列，待新一轮时间窗口到期后再发起主分片查询，避免多分片、多监听器在启动阶段立即触发导致重复选举。<br/>2、核对 Seata 客户端与 Server 版本，客户端 seata-spring-boot-starter 1.7.0 与 seata-server 1.7.0 一致，协议完全兼容，排除因版本不匹配导致分布式事务异常的可能（&ldquo;重启 seata 即恢复&quot;问题排查结论）。<br/>3、梳理 DynamicArbHandler、DynamicRoutesCache、DataSyncWorker 三组件的启动顺序与依赖关系：三者并非由注解排序驱动，而是通过 getBean 强制依赖形成先后顺序（DynamicArbHandler → DynamicRoutesCache → DataSyncWorker），构建&quot;先完成选主、再注册分片轮询器、最后建立二进制同步客户端&quot;的初始化链路。</td>
 </tr>
+<tr>
+<td style="text-align:center">2026.08.20</td>
+<td style="text-align:center">1、新增事件总线模块 native-cloud-common-eventbus：核心类 EventBus 采用单例模式，内部以 ConcurrentHashMap 按事件主题维护监听器列表，提供注册/注销监听器、发布事件能力；同时提供 Event（事件）、EventListener（监听器）、EventPublisher（发布者）三个基础接口，为系统构建统一的事件驱动基础设施。<br/>2、dynamic-routes 模块新增路由变更事件 DynamicRoutesChangeEvent（主题 routes.changed，携带 applicationName、partitionNo、serviceName、version、masterUri 元数据）；DynamicRoutesCache 在场景2（额外监听服务上下线事件）更新完分片路由缓存后，向 EventBus 发布该事件，将下游子系统路由变化通知出去。<br/>3、DataSyncWorker 注册 routes.changed 事件监听器 DataSyncRouteListener，监听器内部采用单线程执行器 + LinkedBlockingQueue 将事件入队异步消费，与网络 IO 线程解耦，为后续基于事件驱动的参数同步动作做准备。<strong style="color:red">4、以上事件总线发布-订阅链路编码完成，监听器消费逻辑暂为 TODO，待结合多分片参数同步场景编码自测。</strong></td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
@@ -1867,7 +1871,7 @@ Relying upon circular references is discouraged and they are prohibited by <span
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        20852字
+        21366字
       </p>
 
       <p>
@@ -1884,7 +1888,7 @@ Relying upon circular references is discouraged and they are prohibited by <span
           
           
             
-              (最后修改: 2026-08-17 22:52)
+              (最后修改: 2026-08-20 23:30)
             
           
          
