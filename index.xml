@@ -283,7 +283,7 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://lemonhuang.com/feeling/</guid>
-      <description>像沉默的打字机 ⌨️ /* ===== 心情页卡片式时间线（内联样式，仅本页生效） ===== */ .content { position: relative; } /* 贯穿的时间线 */ .content::before { content: &#34;&#34;; position: absolute; left: 15px; top: 0; bottom: 0; width: 2px; border-radius: 2px; } [data-theme=&#34;light&#34;] .content::before { background: #e4e7ec; }</description>
+      <description>像沉默的打字机 ⌨️ 满怀热烈情绪 🔥 /* ===== 心情页卡片式时间线（内联样式，仅本页生效） ===== */ .content { position: relative; } /* 贯穿的时间线 */ .content::before { content: &#34;&#34;; position: absolute; left: 15px; top: 0; bottom: 0; width: 2px; border-radius: 2px;</description>
     </item>
     
     <item>
