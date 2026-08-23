@@ -42,8 +42,8 @@
 
 <meta itemprop="name" content="Lemon-Protocal，基于二进制的 RPC 交互协议设计报告">
 <meta itemprop="description" content="面向低延迟、频繁交互数据的海量并发场景设计的轻量级RPC协议"><meta itemprop="datePublished" content="2026-08-14T00:00:00+08:00" />
-<meta itemprop="dateModified" content="2026-08-14T09:12:34+08:00" />
-<meta itemprop="wordCount" content="9009"><meta itemprop="image" content="https://lemonhuang.com"/>
+<meta itemprop="dateModified" content="2026-08-23T22:30:00+08:00" />
+<meta itemprop="wordCount" content="12229"><meta itemprop="image" content="https://lemonhuang.com"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://lemonhuang.com"/>
@@ -58,7 +58,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lemonhuang.com/posts/lemon-protocol/" /><meta property="og:image" content="https://lemonhuang.com"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2026-08-14T00:00:00+08:00" />
-<meta property="article:modified_time" content="2026-08-14T09:12:34+08:00" /><meta property="og:site_name" content="此间的少年" />
+<meta property="article:modified_time" content="2026-08-23T22:30:00+08:00" /><meta property="og:site_name" content="此间的少年" />
 
 
 
@@ -150,7 +150,7 @@
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        18分钟
+        25分钟
 
         
       </p>
@@ -203,7 +203,7 @@ pre code:not([class*="language-"]) {
 <p>协议载体：<code>com.huang.buffer.util.ByteTypeUtil</code><br/>
 配套产物：<code>com.huang.buffer.core.MessageMetaData</code><br/>
 反序列化入口：<code>GenerateMessageDataHandler.channelRead → ByteTypeUtil.handleLineBytes</code>（统一入口）<br/>
-版本：2026-08-15 修订（2026-01-31 初版实现）</p>
+版本：2026-08-23 修订（2026-08-15 增补嵌套 LIST 支持；2026-01-31 初版实现）</p>
 </blockquote>
 <hr>
 <h2 id="一协议概述">一、协议概述</h2>
@@ -212,12 +212,12 @@ pre code:not([class*="language-"]) {
 <ol>
 <li><strong>极致紧凑</strong>：头部只保留字段个数、类型表、长度表，键名只在消息尾部出现一次，避免 JSON 式重复键名带来的体积膨胀。</li>
 <li><strong>批量压缩</strong>：多行消息把&quot;类型表/长度表/名称表&quot;去重为一份，数据区按行列矩阵排布，适合同构批量数据。</li>
-<li><strong>类型自描述</strong>：每个字段带 1 字节类型标记，反序列化时无需外部 schema 即可还原 9 种基础类型。</li>
+<li><strong>类型自描述</strong>：每个字段带 1 字节类型标记，反序列化时无需外部 schema 即可还原 10 种基础类型（含嵌套 LIST 多行结果集）。</li>
 <li><strong>流式边界</strong>：每条消息以 <code>\n</code> 结尾，可作为 Socket 流中多条消息的切分点。</li>
 </ol>
 <hr>
 <h2 id="二类型系统type-枚举">二、类型系统（Type 枚举）</h2>
-<p>协议内置 9 种可传输类型 + 1 种兜底类型。标记字节为<strong>类型名首字母的 ASCII 码</strong>：</p>
+<p>协议内置 10 种可传输类型 + 1 种兜底类型。标记字节为<strong>类型名首字母的 ASCII 码</strong>：</p>
 <table>
 <thead>
 <tr>
@@ -293,6 +293,13 @@ pre code:not([class*="language-"]) {
 <td>UTF-8 字节序列；单行长度记录于长度表，多行内嵌 2 字节长度前缀</td>
 </tr>
 <tr>
+<td><code>LIST</code></td>
+<td>76</td>
+<td><code>L</code></td>
+<td>变长</td>
+<td>2 字节大端嵌套块长度前缀 + 递归嵌套帧（多行结果集，见 3.3）</td>
+</tr>
+<tr>
 <td><code>UNSUPPORTED</code></td>
 <td>0</td>
 <td>—</td>
@@ -301,7 +308,7 @@ pre code:not([class*="language-"]) {
 </tr>
 </tbody>
 </table>
-<p>设计细节：<code>boolean</code> 用小写 <code>b</code> 会与 <code>byte</code>（98）冲突，因此用大写 <code>B</code>（66）；<code>string</code> 用小写 <code>s</code> 会与 <code>short</code>（115）冲突，因此用大写 <code>S</code>（83）。</p>
+<p>设计细节：<code>boolean</code> 用小写 <code>b</code> 会与 <code>byte</code>（98）冲突，因此用大写 <code>B</code>（66）；<code>string</code> 用小写 <code>s</code> 会与 <code>short</code>（115）冲突，因此用大写 <code>S</code>（83）；<code>list</code> 用小写 <code>l</code> 会与 <code>long</code>（108）冲突，因此用大写 <code>L</code>（76）。</p>
 <hr>
 <h2 id="三消息格式">三、消息格式</h2>
 <p>协议存在<strong>单行消息</strong>与<strong>多行消息</strong>两种变体，二者均共享&quot;类型表 + 长度表 + 值区 + 尾部名称区&quot;的骨架，区别仅在头部。</p>
@@ -408,15 +415,15 @@ pre code:not([class*="language-"]) {
 <td><strong>五号域 长度区</strong></td>
 <td><code>[4+N, 4+3N)</code></td>
 <td>2N</td>
-<td>定长列写字节长度（大端）；<strong>STRING 列写 0</strong>（实际长度内嵌于值区）；仅首行写入</td>
+<td>定长列写字节长度（大端）；<strong>STRING/LIST 列写 0</strong>（实际长度内嵌于值区）；仅首行写入</td>
 <td>起点 = <code>4+N</code>；长度 = <code>2N</code></td>
 </tr>
 <tr>
 <td><strong>六号域 值区</strong></td>
 <td><code>[4+3N, 4+3N+Σlen)</code></td>
 <td>Σlen</td>
-<td>行主序：先第 1 行 N 列，再第 2 行 N 列…；定长列按宽度平铺；<strong>STRING 列每行 = 2 字节大端长度前缀 + UTF-8</strong>（同列行内变长）</td>
-<td>起点 = <code>4+3N</code>；Σlen = Σ(所有行所有列)：定长按类型宽、STRING 按 <code>2 + 字节数</code></td>
+<td>行主序：先第 1 行 N 列，再第 2 行 N 列…；定长列按宽度平铺；<strong>STRING 列每行 = 2 字节大端长度前缀 + UTF-8</strong>（同列行内变长）；<strong>LIST 列每行 = 2 字节大端嵌套块长度 + 嵌套帧</strong></td>
+<td>起点 = <code>4+3N</code>；Σlen = Σ(所有行所有列)：定长按类型宽、STRING 按 <code>2 + 字节数</code>、LIST 按 <code>2 + 嵌套块字节数</code></td>
 </tr>
 <tr>
 <td><strong>名称区</strong></td>
@@ -435,13 +442,23 @@ pre code:not([class*="language-"]) {
 <li><strong>二号域（lineNumber）</strong>：2 字节大端序行数，上限 <code>2^16 - 1 = 65535</code> 行；单行时该域被忽略，解码时按 1 行处理。</li>
 <li><strong>三号域（parameterNumber）</strong>：1 字节列头数，上限 255 列；单行/多行通用。</li>
 <li><strong>四号域（类型区）</strong>：N 个字节，<strong>仅首行写入</strong>，后续行复用同一类型表。</li>
-<li><strong>五号域（长度区）</strong>：N×2 字节，<strong>仅首行写入</strong>，后续行复用。定长列写入其字节长度（大端序）；<strong>STRING 列长度表置 0</strong>（实际长度内嵌于值区，见下）。</li>
-<li><strong>六号域（值区）</strong>：<strong>行主序（row-major）</strong>——先排第一行的 N 列，再排第二行的 N 列，以此类推。定长列按各自字节宽度平铺；<strong>STRING 列每行以 2 字节大端长度前缀开头，后跟 UTF-8 字节</strong>，因此<strong>同一 String 列在不同行允许长度不同（行内变长）</strong>，单值上限 65535 字节。</li>
+<li><strong>五号域（长度区）</strong>：N×2 字节，<strong>仅首行写入</strong>，后续行复用。定长列写入其字节长度（大端序）；<strong>STRING/LIST 列长度表置 0</strong>（实际长度内嵌于值区，见下）。</li>
+<li><strong>六号域（值区）</strong>：<strong>行主序（row-major）</strong>——先排第一行的 N 列，再排第二行的 N 列，以此类推。定长列按各自字节宽度平铺；<strong>STRING 列每行以 2 字节大端长度前缀开头，后跟 UTF-8 字节</strong>，因此<strong>同一 String 列在不同行允许长度不同（行内变长）</strong>，单值上限 65535 字节；<strong>LIST 列每行以 2 字节大端嵌套块长度前缀开头，后跟嵌套帧字节</strong>（见 3.3）。</li>
 <li><strong>名称区</strong>：取首行键名，<code>|</code> 连接，以 <code>\n</code> 结尾。</li>
 </ul>
-<h3 id="33-空消息">3.3 空消息</h3>
+<h3 id="33-嵌套块list-字段2026-08-23-新增">3.3 嵌套块（LIST 字段，2026-08-23 新增）</h3>
+<p><code>LIST</code> 列的值是一个<strong>嵌套多行结果集</strong>，在值区内按如下布局递归编码：</p>
+<pre tabindex="0"><code>[2 字节大端 nestedLen][嵌套帧字节]
+</code></pre><ul>
+<li><strong>嵌套帧</strong>：递归调用 <code>generateLineBytes(toRows(list, columnName), depth + 1, false)</code> 的完整产物，与 3.2 的多行帧<strong>同构</strong>（4 字节头 + 类型区 + 长度区 + 值区 + 名称区），但<strong>末尾不带 <code>\n</code></strong>——若带换行符，会被外层帧分隔符（<code>DelimiterBasedFrameDecoder(65535, &quot;\n&quot;)</code>）误切成两条消息。</li>
+<li><strong>空列表</strong>：<code>nestedLen = 0</code>（嵌套帧为 0 字节），解码端返回 <code>Collections.emptyList()</code>。</li>
+<li><strong>标量列表</strong>（如 <code>List&lt;Integer&gt;</code>）：自动包装为&quot;单列多行&quot;嵌套帧，列名沿用外层字段名，业务侧可按该列名识别。</li>
+<li><strong>深度上限</strong>：递归层级上限 <code>MAX_NEST_DEPTH = 8</code>（根帧 depth = 0），超限时序列化/反序列化均抛 <code>IllegalStateException</code>，防止栈溢出与恶意报文攻击。</li>
+<li><strong>可递归嵌套</strong>：嵌套帧自身可再含 LIST 列，支持任意层级的树状 / 多级主从结果集（受 8 层上限约束）。</li>
+</ul>
+<h3 id="34-空消息">3.4 空消息</h3>
 <p><code>parameters</code> 为空（单行）或 <code>list</code> 为空（多行）时，序列化直接返回 <code>new byte[0]</code>。</p>
-<h3 id="34-字节序与字符集">3.4 字节序与字符集</h3>
+<h3 id="35-字节序与字符集">3.5 字节序与字符集</h3>
 <ul>
 <li>所有多字节数值均为<strong>大端序（Big-Endian，网络序）</strong>。</li>
 <li><code>STRING</code> 与名称区一律使用 <strong>UTF-8</strong> 编码。</li>
@@ -462,21 +479,28 @@ pre code:not([class*="language-"]) {
  ├─ generateParameterNameBytes(map) → &quot;key1|key2|…|keyN&quot; + &quot;\n&quot; 的 UTF-8 字节
  └─ Unpooled.wrappedBuffer(头部+值区, 名称区) 合并为完整消息
 </code></pre><h3 id="42-多行generatelinebyteslistmapstring-object">4.2 多行：<code>generateLineBytes(List&lt;Map&lt;String, Object&gt;&gt;)</code></h3>
-<pre tabindex="0"><code>generateLineBytes(list)
+<pre tabindex="0"><code>generateLineBytes(list, depth = 0, appendTerminator = true)
+ ├─ depth &gt; MAX_NEST_DEPTH(8) → 抛 IllegalStateException（深度超限）
  ├─ list 为空 → 返回 new byte[0]
- ├─ generateLineParameterLength(list) → 构造头部 + 值区字节
+ ├─ expandNestedFields(list) → ① 校验行间 schema 一致（fail-fast，见 6.7）
+ │    ② 逐行逐列预序列化 LIST 列 → nestedCache[r][c] = 嵌套帧字节
+ │       嵌套帧 = generateLineBytes(toRows(list, columnName), depth + 1, appendTerminator = false)
+ │       └─ appendTerminator = false：嵌套帧末尾不带换行符，防被帧分隔符误切
+ ├─ generateLineParameterLength(list, nestedCache) → 构造头部 + 值区字节
  │    ├─ lineNumber = list.size()，N = 首行列数
  │    ├─ lineMark = lineNumber &gt; 1 ? 'Y' : 'N'
  │    ├─ 总长度 = 4 + N + 2N + Σ(遍历所有行所有列)：
- │    │    定长列按类型字节宽累加；STRING 列按 2 + UTF-8 字节数累加（含内嵌前缀）
+ │    │    定长列按类型字节宽累加；STRING 列按 2 + UTF-8 字节数累加（含内嵌前缀）；
+ │    │    LIST 列按 2 + 嵌套帧字节数累加（含内嵌前缀）
  │    ├─ bytes[0] = lineMark；bytes[1..2] = lineNumber（大端序）
  │    ├─ bytes[3] = N
  │    ├─ 外层循环行 i，内层循环列 v：
- │    │    ├─ i == 0 时写入类型表与长度表（定长列写真实长度、STRING 置 0；后续行跳过）
+ │    │    ├─ i == 0 时写入类型表与长度表（定长列写真实长度、STRING/LIST 置 0；后续行跳过）
  │    │    └─ 每行每列都写值本体：定长列同单行规则；
- │    │       STRING 先写 2 字节大端长度前缀，再写 UTF-8 字节（行内变长的关键）
+ │    │       STRING 先写 2 字节大端长度前缀，再写 UTF-8 字节（行内变长的关键）；
+ │    │       LIST 先写 2 字节大端嵌套帧长度，再写 nestedCache 中的嵌套帧字节
  │    └─ 返回头部+值区字节
- └─ 名称区取首行：generateParameterNameBytes(list.get(0))，合并返回
+ └─ 名称区取首行：generateParameterNameBytes(list.get(0), appendTerminator)，合并返回
 </code></pre><h3 id="43-各类型值编码对照">4.3 各类型值编码对照</h3>
 <table>
 <thead>
@@ -532,6 +556,11 @@ pre code:not([class*="language-"]) {
 <td>UTF-8 字节序列</td>
 <td>变长（≤65535）</td>
 </tr>
+<tr>
+<td><code>List&lt;?&gt;</code></td>
+<td>2 字节大端嵌套块长度 + 递归嵌套帧</td>
+<td>变长（受帧上限约束）</td>
+</tr>
 </tbody>
 </table>
 <hr>
@@ -554,7 +583,9 @@ pre code:not([class*="language-"]) {
  ├─ 尾部解析名称：byteBuf.toString(offset, 剩余, UTF-8) → split(&quot;\\|&quot;) → 逐列 setName
  └─ 返回 List&lt;MessageMetaData&gt;（一列一个元素）
 </code></pre><h3 id="52-多行handlelinebytesbyte统一反序列化入口">5.2 多行：<code>handleLineBytes(byte[])</code>（统一反序列化入口）</h3>
-<pre tabindex="0"><code>handleLineBytes(bytes)
+<pre tabindex="0"><code>handleLineBytes(bytes, depth = 0)
+ ├─ depth &gt; MAX_NEST_DEPTH(8) → 抛 IllegalStateException（疑似恶意报文/格式损坏）
+ ├─ bytes 为空 → 返回空集合（空嵌套块 / 空 LIST 字段）
  ├─ lineMark = bytes[0]
  │    ├─ 'N' → lineNumber = 1（单行）
  │    └─ 其他 → lineNumber = (bytes[1] &lt;&lt; 8) | bytes[2]（多行）
@@ -565,10 +596,14 @@ pre code:not([class*="language-"]) {
  │    │    ├─ type = getType(bytes[typeIndex])
  │    │    ├─ STRING：长度表恒为 0 → 忽略；改从 offset 读内嵌 2 字节 strLen，
  │    │    │          copy(offset+2, strLen)；offset += strLen + 2
+ │    │    ├─ LIST：从 offset 读内嵌 2 字节 nestedLen；
+ │    │    │        nestedLen == 0 → 值 = 空列表（Collections.emptyList()）
+ │    │    │        否则切片嵌套帧字节 → 递归 handleLineBytes(nested, depth + 1)
+ │    │    │        得到 List&lt;List&lt;MessageMetaData&gt;&gt; 作为该字段值；offset += nestedLen + 2
  │    │    └─ 定长：length = 长度表 2 字节大端；copy(offset, length)；offset += length
  │    ├─ 一行结束：结果入 result；typeIndex 复位 4、index 复位 4 + N；lineNumber--
  ├─ 尾部解析名称区 → 每行每列 setName
- └─ 返回 List&lt;List&lt;MessageMetaData&gt;&gt;（行 × 列）
+ └─ 返回 List&lt;List&lt;MessageMetaData&gt;&gt;（行 × 列；LIST 字段值为 List&lt;List&lt;MessageMetaData&gt;&gt;）
 </code></pre><h3 id="53-类型还原getvaluetype-bytebuf">5.3 类型还原：<code>getValue(Type, ByteBuf)</code></h3>
 <p>按类型标记分别调用 Netty <code>ByteBuf</code> 的读取 API：</p>
 <table>
@@ -617,20 +652,23 @@ pre code:not([class*="language-"]) {
 </tr>
 </tbody>
 </table>
+<blockquote>
+<p><code>LIST</code> 不经过 <code>getValue</code>：其值在 <code>handleLineBytes</code> 的 LIST 分支中通过递归解析嵌套帧得到（见 5.2）。</p>
+</blockquote>
 <h3 id="54-解码产物messagemetadata">5.4 解码产物：<code>MessageMetaData</code></h3>
 <pre tabindex="0"><code>MessageMetaData {
     ByteTypeUtil.Type type;   // 字段类型
     Object             data;  // 还原后的值
     String             name;  // 字段名（来自尾部名称区）
 }
-</code></pre><p>业务侧按 <code>name</code> 取 <code>data</code> 并自行强转为对应类型即可使用。</p>
+</code></pre><p>业务侧按 <code>name</code> 取 <code>data</code> 并自行强转为对应类型即可使用。当 <code>type == LIST</code> 时，<code>data</code> 为 <code>List&lt;List&lt;MessageMetaData&gt;&gt;</code>（子表行 × 列），业务侧可继续按 <code>name</code> 递归取用各子表字段。</p>
 <hr>
 <h2 id="六设计要点与边界限制">六、设计要点与边界限制</h2>
 <h3 id="61-长度字段容量">6.1 长度字段容量</h3>
 <p>长度表每个字段占 <strong>2 字节大端序，容量 0~65535</strong>。<strong>字符串（STRING）长度允许超过 255 字节</strong>（容量上限 65535 字节）：</p>
 <ul>
 <li><strong>单行格式</strong>：STRING 长度按实际 UTF-8 字节数写入长度表；</li>
-<li><strong>多行格式</strong>：STRING 列在长度表置 0，实际字节长度改为内嵌在值区每行的 2 字节前缀中（见 3.2），因此多行 STRING 同样支持最长 65535 字节。</li>
+<li><strong>多行格式</strong>：STRING/LIST 列在长度表置 0，实际字节长度改为内嵌在值区每行的 2 字节前缀中（见 3.2/3.3），因此多行 STRING 同样支持最长 65535 字节，LIST 嵌套块同样受 2 字节前缀 65535 上限约束。</li>
 </ul>
 <h3 id="62-多行模式string-行内变长定长列天然等长">6.2 多行模式：String 行内变长，定长列天然等长</h3>
 <p>多行消息只写首行的类型表/长度表，后续行复用。</p>
@@ -648,7 +686,21 @@ pre code:not([class*="language-"]) {
 <p><code>split(&quot;\\|&quot;)</code> 未去除末尾 <code>\n</code>，最后一个字段名会携带换行符（<code>&quot;nameN\n&quot;</code>）。当前仅用于 <code>setName</code>，若下游用 name 精确匹配需注意。</p>
 <h3 id="65-消息边界">6.5 消息边界</h3>
 <p>名称区固定以 <code>\n</code> 结尾，在流式 TCP 场景中可作为下一条消息的切分点（<code>GenerateMessageDataHandler</code> 收到的 <code>byte[]</code> 即按此切分后的单条完整消息）。</p>
-<h3 id="66-map-迭代顺序">6.6 Map 迭代顺序</h3>
+<h3 id="66-嵌套-list-字段2026-08-23-新增">6.6 嵌套 LIST 字段（2026-08-23 新增）</h3>
+<p><code>LIST</code> 列以&quot;2 字节大端嵌套块长度 + 嵌套帧&quot;递归编码（见 3.3），使单行字段支持<strong>多行子结果集</strong>（<code>List&lt;Map&gt;</code>）与<strong>标量列表</strong>（<code>List&lt;Integer&gt;</code> 等自动包装为单列多行）。要点：</p>
+<ul>
+<li><strong>深度上限 8</strong>：<code>MAX_NEST_DEPTH = 8</code>，序列化/反序列化双侧校验，超限抛 <code>IllegalStateException</code>，防栈溢出与恶意报文攻击。</li>
+<li><strong>嵌套帧不带 <code>\n</code></strong>：嵌套块末尾不追加换行符，否则会被帧分隔符 <code>\n</code> 误切成两条消息。</li>
+<li><strong>空列表</strong>：<code>nestedLen = 0</code>，解码端返回空列表。</li>
+<li><strong>整帧上限不变</strong>：外层仍受 <code>DelimiterBasedFrameDecoder(65535, &quot;\n&quot;)</code> 约束，嵌套总数据量锁死在约 64 KB；单值（STRING/LIST）仍有 2 字节长度前缀 65535 上限。</li>
+</ul>
+<h3 id="67-列数类型约束层内一致跨层自由2026-08-23-新增">6.7 列数/类型约束：层内一致、跨层自由（2026-08-23 新增）</h3>
+<p>嵌套块的列数与类型由<strong>各层自身的首行</strong>决定，与外层互不约束：</p>
+<ul>
+<li><strong>同一层内</strong>：所有行的列数、各列类型必须与首行一致（fail-fast，抛 <code>IllegalArgumentException</code>），防止静默写坏报文；</li>
+<li><strong>跨层</strong>：外层 N 列、嵌套层 M 列（M ≠ N）完全合法——&ldquo;外层 3 列 + 子表 2 列&quot;即可正常往返，支持&quot;外层 20 列 + 子表 20 列&quot;等任意组合。</li>
+</ul>
+<h3 id="68-map-迭代顺序">6.8 Map 迭代顺序</h3>
 <p>头部类型表/长度表/值区与名称区均基于同一 <code>Map</code> 迭代顺序生成（<code>HashMap</code> 顺序不保证），但解码时列顺序由头部决定、名称仅作标记，故<strong>列序不影响正确性</strong>（键名与值是一一对应的，只要类型/长度/值三表顺序一致即可）。</p>
 <hr>
 <h2 id="七适合的场景">七、适合的场景</h2>
@@ -685,6 +737,12 @@ pre code:not([class*="language-"]) {
 <li>字段名/类型/数量在收发双方约定固定（如 RPC 命令参数、配置下发、业务标记回写），无需动态 schema 协商。</li>
 </ul>
 </li>
+<li>
+<p><strong>嵌套多行结果集（2026-08-23 新增）</strong></p>
+<ul>
+<li>单行字段可携带 <code>List&lt;Map&gt;</code> 子表（多级主从 / 树状结果集，如&quot;订单 → 明细 → 商品&rdquo;），或标量列表；递归长度前缀 + <code>LIST</code> 类型标记，深度上限 8 层。</li>
+</ul>
+</li>
 </ol>
 <h3 id="72-不适合的场景">7.2 不适合的场景</h3>
 <table>
@@ -696,8 +754,8 @@ pre code:not([class*="language-"]) {
 </thead>
 <tbody>
 <tr>
-<td>嵌套对象 / 数组 / 泛型 / 枚举</td>
-<td>仅支持 9 种标量 + String，无递归结构支持</td>
+<td>任意对象图 / Map 值 / 枚举 / 泛型</td>
+<td>仅支持 10 种基础类型 + 嵌套 LIST（元素须为 <code>Map</code> 或标量），不支持任意 Java 对象图</td>
 </tr>
 <tr>
 <td>超长文本（&gt;65535 字节字符串）</td>
@@ -715,11 +773,11 @@ pre code:not([class*="language-"]) {
 </table>
 <hr>
 <h2 id="八总结">八、总结</h2>
-<p>Lemon-Protocol 是一套<strong>面向高性能 Java 内网通信的紧凑二进制协议</strong>：以&quot;字段数 + 类型表 + 长度表 + 值区 + 尾部名称区&quot;为骨架，单行变体面向单条参数、多行变体面向批量行数据。多行 STRING 列通过值区内嵌长度前缀支持行内变长，发送/接收已统一为 4 字节头格式，天然适配环形缓冲与长连接流式传输。其优势在于体积小、解码规则简单、零对象复用的并发友好；使用时需注意 String 单值 65535 字节上限、名称区尾随换行等边界条件。</p>
+<p>Lemon-Protocol 是一套<strong>面向高性能 Java 内网通信的紧凑二进制协议</strong>：以&quot;字段数 + 类型表 + 长度表 + 值区 + 尾部名称区&quot;为骨架，单行变体面向单条参数、多行变体面向批量行数据。多行 STRING 列通过值区内嵌长度前缀支持行内变长，LIST 列通过递归长度前缀支持<strong>嵌套多行结果集</strong>（深度上限 8 层），发送/接收已统一为 4 字节头格式，天然适配环形缓冲与长连接流式传输。其优势在于体积小、解码规则简单、零对象复用的并发友好；使用时需注意 String 单值 65535 字节上限、整帧 65535 字节上限、名称区尾随换行等边界条件。</p>
 <hr>
 <h2 id="九测试验证与修订记录">九、测试验证与修订记录</h2>
 <h3 id="91-单元测试bytetypeutilcodectestjunit-5">9.1 单元测试：<code>ByteTypeUtilCodecTest</code>（JUnit 5）</h3>
-<p>测试类位于 <code>native-cloud-common-ringbuffer/src/test/java/com/huang/buffer/ByteTypeUtilCodecTest.java</code>，2026-08-15 新增，<strong>7 个用例全部通过</strong>（<code>Tests run: 7, Failures: 0, Errors: 0</code>）：</p>
+<p>测试类位于 <code>native-cloud-common-ringbuffer/src/test/java/com/huang/buffer/ByteTypeUtilCodecTest.java</code>，2026-08-15 新增、2026-08-23 扩展，<strong>18 个用例全部通过</strong>（<code>Tests run: 18, Failures: 0, Errors: 0</code>）：</p>
 <table>
 <thead>
 <tr>
@@ -747,6 +805,50 @@ pre code:not([class*="language-"]) {
 <tr>
 <td><code>testMultiLineStringNear65535Bytes</code></td>
 <td>60000 字节 String（2 字节前缀上限内）</td>
+</tr>
+<tr>
+<td><code>testNestedListFieldSingleOuterRow</code></td>
+<td>单外层行 + LIST 子表多行（嵌套往返）</td>
+</tr>
+<tr>
+<td><code>testNestedListFieldMultiOuterRows</code></td>
+<td>多外层行 + LIST 子表（含空子表）</td>
+</tr>
+<tr>
+<td><code>testNestedListEmpty</code></td>
+<td>空列表字段（nestedLen = 0）</td>
+</tr>
+<tr>
+<td><code>testNestedScalarList</code></td>
+<td>标量列表：<code>List&lt;Integer&gt;</code> / <code>List&lt;String&gt;</code> 自动包装单列多行</td>
+</tr>
+<tr>
+<td><code>testNestedListTwoLevels</code></td>
+<td>两层嵌套（外层 → 子表 → 孙表）</td>
+</tr>
+<tr>
+<td><code>testNestedListLongStrings</code></td>
+<td>嵌套块内 600 字节长字符串</td>
+</tr>
+<tr>
+<td><code>testNestedListNearFrameLimit</code></td>
+<td>300 行子表（约 31 KB），接近帧上限</td>
+</tr>
+<tr>
+<td><code>testNestedFiveLevelsTwentyColumnsAllTypes</code></td>
+<td><strong>五层嵌套 × 每层 20 列全类型</strong>（根 → L1 → L2 → L3 → L4 → L5，最内层空子表；每层 19 标量 + 1 LIST）</td>
+</tr>
+<tr>
+<td><code>testTypeInconsistencyAcrossRowsThrows</code></td>
+<td>行间列数/类型不一致抛 <code>IllegalArgumentException</code>（fail-fast）</td>
+</tr>
+<tr>
+<td><code>testUnsupportedTypeThrows</code></td>
+<td>不支持类型（如 Map/BigDecimal）抛 <code>IllegalArgumentException</code></td>
+</tr>
+<tr>
+<td><code>testNestedDepthLimitThrows</code></td>
+<td>9 层嵌套（超过上限 8）抛 <code>IllegalStateException</code></td>
 </tr>
 <tr>
 <td><code>testEmptyParameters</code></td>
@@ -789,6 +891,45 @@ pre code:not([class*="language-"]) {
 <p>以上缺陷在旧实现下未被端到端验证暴露——新增的 <code>ByteTypeUtilCodecTest</code> 首次对
 混合类型 + 行内变长 String 做了全链路往返断言。</p>
 </blockquote>
+<h3 id="93-2026-08-23-修订记录">9.3 2026-08-23 修订记录</h3>
+<table>
+<thead>
+<tr>
+<th>变更</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>新增 <code>LIST</code> 类型（76 = &lsquo;L&rsquo;）</td>
+<td>类型表扩展为 10 种；<code>list</code> 首字母 <code>l</code>(108) 与 <code>long</code> 冲突，用大写 <code>L</code>(76)</td>
+</tr>
+<tr>
+<td>嵌套多行结果集</td>
+<td>单行字段支持 <code>List&lt;Map&gt;</code> 子表 / 标量列表；递归长度前缀 + 嵌套帧（末尾不带 <code>\n</code>，防被帧分隔符误切）</td>
+</tr>
+<tr>
+<td>递归改造</td>
+<td><code>generateLineBytes</code> / <code>handleLineBytes</code> 增加 depth 参数与 LIST 分支；<code>expandNestedFields</code> 预序列化嵌套块（<code>nestedCache</code> 三层数组）</td>
+</tr>
+<tr>
+<td>深度上限</td>
+<td><code>MAX_NEST_DEPTH = 8</code>，序列化/反序列化双侧校验，防栈溢出与恶意报文</td>
+</tr>
+<tr>
+<td>schema fail-fast</td>
+<td>行间列数/类型不一致、不支持类型（Map/BigDecimal 等）直接抛异常，避免静默写坏报文</td>
+</tr>
+<tr>
+<td>标量列表包装</td>
+<td><code>toRows</code> 将标量列表包装为单列多行（列名沿用外层字段名）</td>
+</tr>
+<tr>
+<td>测试扩展</td>
+<td>7 → 18 个用例，新增 11 个嵌套相关用例（含五层 × 每层 20 列全类型）</td>
+</tr>
+</tbody>
+</table>
 <hr>
 <h2 id="十与-fastjson-的基准对比">十、与 fastjson 的基准对比</h2>
 <h3 id="101-测试方法与环境">10.1 测试方法与环境</h3>
@@ -980,7 +1121,7 @@ pre code:not([class*="language-"]) {
 | lineMark  | line M | N  | type (N x 1B)| len (2N x 2B) | values          | names &quot;...\n&quot;     |
 | 'Y'/'N'   | (2B)   |(1B)| row1 only    | row1 only     | row-major       | row1 keys        |
 +-----------+--------+----+--------------+---------------+-----------------+------------------+
-                                                          | 定长列按宽平铺；STRING 每行 2B 前缀 + UTF-8
+                                                          | 定长列按宽平铺；STRING/LIST 每行 2B 前缀 + 值
 </code></pre><h3 id="d-多行消息逐字节示例2-行--3-列idinteger--pricedouble--codestringabcd">D. 多行消息逐字节示例（2 行 × 3 列：<code>id(Integer)</code> + <code>price(Double)</code> + <code>code(String=&quot;AB&quot;/&quot;CD&quot;)</code>）</h3>
 <table>
 <thead>
@@ -1099,10 +1240,159 @@ pre code:not([class*="language-"]) {
    typeIndex = 4（类型区起点）   index = 4+N（长度区起点）   offset = 4+3N（值区起点）
    每列：
      STRING：长度表置 0 → 忽略；改读 offset 处内嵌 2B strLen → copy(offset+2, strLen) → offset += strLen+2
+     LIST：读 offset 处内嵌 2B nestedLen → 切片嵌套帧 → 递归 handleLineBytes(nested, depth+1) → offset += nestedLen+2
      定长：读长度表 2B length → copy(offset, length) → offset += length
    每行结束：typeIndex 复位 4、index 复位 4+N、offset 连续、M--
  名称区：从当前 offset 到末尾 split(&quot;\\|&quot;) 得键名，按列 set 到每行的 MessageMetaData
-</code></pre>
+</code></pre><h3 id="f-list-嵌套字段字节示例外层-1-行--2-列id1integer--orderslist">F. LIST 嵌套字段字节示例（外层 1 行 × 2 列：<code>id=1(Integer)</code> + <code>orders=LIST</code>）</h3>
+<p>外层行 2 列，其中 <code>orders</code> 为嵌套子表（2 行 × 1 列 STRING <code>oid=&quot;101&quot;/&quot;102&quot;</code>）。注意<strong>外层 2 列、嵌套层 1 列</strong>——印证&quot;层内一致、跨层自由&quot;（见 6.7）。</p>
+<p>外层帧：</p>
+<table>
+<thead>
+<tr>
+<th>偏移</th>
+<th>hex</th>
+<th>值（hex）</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0x00</td>
+<td><code>4E ('N')</code></td>
+<td>lineMark：单行（统一走 4 字节头）</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0x01</td>
+<td><code>00 01</code></td>
+<td>行数 = 1（单行时忽略）</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0x03</td>
+<td><code>02</code></td>
+<td>列数 N = 2</td>
+</tr>
+<tr>
+<td>4</td>
+<td>0x04</td>
+<td><code>69 ('i') 4C ('L')</code></td>
+<td>类型区：INTEGER / LIST</td>
+</tr>
+<tr>
+<td>6</td>
+<td>0x06</td>
+<td><code>00 04</code></td>
+<td>第1列(id)长度 = 4</td>
+</tr>
+<tr>
+<td>8</td>
+<td>0x08</td>
+<td><code>00 00</code></td>
+<td>第2列(orders, LIST)长度表置 0</td>
+</tr>
+<tr>
+<td>10</td>
+<td>0x0A</td>
+<td><code>00 00 00 01</code></td>
+<td>第1列值：id = 1</td>
+</tr>
+<tr>
+<td>14</td>
+<td>0x0E</td>
+<td><code>00 17</code></td>
+<td>第2列值：嵌套块长度 nestedLen = 23</td>
+</tr>
+<tr>
+<td>16</td>
+<td>0x10</td>
+<td><code>59 00 02 01 53 00 00 00 03 31 30 31 00 03 31 30 32 6F 72 64 65 72 73</code></td>
+<td>嵌套帧（23 字节，见下）</td>
+</tr>
+<tr>
+<td>39</td>
+<td>0x27</td>
+<td><code>69 64 7C 6F 72 64 65 72 73</code></td>
+<td>名称区：&ldquo;id|orders&rdquo;（无 <code>\n</code>）</td>
+</tr>
+<tr>
+<td>48</td>
+<td>0x30</td>
+<td><code>0A</code></td>
+<td>边界符：<code>\n</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>外层总长 = 1(头) + 2(行数) + 1(列数) + 2(类型) + 4(长度) + 4(id) + 25(orders = 2B 前缀 + 23B 嵌套帧) + 9(名称区) + 1(<code>\n</code>) = 49 字节</p>
+</blockquote>
+<p>嵌套帧（<code>orders</code> 子表，nestedLen = 23，相对嵌套帧偏移）：</p>
+<table>
+<thead>
+<tr>
+<th>偏移</th>
+<th>hex</th>
+<th>值（hex）</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>0x00</td>
+<td><code>59 ('Y')</code></td>
+<td>lineMark：多行</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0x01</td>
+<td><code>00 02</code></td>
+<td>行数 = 2</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0x03</td>
+<td><code>01</code></td>
+<td>列数 = 1（与外层 2 列不同，合法）</td>
+</tr>
+<tr>
+<td>4</td>
+<td>0x04</td>
+<td><code>53 ('S')</code></td>
+<td>类型区：STRING</td>
+</tr>
+<tr>
+<td>5</td>
+<td>0x05</td>
+<td><code>00 00</code></td>
+<td>长度表置 0</td>
+</tr>
+<tr>
+<td>7</td>
+<td>0x07</td>
+<td><code>00 03 31 30 31</code></td>
+<td>行1 oid = &ldquo;101&rdquo;</td>
+</tr>
+<tr>
+<td>12</td>
+<td>0x0C</td>
+<td><code>00 03 31 30 32</code></td>
+<td>行2 oid = &ldquo;102&rdquo;</td>
+</tr>
+<tr>
+<td>17</td>
+<td>0x11</td>
+<td><code>6F 72 64 65 72 73</code></td>
+<td>名称区：&ldquo;orders&rdquo;（appendTerminator = false，无 <code>\n</code>）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>嵌套帧总长 = 4(头) + 1(类型) + 2(长度) + 5 + 5(两行值，各含 2B 前缀) + 6(名称区) = 23 字节</p>
+</blockquote>
+
       </div>
     </article>
 
@@ -1134,7 +1424,7 @@ pre code:not([class*="language-"]) {
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        9009字
+        12229字
       </p>
 
       <p>
@@ -1151,7 +1441,7 @@ pre code:not([class*="language-"]) {
           
           
             
-              (最后修改: 2026-08-14 09:12)
+              (最后修改: 2026-08-23 22:30)
             
           
          
