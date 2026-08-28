@@ -42,8 +42,8 @@
 
 <meta itemprop="name" content="云交易系统开发手册">
 <meta itemprop="description" content="随着云交易系统的建设，陆续更新过程中的开发日志、遇到的问题以及解决方案。"><meta itemprop="datePublished" content="2024-03-02T00:00:00+08:00" />
-<meta itemprop="dateModified" content="2026-08-26T23:00:00+08:00" />
-<meta itemprop="wordCount" content="24714"><meta itemprop="image" content="https://lemonhuang.com"/>
+<meta itemprop="dateModified" content="2026-08-28T22:30:00+08:00" />
+<meta itemprop="wordCount" content="25518"><meta itemprop="image" content="https://lemonhuang.com"/>
 <meta itemprop="keywords" content="交易系统开发日志," />
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://lemonhuang.com"/>
@@ -58,7 +58,7 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://lemonhuang.com/posts/native-trade-system-devlop-log/" /><meta property="og:image" content="https://lemonhuang.com"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2024-03-02T00:00:00+08:00" />
-<meta property="article:modified_time" content="2026-08-26T23:00:00+08:00" /><meta property="og:site_name" content="此间的少年" />
+<meta property="article:modified_time" content="2026-08-28T22:30:00+08:00" /><meta property="og:site_name" content="此间的少年" />
 
 
 
@@ -150,7 +150,7 @@
           <circle cx="12" cy="12" r="10"></circle>
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg>
-        50分钟
+        51分钟
 
         
       </p>
@@ -1457,6 +1457,10 @@ Relying upon circular references is discouraged and they are prohibited by <span
 <td style="text-align:center">2026.08.26</td>
 <td style="text-align:center">1、DataSyncWorker（native-cloud-system-argument 模块）同步数据链路升级：syncData 公开方法新增 transactionNo（事务号）参数，要求调用方必须送入事务号——后续通过组播向各主分片同步数据时需携带事务号，以便于主分片进行数据一致性校验。<br/>2、新增 constructData(tableName, data, transactionNo) 私有方法：将表名、事务号、业务数据打包为一个行结构 {tableName, transactionNo, data}，使下游子系统收到同步数据时能识别数据来源表名与所属事务。<br/>3、新增 getApplicationSyncList(tableName) 私有方法：根据表名获取需要同步的应用程序列表，当前为占位实现（硬编码返回 test），遗留 TODO：需实时获取 extendedApplicationList 中 applicationName 与 tableName 的映射关系。<br/>4、私有 syncData(tableName, applicationName, data, transactionNo) 方法签名同步增加 transactionNo 透传，序列化后经各分片 ClientWorker 广播下发。<br/>5、@PreDestroy destroy() 完善注释说明：销毁时取消事件监听器注册、停止所有客户端并置空引用帮助 GC。<br/>6、DataSyncWorker 事件监听器 eventLoop 注释补充说明：路由变更事件异步且需经阻塞队列保证有序处理，监听器随 DataSyncWorker 生命周期只初始化一次，不存在内存泄漏风险。</td>
 </tr>
+<tr>
+<td style="text-align:center">2026.08.28</td>
+<td style="text-align:center">1、删除ring-buffer模块反序列化冗余代码，统一使用 ByteTypeUtil 进行反序列化。<br/>2、BusinessHandler 业务处理接口扩展：新增 handleMultiMessage(List&lt;Map&lt;String,Object&gt;&gt; parameters) 批量消息处理方法，支持一次处理一组&quot;格式为多条消息&quot;的业务（区别于 doHandle 的单条消息处理），提升批量数据同步等场景的吞吐量；所有实现类（FinancingPurchaseBackReportHandler、CreditEntrustBackWriteHandler、TestBusinessHandler 等）同步实现该方法。<br/>3、新增内存存储模块 common-memory-storage：新增 @EnableMemoryStorage 自定义开关注解（@Import(MemoryStorageImportSelector.class)，与 @EnableRingBuffer / @EnableDynamicRoutes 同风格的注解开关机制）与 MemoryStorageImportSelector（ImportSelector 动态导入 MemoryStorageDataSyncHandler，规避组件扫描范围限制）。<br/>4、新增 MemoryStorageDataSyncHandler 内存数据同步处理类：实现 BusinessHandler，业务标志 BUSINESS_FLAG = 100；构造器注入 DynamicRoutesCache（强依赖，Spring 容器保证其先完成创建与初始化，缺 bean 时启动直接抛异常，优于 @ConditionalOnBean 的静默跳过）；doHandle 单条同步返回 UNSUPPORTED_OPERATION（不支持的操作，新增于 ResultCodeEnum，码值 500），只支持批量同步走 handleMultiMessage。<br/>5、credit-trade 模块启动类 CreditTradeApplication 新增 @EnableMemoryStorage 注解（2026.08.28 huangzh mod 开启内存存储），接入内存存储能力。<br/>6、credit-trade 业务处理器适配批量接口：FinancingPurchaseBackReportHandler（融资买入回报）、CreditEntrustBackWriteHandler（信用委托回写）实现 handleMultiMessage 返回成功。</td>
+</tr>
 </tbody>
 </table>
 <h3 id="6初始化脚本">6.初始化脚本</h3>
@@ -1887,7 +1891,7 @@ Relying upon circular references is discouraged and they are prohibited by <span
           <line x1="16" y1="17" x2="8" y2="17"></line>
           <polyline points="10 9 9 9 8 9"></polyline>
         </svg>
-        24714字
+        25518字
       </p>
 
       <p>
@@ -1904,7 +1908,7 @@ Relying upon circular references is discouraged and they are prohibited by <span
           
           
             
-              (最后修改: 2026-08-26 23:00)
+              (最后修改: 2026-08-28 22:30)
             
           
          
